@@ -102,8 +102,20 @@ InitTestScene*.unity*
 /[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers
 /[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers.meta
 
+
+
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+
+# Wolfram Language 인식 문제 해결 (TutorialInfo 폴더 및 wlt 파일 무시)
+/[Aa]ssets/TutorialInfo/
+*.wlt
+*.wlt.meta
+
+# 민감한 DB 정보가 담긴 스크립트 무시
+/[Aa]ssets/02Scripts/DBManager.cs
+/[Aa]ssets/02Scripts/DBManager.cs.meta
