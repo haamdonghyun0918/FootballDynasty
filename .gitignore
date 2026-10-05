@@ -117,5 +117,5 @@ InitTestScene*.unity*
 *.wlt.meta
 
 # 민감한 DB 정보가 담긴 스크립트 무시
-/[Aa]ssets/02Scripts/DBManager.cs
-/[Aa]ssets/02Scripts/DBManager.cs.meta
+/[Aa]ssets/02Scripts/DBConfig.cs
+/[Aa]ssets/02Scripts/DBConfig.cs.meta
