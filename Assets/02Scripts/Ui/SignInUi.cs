@@ -9,7 +9,7 @@ public class SignInUi : UiBase
     {
         if (_buttonSignIn)
         {
-            _buttonSignIn.BindOnClickButtonEvent(OpenMainUi);
+            _buttonSignIn.BindOnClickButtonEvent(OpenSignInPopUp);
         }
 
         if (_buttonSignUp)
@@ -18,10 +18,9 @@ public class SignInUi : UiBase
         }
     }
 
-    private async void OpenMainUi()
+    private async void OpenSignInPopUp()
     {
-        //TODO: MainUi만들어질 시 주석 해제 10/05
-        //await UiManager.Instance.OpenUi<MainUi>();
+        await UiManager.Instance.OpenUi<SignInPopUp>();
     }
 
     private async void OpenSignUpUi()
