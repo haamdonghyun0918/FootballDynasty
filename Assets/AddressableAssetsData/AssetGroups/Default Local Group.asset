@@ -16,7 +16,7 @@ MonoBehaviour:
   m_GUID: cf6cae09f2932f34a9d1db154c984050
   m_SerializeEntries:
   - m_GUID: a4c890c9cbbe5c844accadeb7a6583e2
-    m_Address: LoginUi
+    m_Address: SignInUi
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
