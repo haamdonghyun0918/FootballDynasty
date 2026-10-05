@@ -26,7 +26,7 @@ public class DBManager : MonoBehaviour
                             string userId = reader["UserId"].ToString();
                             string userName = reader["UserName"].ToString();
 
-                            Debug.Log($"가져온 유저 ID: {userId}, 유저 이름: {userName}");
+                            Debug.Log($"가져온 유저 ID: {userId}, 유저 닉네임: {userName}");
                         }
                     }
                 }
@@ -38,7 +38,7 @@ public class DBManager : MonoBehaviour
         }
     }
 
-    public bool InsertUser(string userId, string userName)
+    public bool InsertUser(string userId, string userPw, string userName)
     {
         string connString = DBConfig.GetConnection();
         
@@ -48,11 +48,12 @@ public class DBManager : MonoBehaviour
             {
                 conn.Open();
 
-                string query = "INSERT INTO userinfo (UserId, UserName) VALUES (@userId, @userName)";
+                string query = "INSERT INTO userinfo (UserId, UserPw, UserName) VALUES (@userId, @userPw, @userName)";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("@userPw", userPw);
                     cmd.Parameters.AddWithValue("@userName", userName);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
