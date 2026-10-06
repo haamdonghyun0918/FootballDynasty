@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
 using TMPro;
+using UnityEngine;
 
 public class SignInPopUp : UiBase
 {
@@ -45,25 +46,31 @@ public class SignInPopUp : UiBase
 
         if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(pw))
         {
-            Debug.LogWarning("아이디와 비밀번호를 모두 입력해주세요.");
+            UiManager.Instance.ShowWarning("아이디와 비밀번호를 모두 입력해주세요.").Forget();
+            return;
+        }
+
+        bool isIdExists = DBManager.Instance.IsUserIdExists(id);
+        if (isIdExists == false)
+        {
+            UiManager.Instance.ShowWarning("존재하지 않는 ID입니다.").Forget();
+            inputField_Id.text = "";
+            inputField_Pw.text = "";
             return;
         }
 
         bool isLoginSuccessful = DBManager.Instance.ValidateUser(id, pw);
-
-        if (isLoginSuccessful)
+        if (isLoginSuccessful == false)
         {
-            Debug.Log("로그인 성공");
-            await UiManager.Instance.OpenUi<MainUi>();
-            UiManager.Instance.CloseUi<SignInPopUp>();
-        }
-
-        else
-        {
-            Debug.LogWarning("로그인 실패");
-            inputField_Id.text = "";
+            UiManager.Instance.ShowWarning("비밀번호가 틀렸습니다.").Forget();
             inputField_Pw.text = "";
+            return;
         }
+
+        Debug.Log("로그인 성공");
+        await UiManager.Instance.OpenUi<MainUi>();
+        UiManager.Instance.CloseUi<SignInPopUp>();
+
     }
 
     private async void OpenSignUpUi()

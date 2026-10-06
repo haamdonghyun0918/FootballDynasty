@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
 using TMPro;
+using UnityEngine;
 
 public class SignUpPopUp : UiBase
 {
@@ -46,22 +47,29 @@ public class SignUpPopUp : UiBase
 
         if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(pw) || string.IsNullOrEmpty(name))
         {
-            Debug.LogWarning("아이디와 비밀번호와 닉네임을 모두 입력해주세요.");
+            UiManager.Instance.ShowWarning("아이디, 비밀번호, 닉네임을 모두 입력해주세요.").Forget();
+            return;
+        }
+
+        bool isIdExists = DBManager.Instance.IsUserIdExists(id);
+        if (isIdExists)
+        {
+            UiManager.Instance.ShowWarning("존재하는 ID입니다.").Forget();
+            inputField_Id.text = "";
             return;
         }
 
         bool isSignUpSuccessful = DBManager.Instance.InsertUser(id, pw, name);
-
         if (isSignUpSuccessful)
         {
-            Debug.Log("회원가입 성공");
+            UiManager.Instance.ShowWarning("회원가입이 완료되었습니다.").Forget();
             await UiManager.Instance.OpenUi<SignInUi>();
             UiManager.Instance.CloseUi<SignUpPopUp>();
         }
 
         else
         {
-            Debug.LogWarning("회원가입 실패");
+            UiManager.Instance.ShowWarning("회원가입에 실패했습니다. 다시 시도해주세요.").Forget();
             inputField_Id.text = "";
             inputField_Pw.text = "";
             inputField_Name.text = "";

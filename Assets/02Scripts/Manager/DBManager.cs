@@ -142,4 +142,33 @@ public class DBManager : MonoBehaviour
             }
         }
     }
+
+    public bool IsUserIdExists(string userId)
+    {
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                string query = "SELECT COUNT(*) FROM userinfo WHERE UserId = @userId";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    return count > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"ID 존재 여부 확인 실패: {ex.Message}");
+                return false;
+            }
+        }
+    }
 }
