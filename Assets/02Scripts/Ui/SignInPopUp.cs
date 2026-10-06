@@ -68,8 +68,7 @@ public class SignInPopUp : UiBase
 
     private async void OpenSignUpUi()
     {
-        //TODO: SignUpUi만들어질 시 주석 해제 10/06
-        //await UiManager.Instance.OpenUi<SignUpUi>();
+        await UiManager.Instance.OpenUi<SignUpPopUp>();
     }
 
     private void OnClickClose()

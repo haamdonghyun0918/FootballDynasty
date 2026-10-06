@@ -25,7 +25,6 @@ public class SignInUi : UiBase
 
     private async void OpenSignUpUi()
     {
-        //TODO: SignUpUi만들어질 시 주석 해제 10/05
-        //await UiManager.Instance.OpenUi<SignUpUi>();
+        await UiManager.Instance.OpenUi<SignUpPopUp>();
     }
 }

@@ -12,7 +12,6 @@ public class UiManager : MonoBehaviour
     private HashSet<Type> _openUiDic = new HashSet<Type>();
 
     private readonly HashSet<Type> _openUiTypes = new HashSet<Type>();
-
     private readonly HashSet<Type> _creatingUiTypes = new HashSet<Type>();
 
     private void Awake()
