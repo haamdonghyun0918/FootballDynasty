@@ -104,4 +104,14 @@ public class UiManager : MonoBehaviour
             Debug.LogError($"[UiManager] {address} 프리팹에 {uiType.Name} 스크립트가 없습니다!");
         }
     }
+
+    public async UniTask ShowWarning(string message, float duration = 2.0f)
+    {
+        var warningUi = await OpenUi<WarningSimpleUi>();
+
+        if (warningUi != null)
+        {
+            warningUi.ShowWarning(message, duration).Forget();
+        }
+    }
 }
