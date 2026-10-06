@@ -54,8 +54,8 @@ public class SignInPopUp : UiBase
         if (isLoginSuccessful)
         {
             Debug.Log("로그인 성공");
-            //await UiManager.Instance.OpenUi<MainUi>();
-            //UiManager.Instance.CloseUi<SignInPopUp>();
+            await UiManager.Instance.OpenUi<MainUi>();
+            UiManager.Instance.CloseUi<SignInPopUp>();
         }
 
         else

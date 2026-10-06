@@ -1729,11 +1729,11 @@ RectTransform:
   m_Children:
   - {fileID: 646233963225772550}
   - {fileID: 7533605467883488243}
-  - {fileID: 6434232566692831802}
-  - {fileID: 1319347149792507232}
-  - {fileID: 9038356030204991658}
-  - {fileID: 1877183852413460503}
   - {fileID: 6514727012946793403}
+  - {fileID: 6434232566692831802}
+  - {fileID: 9038356030204991658}
+  - {fileID: 1319347149792507232}
+  - {fileID: 1877183852413460503}
   - {fileID: 7554788901562322581}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1754,6 +1754,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2912d94841910240af6de478c6f5233, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SignUpPopUp
+  button_SignUp: {fileID: 7187456185523780170}
+  button_Exit: {fileID: 3099093635603117518}
+  inputField_Id: {fileID: 4226207580543095717}
+  inputField_Pw: {fileID: 5140600858705162913}
+  inputField_Name: {fileID: 8887724161863406563}
 --- !u!1 &4873387267898361745
 GameObject:
   m_ObjectHideFlags: 0
