@@ -4,6 +4,21 @@ using MySqlConnector;
 
 public class DBManager : MonoBehaviour
 {
+    public static DBManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void Start()
     {
         string connString = DBConfig.GetConnection();
@@ -93,6 +108,36 @@ public class DBManager : MonoBehaviour
             catch (Exception ex)
             {
                 Debug.LogError($"유저 삭제 실패: {ex.Message}");
+                return false;
+            }
+        }
+    }
+
+    public bool ValidateUser(string userId, string userPw)
+    {
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                string query = "SELECT COUNT(*) FROM userinfo WHERE UserId = @userId AND UserPw = @userPw";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("@userPw", userPw);
+
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    return count > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"로그인 실패: {ex.Message}");
                 return false;
             }
         }
