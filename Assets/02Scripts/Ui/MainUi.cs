@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using TMPro;
 
 public class MainUi : UiBase
 {
@@ -15,4 +16,15 @@ public class MainUi : UiBase
 
     [Header("LeftSide")]
     [SerializeField] private UiButton button_Dictionary;
+
+    [Header("Left Up")]
+    [SerializeField] private TextMeshProUGUI text_Name;
+
+    private void OnEnable()
+    {
+        if (text_Name != null && string.IsNullOrEmpty(DBManager.Instance.CurrentUserName) == false)
+        {
+            text_Name.text = DBManager.Instance.CurrentUserName;
+        }
+    }
 }

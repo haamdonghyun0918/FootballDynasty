@@ -6,6 +6,8 @@ public class DBManager : MonoBehaviour
 {
     public static DBManager Instance { get; private set; }
 
+    public string CurrentUserName { get; private set; }
+
     private void Awake()
     {
         if (Instance == null)
@@ -123,16 +125,22 @@ public class DBManager : MonoBehaviour
             {
                 conn.Open();
 
-                string query = "SELECT COUNT(*) FROM userinfo WHERE UserId = @userId AND UserPw = @userPw";
+                string query = "SELECT UserName FROM userinfo WHERE UserId = @userId AND UserPw = @userPw";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@userId", userId);
                     cmd.Parameters.AddWithValue("@userPw", userPw);
 
-                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    object result = cmd.ExecuteScalar();
 
-                    return count > 0;
+                    if (result != null)
+                    {
+                        CurrentUserName = result.ToString();
+                        return true;
+                    }
+
+                    return false;
                 }
             }
             catch (Exception ex)
