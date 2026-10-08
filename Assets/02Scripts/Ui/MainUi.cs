@@ -26,5 +26,15 @@ public class MainUi : UiBase
         {
             text_Name.text = DBManager.Instance.CurrentUserName;
         }
+
+        if (button_Dictionary)
+        {
+            button_Dictionary.BindOnClickButtonEvent(OnClickDictionary);
+        }
+    }
+
+    private async void OnClickDictionary()
+    {
+        await UiManager.Instance.OpenUi<CardDictionaryUi>();
     }
 }
