@@ -40,6 +40,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d41176b8c8b84884c9d834cb12380349
+    m_Address: CardDictionaryUi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d9f655cb13d492d49b0bb2508bc8e8c0
     m_Address: WarningSimpleUi
     m_ReadOnly: 0
