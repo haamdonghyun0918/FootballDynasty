@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using TMPro;
 
 public class CardDictionaryUi : UiBase
 {
@@ -8,13 +9,27 @@ public class CardDictionaryUi : UiBase
     private string cardPrefabAddress = "Card";
 
     [SerializeField] private UiButton _buttonClose;
+    [SerializeField] private UiButton _buttonNext;
+    [SerializeField] private UiButton _buttonPrevious;
+    [SerializeField] private TMP_InputField inputField_Page;
 
     private void OnEnable()
     {
         RefreshDictionary().Forget();
+        
         if (_buttonClose)
         {
             _buttonClose.BindOnClickButtonEvent(OnClickClose);
+        }
+
+        if (_buttonNext)
+        {
+            _buttonNext.BindOnClickButtonEvent(OnClickNext);
+        }
+
+        if (_buttonPrevious)
+        {
+            _buttonPrevious.BindOnClickButtonEvent(OnClickPrevious);
         }
     }
 
@@ -48,4 +63,15 @@ public class CardDictionaryUi : UiBase
     {
         UiManager.Instance.CloseUi<CardDictionaryUi>();
     }
+
+    private void OnClickNext()
+    {
+
+    }
+
+    private void OnClickPrevious()
+    {
+
+    }
+
 }
