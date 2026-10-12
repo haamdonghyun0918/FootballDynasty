@@ -95,6 +95,8 @@ MonoBehaviour:
   text_Attoverall: {fileID: 2245240657043262610}
   text_Midoverall: {fileID: 6644595509706202074}
   text_Defoverall: {fileID: 7098125654236728065}
+  image_Team: {fileID: 8253686037795733977}
+  image_Pos: {fileID: 9055963599962737365}
 --- !u!1 &643550839965971322
 GameObject:
   m_ObjectHideFlags: 0
