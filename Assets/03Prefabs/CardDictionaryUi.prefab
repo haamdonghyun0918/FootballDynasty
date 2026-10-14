@@ -239,6 +239,7 @@ MonoBehaviour:
   inputField_Page: {fileID: 2455279221546774617}
   inputField_Name: {fileID: 8838877839892287585}
   _buttonPosition: {fileID: 2408434440584567290}
+  _buttonTeam: {fileID: 8314319351168448642}
 --- !u!1 &1912985585540615290
 GameObject:
   m_ObjectHideFlags: 0

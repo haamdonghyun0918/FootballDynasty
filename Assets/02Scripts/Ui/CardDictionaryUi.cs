@@ -19,12 +19,15 @@ public class CardDictionaryUi : UiBase
     [Header("Filters")]
     [SerializeField] private TMP_InputField inputField_Name;
     [SerializeField] private UiButton _buttonPosition;
+    [SerializeField] private UiButton _buttonTeam;
 
     private bool _filterTotal = true;
     private bool _filterFw = false;
     private bool _filterMf = false;
     private bool _filterDf = false;
     private bool _filterGk = false;
+
+    private string _selectedTeamName = string.Empty;
 
     private List<PlayerData> _playerList;
     private List<PlayerData> _filteredPlayerList = new List<PlayerData>();
@@ -80,6 +83,11 @@ public class CardDictionaryUi : UiBase
         {
             _buttonPosition.BindOnClickButtonEvent(OnClickPosition);
         }
+
+        if (_buttonTeam != null)
+        {
+            _buttonTeam.BindOnClickButtonEvent(OnClickTeam);
+        }
     }
 
     private void OnDisable()
@@ -105,6 +113,7 @@ public class CardDictionaryUi : UiBase
         _filterMf = false;
         _filterDf = false;
         _filterGk = false;
+        _selectedTeamName = string.Empty;
     }
 
     private async void OnClickPosition()
@@ -116,6 +125,20 @@ public class CardDictionaryUi : UiBase
         }
     }
 
+    private async void OnClickTeam()
+    {
+        var teamFilterUi = await UiManager.Instance.OpenUi<TeamFilterUi>();
+        if (teamFilterUi != null)
+        {
+            teamFilterUi.Init(this, _selectedTeamName);
+        }
+    }
+
+    private void OnClickClose()
+    {
+        UiManager.Instance.CloseUi<CardDictionaryUi>();
+    }
+
     public void ApplyFilter(bool total, bool fw, bool mf, bool df, bool gk)
     {
         _filterTotal = total;
@@ -124,6 +147,12 @@ public class CardDictionaryUi : UiBase
         _filterDf = df;
         _filterGk = gk;
 
+        RefreshDictionaryList();
+    }
+
+    public void ApplyTeamFilter(string teamName)
+    {
+        _selectedTeamName = teamName;
         RefreshDictionaryList();
     }
 
@@ -175,7 +204,9 @@ public class CardDictionaryUi : UiBase
                 }
             }
 
-            if (matchesName && matchesPosition)
+            bool matchesTeam = string.IsNullOrEmpty(_selectedTeamName) || player.Team == _selectedTeamName;
+
+            if (matchesName && matchesPosition && matchesTeam)
             {
                 _filteredPlayerList.Add(player);
             }
@@ -183,11 +214,6 @@ public class CardDictionaryUi : UiBase
 
         _currentPage = 1;
         RefreshPage();
-    }
-
-    private void OnClickClose()
-    {
-        UiManager.Instance.CloseUi<CardDictionaryUi>();
     }
 
     private async UniTaskVoid InitializeAndRefresh()
