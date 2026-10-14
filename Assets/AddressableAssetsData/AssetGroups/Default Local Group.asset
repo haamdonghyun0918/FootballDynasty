@@ -385,6 +385,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d0023ce65f8c4c441a066dd830cde10e
+    m_Address: TeamFilterUi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d41176b8c8b84884c9d834cb12380349
     m_Address: CardDictionaryUi
     m_ReadOnly: 0
