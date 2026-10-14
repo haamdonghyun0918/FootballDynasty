@@ -9,16 +9,16 @@ public class TeamSlot : MonoBehaviour
     [SerializeField] private TMP_Text text_TeamName;
     [SerializeField] private Image image_TeamLogo;
     [SerializeField] private Image image_Check;
-    [SerializeField] private Button button_Slot;
+    [SerializeField] private UiButton button_Slot;
 
     private string _teamName;
     private Action<string> _onClickCallback;
 
-    private void Awake()
+    private void OnEnable()
     {
         if (button_Slot != null)
         {
-            button_Slot.onClick.AddListener(OnClickSlot);
+            button_Slot.BindOnClickButtonEvent(OnClickSlot);
         }
     }
 
@@ -55,7 +55,6 @@ public class TeamSlot : MonoBehaviour
             image_TeamLogo.sprite = teamSprite;
             image_TeamLogo.gameObject.SetActive(true);
         }
-
         else
         {
             image_TeamLogo.gameObject.SetActive(false);
@@ -65,6 +64,10 @@ public class TeamSlot : MonoBehaviour
 
     private void OnClickSlot()
     {
-        _onClickCallback?.Invoke(_teamName);
+        Debug.Log($"[클릭 감지] 사용자가 클릭한 팀 슬롯: {_teamName}");
+        if (_onClickCallback != null)
+        {
+            _onClickCallback.Invoke(_teamName);
+        }
     }
 }

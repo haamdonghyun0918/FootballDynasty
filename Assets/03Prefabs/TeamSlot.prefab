@@ -616,7 +616,7 @@ MonoBehaviour:
   text_TeamName: {fileID: 637044601774211523}
   image_TeamLogo: {fileID: 3882188990404434253}
   image_Check: {fileID: 1462082119766833667}
-  button_Slot: {fileID: 8840477620578479968}
+  button_Slot: {fileID: 150038165367707828}
 --- !u!1 &8708491057023819818
 GameObject:
   m_ObjectHideFlags: 0

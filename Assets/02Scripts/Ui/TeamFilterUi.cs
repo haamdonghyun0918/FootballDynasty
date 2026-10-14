@@ -6,6 +6,7 @@ public class TeamFilterUi : UiBase
 {
     [SerializeField] private Transform _teamContent;
     [SerializeField] private UiButton _buttonClose;
+    [SerializeField] private UiButton _buttonConfirm;
 
     private string teamSlotPrefabAddress = "TeamSlot";
 
@@ -32,6 +33,11 @@ public class TeamFilterUi : UiBase
         {
             _buttonClose.BindOnClickButtonEvent(OnClickClose);
         }
+
+        if (_buttonConfirm != null)
+        {
+            _buttonConfirm.BindOnClickButtonEvent(OnClickConfirm);
+        }
     }
 
     private async UniTaskVoid InitializeAndRefresh()
@@ -43,7 +49,7 @@ public class TeamFilterUi : UiBase
         {
             foreach (var player in players)
             {
-                if (!string.IsNullOrEmpty(player.Team))
+                if (string.IsNullOrEmpty(player.Team) == false)
                 {
                     uniqueTeams.Add(player.Team);
                 }
@@ -92,11 +98,16 @@ public class TeamFilterUi : UiBase
     {
         _selectedTeamName = teamName;
         RefreshSlots();
+    }
 
+    private void OnClickConfirm()
+    {
         if (_cardDictionaryUi != null)
         {
-            _cardDictionaryUi.ApplyTeamFilter(teamName);
+            _cardDictionaryUi.ApplyTeamFilter(_selectedTeamName);
         }
+
+        UiManager.Instance.CloseUi<TeamFilterUi>();
     }
 
     private void OnClickClose()
