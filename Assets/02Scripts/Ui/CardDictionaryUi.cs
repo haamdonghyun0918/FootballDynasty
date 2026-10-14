@@ -100,6 +100,11 @@ public class CardDictionaryUi : UiBase
         await UiManager.Instance.OpenUi<PositionFilterUi>();
     }
 
+    private void OnClickClose()
+    {
+        UiManager.Instance.CloseUi<CardDictionaryUi>();
+    }
+
     private async UniTaskVoid InitializeAndRefresh()
     {
         _playerList = GameDataManager.Instance.GetAllData<PlayerData>();
@@ -242,11 +247,6 @@ public class CardDictionaryUi : UiBase
                 inputField_Page.text = _currentPage + " / " + totalPages;
             }
         }
-    }
-
-    private void OnClickClose()
-    {
-        UiManager.Instance.CloseUi<CardDictionaryUi>();
     }
 
     private void OnClickNext()
