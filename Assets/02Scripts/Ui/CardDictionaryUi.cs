@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CardDictionaryUi : UiBase
 {
@@ -9,11 +10,17 @@ public class CardDictionaryUi : UiBase
     private string cardPrefabAddress = "Card";
 
     [SerializeField] private UiButton _buttonClose;
+   
+    [Header("Pages")]
     [SerializeField] private UiButton _buttonNext;
     [SerializeField] private UiButton _buttonPrevious;
     [SerializeField] private TMP_InputField inputField_Page;
 
+    [Header("Filters")]
+    [SerializeField] private TMP_InputField inputField_Name;
+
     private List<PlayerData> _playerList;
+    private List<PlayerData> _filteredPlayerList = new List<PlayerData>();
     private List<Card> _cardPool = new List<Card>();
 
     private const int _cardsInPage = 40;
@@ -22,17 +29,17 @@ public class CardDictionaryUi : UiBase
 
     private int GetTotalPages()
     {
-        if (_playerList == null)
+        if (_filteredPlayerList == null)
         {
             return 1;
         }
 
-        if (_playerList.Count == 0)
+        if (_filteredPlayerList.Count == 0)
         {
             return 1;
         }
 
-        return Mathf.CeilToInt((float)_playerList.Count / _cardsInPage);
+        return Mathf.CeilToInt((float)_filteredPlayerList.Count / _cardsInPage);
     }
 
     private void OnEnable()
@@ -59,13 +66,26 @@ public class CardDictionaryUi : UiBase
             inputField_Page.onSelect.AddListener(OnInputPageSelect);
             inputField_Page.onEndEdit.AddListener(OnInputPageEndEdit);
         }
+
+        if (inputField_Name != null)
+        {
+            inputField_Name.text = string.Empty;
+            inputField_Name.onSelect.AddListener(OnNameSelect);
+            inputField_Name.onEndEdit.AddListener(OnNameEndEdit);
+        }
     }
 
     private void OnDisable()
     {
         if (inputField_Page != null)
         {
+            inputField_Page.onSelect.RemoveListener(OnInputPageSelect);
             inputField_Page.onEndEdit.RemoveListener(OnInputPageEndEdit);
+        }
+
+        if (inputField_Name != null)
+        {
+            inputField_Name.onEndEdit.RemoveListener(OnNameEndEdit);
         }
     }
 
@@ -73,18 +93,20 @@ public class CardDictionaryUi : UiBase
     {
         _playerList = GameDataManager.Instance.GetAllData<PlayerData>();
 
-        if (_playerList == null)
+        if (_playerList == null || _playerList.Count == 0)
         {
             Debug.LogWarning("[CardDictionaryUI] 로드할 PlayerData가 없습니다.");
-            return;
-        }
-        if (_playerList.Count == 0)
-        {
-            Debug.LogWarning("[CardDictionaryUI] 로드할 PlayerData가 없습니다.");
+            _filteredPlayerList = new List<PlayerData>();
             return;
         }
 
+        _filteredPlayerList = new List<PlayerData>(_playerList);
         _currentPage = 1;
+
+        if (inputField_Name != null)
+        {
+            inputField_Name.text = string.Empty;
+        }
 
         if (_isInitialized == false)
         {
@@ -106,15 +128,76 @@ public class CardDictionaryUi : UiBase
         RefreshPage();
     }
 
-    private void RefreshPage()
+    private void OnNameSelect(string text)
+    {
+        if (inputField_Name != null)
+        {
+            inputField_Name.text = string.Empty;
+        }
+    }
+
+    private void OnNameEndEdit(string keyword)
     {
         if (_playerList == null)
         {
             return;
         }
 
-        if (_playerList.Count == 0)
+        _filteredPlayerList.Clear();
+
+        string searchKeyword = keyword;
+        if (string.IsNullOrEmpty(searchKeyword) && inputField_Name != null)
         {
+            searchKeyword = inputField_Name.text;
+        }
+
+        if (string.IsNullOrEmpty(searchKeyword) == false)
+        {
+            searchKeyword = searchKeyword.Trim();
+        }
+
+        if (string.IsNullOrEmpty(searchKeyword))
+        {
+            _filteredPlayerList = new List<PlayerData>(_playerList);
+        }
+
+        else
+        {
+            foreach (var player in _playerList)
+            {
+                if (player.Name != null && player.Name.Contains(searchKeyword))
+                {
+                    _filteredPlayerList.Add(player);
+                }
+            }
+        }
+
+        _currentPage = 1;
+        RefreshPage();
+        EventSystem.current.SetSelectedGameObject(null);
+    }
+
+    private void RefreshPage()
+    {
+        if (_filteredPlayerList == null)
+        {
+            return;
+        }
+
+        if (_filteredPlayerList.Count == 0)
+        {
+            for (int i = 0; i < _cardPool.Count; i++)
+            {
+                _cardPool[i].gameObject.SetActive(false);
+            }
+
+            if (inputField_Page != null)
+            {
+                if (inputField_Page.isFocused == false)
+                {
+                    inputField_Page.text = "1 / 1";
+                }
+            }
             return;
         }
 
@@ -129,12 +212,11 @@ public class CardDictionaryUi : UiBase
 
             if (i < _cardPool.Count)
             {
-                if (dataIndex < _playerList.Count)
+                if (dataIndex < _filteredPlayerList.Count)
                 {
                     _cardPool[i].gameObject.SetActive(true);
-                    _cardPool[i].SetUpCard(_playerList[dataIndex]);
+                    _cardPool[i].SetUpCard(_filteredPlayerList[dataIndex]);
                 }
-
                 else
                 {
                     _cardPool[i].gameObject.SetActive(false);
@@ -144,7 +226,10 @@ public class CardDictionaryUi : UiBase
 
         if (inputField_Page != null)
         {
-            inputField_Page.text = _currentPage + " / " + totalPages;
+            if (inputField_Page.isFocused == false)
+            {
+                inputField_Page.text = _currentPage + " / " + totalPages;
+            }
         }
     }
 
@@ -183,39 +268,37 @@ public class CardDictionaryUi : UiBase
 
     private void OnInputPageEndEdit(string text)
     {
-        if (string.IsNullOrEmpty(text) == true)
+        int totalPages = GetTotalPages();
+
+        if (string.IsNullOrEmpty(text))
         {
-            RefreshPage();
+            if (inputField_Page != null)
+            {
+                inputField_Page.text = _currentPage + " / " + totalPages;
+            }
+            EventSystem.current.SetSelectedGameObject(null);
             return;
         }
 
         string cleanText = text;
         int slashIndex = text.IndexOf('/');
-        
+
         if (slashIndex >= 0)
         {
             cleanText = text.Substring(0, slashIndex).Trim();
         }
 
         int page;
-        
-        if (int.TryParse(cleanText, out page) == true)
-        {
-            int totalPages = GetTotalPages();
-            if (page >= 1)
-            {
-                if (page <= totalPages)
-                {
-                    _currentPage = page;
-                    RefreshPage();
-                }
 
-                else
+        if (int.TryParse(cleanText, out page))
+        {
+            if (page >= 1 && page <= totalPages)
+            {
+                _currentPage = page;
+                RefreshPage();
+                if (inputField_Page != null)
                 {
-                    if (inputField_Page != null)
-                    {
-                        inputField_Page.text = _currentPage + " / " + totalPages;
-                    }
+                    inputField_Page.text = _currentPage + " / " + totalPages;
                 }
             }
 
@@ -232,9 +315,10 @@ public class CardDictionaryUi : UiBase
         {
             if (inputField_Page != null)
             {
-                int totalPages = GetTotalPages();
                 inputField_Page.text = _currentPage + " / " + totalPages;
             }
         }
+
+        EventSystem.current.SetSelectedGameObject(null);
     }
 }

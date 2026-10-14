@@ -237,6 +237,7 @@ MonoBehaviour:
   _buttonNext: {fileID: 6533093782290513760}
   _buttonPrevious: {fileID: 6375779230456912594}
   inputField_Page: {fileID: 2455279221546774617}
+  inputField_Name: {fileID: 8838877839892287585}
 --- !u!1 &1912985585540615290
 GameObject:
   m_ObjectHideFlags: 0
