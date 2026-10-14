@@ -215,6 +215,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6aae2db89149eb641b06c82835123bf3
+    m_Address: TeamSlot
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 706964d16e7e1a24a988646cec0b4475
     m_Address: "\uD1A0\uB860\uD1A0 \uC6CC\uB9AC\uC5B4\uC2A4"
     m_ReadOnly: 0
