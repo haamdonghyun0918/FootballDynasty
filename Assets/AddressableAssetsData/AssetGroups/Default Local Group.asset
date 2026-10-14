@@ -255,6 +255,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 82eb11ad5122710479d1ea9f4da60980
+    m_Address: PositionFilterUi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8599c29b3d8ace64aacb645ca4a9a569
     m_Address: "\uC624\uC0AC\uCE74 \uC2A4\uD3EC\uB974\uD305"
     m_ReadOnly: 0
