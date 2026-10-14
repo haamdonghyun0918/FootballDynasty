@@ -18,6 +18,7 @@ public class CardDictionaryUi : UiBase
 
     [Header("Filters")]
     [SerializeField] private TMP_InputField inputField_Name;
+    [SerializeField] private UiButton _buttonPosition;
 
     private List<PlayerData> _playerList;
     private List<PlayerData> _filteredPlayerList = new List<PlayerData>();
@@ -73,6 +74,11 @@ public class CardDictionaryUi : UiBase
             inputField_Name.onSelect.AddListener(OnNameSelect);
             inputField_Name.onEndEdit.AddListener(OnNameEndEdit);
         }
+
+        if (_buttonPosition != null)
+        {
+            _buttonPosition.BindOnClickButtonEvent(OnClickPosition);
+        }
     }
 
     private void OnDisable()
@@ -87,6 +93,11 @@ public class CardDictionaryUi : UiBase
         {
             inputField_Name.onEndEdit.RemoveListener(OnNameEndEdit);
         }
+    }
+
+    private async void OnClickPosition()
+    {
+        await UiManager.Instance.OpenUi<PositionFilterUi>();
     }
 
     private async UniTaskVoid InitializeAndRefresh()
