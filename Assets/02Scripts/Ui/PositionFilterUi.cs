@@ -3,6 +3,7 @@
 public class PositionFilterUi : UiBase
 {
     [SerializeField] private UiButton _buttonClose;
+    [SerializeField] private UiButton _buttonConfirm;
 
     [Header("Total")]
     [SerializeField] private UiButton _buttonTotal;
@@ -27,11 +28,29 @@ public class PositionFilterUi : UiBase
     private bool _isDf = false;
     private bool _isGk = false;
 
+    private CardDictionaryUi _applyDictionary;
+
+    public void Init(CardDictionaryUi apply, bool total, bool fw, bool mf, bool df, bool gk)
+    {
+        _applyDictionary = apply;
+        _isTotal = total;
+        _isFw = fw;
+        _isMf = mf;
+        _isDf = df;
+        _isGk = gk;
+        UpdateUi();
+    }
+
     private void OnEnable()
     {
         if (_buttonClose != null)
         {
             _buttonClose.BindOnClickButtonEvent(OnClickClose);
+        }
+
+        if (_buttonConfirm != null)
+        {
+            _buttonConfirm.BindOnClickButtonEvent(OnClickConfirm);
         }
 
         if (_buttonTotal != null)
@@ -58,12 +77,20 @@ public class PositionFilterUi : UiBase
         {
             _buttonGk.BindOnClickButtonEvent(OnClickGk);
         }
-
-        ResetToTotal();
     }
 
     private void OnClickClose()
     {
+        UiManager.Instance.CloseUi<PositionFilterUi>();
+    }
+
+    private void OnClickConfirm()
+    {
+        if (_applyDictionary != null)
+        {
+            _applyDictionary.ApplyFilter(_isTotal, _isFw, _isMf, _isDf, _isGk);
+        }
+
         UiManager.Instance.CloseUi<PositionFilterUi>();
     }
 
