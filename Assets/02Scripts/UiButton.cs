@@ -23,7 +23,7 @@ public class UiButton : MonoBehaviour
 
     private void OnDisable()
     {
-        Button_Base.onClick.RemoveAllListeners();
+        UnBindOnClickButtonEvent(OnClickSetSelectUI);
     }
 
     private void SetDefaultUI()

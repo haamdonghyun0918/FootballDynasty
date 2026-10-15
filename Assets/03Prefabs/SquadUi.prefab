@@ -1198,6 +1198,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SquadUi
   _buttonClose: {fileID: 5653158939417081645}
   _buttonFormation: {fileID: 7618187713092121301}
+  _textFormationButton: {fileID: 6627403259777863931}
   _formationListPanel: {fileID: 4938779116097939630}
   _button433: {fileID: 6629368603222053649}
   _button442: {fileID: 809975361961521905}
@@ -2388,7 +2389,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uD3EC\uBA54\uC774\uC158 \uC120\uD0DD"
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9ac7782dc048b9a4fbf212975d724aa4, type: 2}
   m_sharedMaterial: {fileID: -2890610645733430424, guid: 9ac7782dc048b9a4fbf212975d724aa4, type: 2}
