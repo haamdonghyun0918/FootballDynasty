@@ -50,6 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7ec46a9c2f416347998e8207e918c21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SquadUi
+  _buttonClose: {fileID: 5653158939417081645}
 --- !u!1 &4126869514653320905
 GameObject:
   m_ObjectHideFlags: 0
