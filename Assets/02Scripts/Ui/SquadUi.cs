@@ -24,6 +24,11 @@ public class SquadUi : UiBase
     [SerializeField] private GameObject[] _slotFWs;
     private bool isDropdownOpen = false;
 
+    [Header("Substitute")]
+    [SerializeField] private RectTransform _panelSubRectTransform;
+    [SerializeField] private UiButton _buttonSubstitute;
+    private bool isSubPanelOpen = false;
+
     private void OnEnable()
     {
         if (_buttonClose != null)
@@ -150,6 +155,19 @@ public class SquadUi : UiBase
                 SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 3, 4 });
                 SetSelectedSlotsActive(_slotFWs, new int[] { 0, 2, 4 });
             }
+        }
+
+        if (_buttonSubstitute != null)
+        {
+            _buttonSubstitute.BindOnClickButtonEvent(OnClickSubstitute);
+        }
+
+        if (_panelSubRectTransform != null)
+        {
+            Vector2 closedPos = _panelSubRectTransform.anchoredPosition;
+            closedPos.y = -200f;
+            _panelSubRectTransform.anchoredPosition = closedPos;
+            isSubPanelOpen = false;
         }
     }
 
@@ -337,6 +355,28 @@ public class SquadUi : UiBase
         {
             _formationListPanel.SetActive(false);
             isDropdownOpen = false;
+        }
+    }
+
+    private void OnClickSubstitute()
+    {
+        if (_panelSubRectTransform != null)
+        {
+            Vector2 currentPos = _panelSubRectTransform.anchoredPosition;
+
+            if (isSubPanelOpen == false)
+            {
+                currentPos.y = 0f;
+                _panelSubRectTransform.anchoredPosition = currentPos;
+                isSubPanelOpen = true;
+            }
+
+            else
+            {
+                currentPos.y = -200f;
+                _panelSubRectTransform.anchoredPosition = currentPos;
+                isSubPanelOpen = false;
+            }
         }
     }
 

@@ -1500,6 +1500,8 @@ MonoBehaviour:
   - {fileID: 1995019161315518441}
   - {fileID: 6307658707107779920}
   - {fileID: 4252996968629279058}
+  _panelSubRectTransform: {fileID: 2739872991986125329}
+  _buttonSubstitute: {fileID: 2723893359688848363}
 --- !u!1 &1995019161315518441
 GameObject:
   m_ObjectHideFlags: 0
