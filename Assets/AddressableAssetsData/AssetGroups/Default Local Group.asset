@@ -20,8 +20,18 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 04269d54ac0d682419df698e7911f558
+    m_Address: SquadCard
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0445e9d147fa5a24e8f62e88b8514705
     m_Address: "\uB3C4\uCFC4 \uC2A4\uD30C\uB974\uD0C4\uC2A4"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 053865ec50837f6488f58cf14118eccd
+    m_Address: SquadUi
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
