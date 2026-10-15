@@ -14,6 +14,12 @@ public class SquadUi : UiBase
     [SerializeField] private UiButton _button352;
     [SerializeField] private UiButton _button343;
 
+    [Header("Position Slots(From Left: 1 ~ 5)")]
+    [SerializeField] private GameObject _slotGK;
+    [SerializeField] private GameObject[] _slotDFs;
+    [SerializeField] private GameObject[] _slotMFs;
+    [SerializeField] private GameObject[] _slotFWs;
+
     private bool isDropdownOpen = false;
 
     private void OnEnable()
@@ -80,31 +86,75 @@ public class SquadUi : UiBase
     private void OnClick433()
     {
         Debug.Log("4-3-3 포메이션 선택됨");
+
+        SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
+        SetSelectedSlotsActive(_slotMFs, new int[] { 0, 2, 4 });
+        SetSelectedSlotsActive(_slotFWs, new int[] { 0, 2, 4 });
+
         CloseDropdownPanel();
     }
 
     private void OnClick442()
     {
         Debug.Log("4-4-2 포메이션 선택됨");
+
+        SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
+        SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 3, 4 });
+        SetSelectedSlotsActive(_slotFWs, new int[] { 1, 3 });
+
         CloseDropdownPanel();
     }
 
     private void OnClick451()
     {
         Debug.Log("4-5-1 포메이션 선택됨");
+
+        SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
+        SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 2, 3, 4 });
+        SetSelectedSlotsActive(_slotFWs, new int[] { 2 });
+
         CloseDropdownPanel();
     }
 
     private void OnClick352()
     {
         Debug.Log("3-5-2 포메이션 선택됨");
+
+        SetSelectedSlotsActive(_slotDFs, new int[] { 1, 2, 3 });
+        SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 2, 3, 4 });
+        SetSelectedSlotsActive(_slotFWs, new int[] { 1, 3 });
+
         CloseDropdownPanel();
     }
 
     private void OnClick343()
     {
         Debug.Log("3-4-3 포메이션 선택됨");
+
+        SetSelectedSlotsActive(_slotDFs, new int[] { 1, 2, 3 });
+        SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 3, 4 });
+        SetSelectedSlotsActive(_slotFWs, new int[] { 0, 2, 4 });
+
         CloseDropdownPanel();
+    }
+    private void SetSelectedSlotsActive(GameObject[] slots, int[] actives)
+    {
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i] != null)
+            {
+                slots[i].SetActive(false);
+            }
+        }
+
+        for (int i = 0; i < actives.Length; i++)
+        {
+            int targetIndex = actives[i];
+            if (targetIndex >= 0 && targetIndex < slots.Length && slots[targetIndex] != null)
+            {
+                slots[targetIndex].SetActive(true);
+            }
+        }
     }
 
     private void CloseDropdownPanel()

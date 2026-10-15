@@ -1171,12 +1171,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 294133465906600790}
+  - {fileID: 4399597263151621203}
   - {fileID: 3748864492136942170}
   - {fileID: 3194352456095256688}
   - {fileID: 1176877627156063126}
   - {fileID: 6703295061473644882}
   - {fileID: 5399659608754261827}
-  - {fileID: 4399597263151621203}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1204,6 +1204,25 @@ MonoBehaviour:
   _button451: {fileID: 208401108502521121}
   _button352: {fileID: 7560214377545418381}
   _button343: {fileID: 8449540088863730865}
+  _slotGK: {fileID: 7335481947313065389}
+  _slotDFs:
+  - {fileID: 7149082119088492350}
+  - {fileID: 6524654920204466999}
+  - {fileID: 795226676499356669}
+  - {fileID: 748403344561045450}
+  - {fileID: 5066991859441931555}
+  _slotMFs:
+  - {fileID: 3366857578494228188}
+  - {fileID: 1839699610331774859}
+  - {fileID: 6085398570314892675}
+  - {fileID: 7295892271666337560}
+  - {fileID: 8797022228068060972}
+  _slotFWs:
+  - {fileID: 1596227953917299437}
+  - {fileID: 2259004373491558475}
+  - {fileID: 1995019161315518441}
+  - {fileID: 6307658707107779920}
+  - {fileID: 4252996968629279058}
 --- !u!1 &1995019161315518441
 GameObject:
   m_ObjectHideFlags: 0
