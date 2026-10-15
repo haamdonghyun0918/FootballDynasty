@@ -107,6 +107,12 @@ public class SquadUi : UiBase
             {
                 _textFormationButton.text = "포메이션 선택";
             }
+
+            if (_buttonSubstitute != null)
+            {
+                _buttonSubstitute.gameObject.SetActive(false);
+            }
+
         }
 
         else
@@ -119,6 +125,11 @@ public class SquadUi : UiBase
             if (_slotGK != null)
             {
                 _slotGK.SetActive(true);
+            }
+
+            if (_buttonSubstitute != null)
+            {
+                _buttonSubstitute.gameObject.SetActive(true);
             }
 
             if (currentFormation == "4-3-3")
@@ -210,6 +221,11 @@ public class SquadUi : UiBase
             _slotGK.SetActive(true);
         }
 
+        if (_buttonSubstitute != null)
+        {
+            _buttonSubstitute.gameObject.SetActive(true);
+        }
+
         SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
         SetSelectedSlotsActive(_slotMFs, new int[] { 0, 2, 4 });
         SetSelectedSlotsActive(_slotFWs, new int[] { 0, 2, 4 });
@@ -236,6 +252,11 @@ public class SquadUi : UiBase
         if (_slotGK != null)
         {
             _slotGK.SetActive(true);
+        }
+
+        if (_buttonSubstitute != null)
+        {
+            _buttonSubstitute.gameObject.SetActive(true);
         }
 
         SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
@@ -266,6 +287,11 @@ public class SquadUi : UiBase
             _slotGK.SetActive(true);
         }
 
+        if (_buttonSubstitute != null)
+        {
+            _buttonSubstitute.gameObject.SetActive(true);
+        }
+
         SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
         SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 2, 3, 4 });
         SetSelectedSlotsActive(_slotFWs, new int[] { 2 });
@@ -294,6 +320,11 @@ public class SquadUi : UiBase
             _slotGK.SetActive(true);
         }
 
+        if (_buttonSubstitute != null)
+        {
+            _buttonSubstitute.gameObject.SetActive(true);
+        }
+
         SetSelectedSlotsActive(_slotDFs, new int[] { 1, 2, 3 });
         SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 2, 3, 4 });
         SetSelectedSlotsActive(_slotFWs, new int[] { 1, 3 });
@@ -320,6 +351,11 @@ public class SquadUi : UiBase
         if (_slotGK != null)
         {
             _slotGK.SetActive(true);
+        }
+
+        if (_buttonSubstitute != null)
+        {
+            _buttonSubstitute.gameObject.SetActive(true);
         }
 
         SetSelectedSlotsActive(_slotDFs, new int[] { 1, 2, 3 });
