@@ -280,6 +280,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 865d50a6874139e459d911860584b957
+    m_Address: CardInventoryUi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 88009bcc1084a5347a1aca8c1911d281
     m_Address: "\uD1A0\uB860\uD1A0 FC"
     m_ReadOnly: 0

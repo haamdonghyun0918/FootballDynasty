@@ -36,6 +36,11 @@ public class MainUi : UiBase
         {
             button_Squad.BindOnClickButtonEvent(OnClickSquad);
         }
+
+        if (button_Manage)
+        {
+            button_Manage.BindOnClickButtonEvent(OnClickCard);
+        }
     }
 
     private async void OnClickDictionary()
@@ -46,5 +51,10 @@ public class MainUi : UiBase
     private async void OnClickSquad()
     {
         await UiManager.Instance.OpenUi<SquadUi>();
+    }
+
+    private async void OnClickCard()
+    {
+        await UiManager.Instance.OpenUi<CardInventoryUi>();
     }
 }
