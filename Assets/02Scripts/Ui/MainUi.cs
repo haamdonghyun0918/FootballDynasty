@@ -31,10 +31,20 @@ public class MainUi : UiBase
         {
             button_Dictionary.BindOnClickButtonEvent(OnClickDictionary);
         }
+
+        if (button_Squad)
+        {
+            button_Squad.BindOnClickButtonEvent(OnClickSquad);
+        }
     }
 
     private async void OnClickDictionary()
     {
         await UiManager.Instance.OpenUi<CardDictionaryUi>();
+    }
+
+    private async void OnClickSquad()
+    {
+        await UiManager.Instance.OpenUi<SquadUi>();
     }
 }

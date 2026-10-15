@@ -70,6 +70,7 @@ public class SignInPopUp : UiBase
         Debug.Log("로그인 성공");
         await UiManager.Instance.OpenUi<MainUi>();
         UiManager.Instance.CloseUi<SignInPopUp>();
+        UiManager.Instance.CloseUi<SignInUi>();
 
     }
 
