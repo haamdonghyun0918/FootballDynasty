@@ -232,6 +232,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d9c75010561076428cf4f2625eda159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardInventoryUi
+  _buttonClose: {fileID: 7645973984921475799}
 --- !u!1 &1912985585540615290
 GameObject:
   m_ObjectHideFlags: 0
