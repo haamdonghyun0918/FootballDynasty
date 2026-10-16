@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using MySqlConnector;
+using System.Collections.Generic;
 
 public class DBManager : MonoBehaviour
 {
@@ -30,18 +31,20 @@ public class DBManager : MonoBehaviour
             try
             {
                 conn.Open();
+                
                 Debug.Log("MYSQL 연결 성공");
 
                 string query = "SELECT * FROM userinfo";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
+
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string userId = reader["UserId"].ToString();
-                            string userName = reader["UserName"].ToString();
+                            string userId = reader.GetString("UserId");
+                            string userName = reader.GetString("UserName");
 
                             Debug.Log($"가져온 유저 ID: {userId}, 유저 닉네임: {userName}");
                         }
@@ -178,5 +181,81 @@ public class DBManager : MonoBehaviour
                 return false;
             }
         }
+    }
+
+    public List<UserCardData> GetUserCards(string userId)
+    {
+        List<UserCardData> cardList = new List<UserCardData>();
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                string query = "SELECT InstanceId, UserId, PlayerId FROM usercards WHERE UserId = @userId";
+
+                using ( MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            UserCardData card = new UserCardData
+                            {
+                                InstanceId = reader.GetInt32("InstanceId"),
+                                UserId = reader.GetString("UserId"),
+                                PlayerId = reader.GetString("PlayerId")
+                            };
+
+                            cardList.Add(card);
+                        }
+                    }
+                }
+                Debug.Log($"[DBManager] 유저({userId})의 카드 {cardList.Count}장 로드 완료");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"보유 카드 조회 실패: {ex.Message}");
+            }
+        }
+        return cardList;
+    }
+
+    public bool InsterUserCard(string userId, string playerId)
+    {
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                string query = "INSERT INTO usercards (UserId, PlayerId) VALUES (@userId, @playerId)";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("@playerId", playerId);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        Debug.Log($"[DBManager] 카드 획득 성공! 유저: {userId}, 선수: {playerId}");
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"카드 획득 저장 실패: {ex.Message}");
+            }
+        }
+        return false;
     }
 }
