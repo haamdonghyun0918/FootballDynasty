@@ -232,6 +232,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d9c75010561076428cf4f2625eda159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardInventoryUi
+  _cardContent: {fileID: 8297371743560539364}
   button_Close: {fileID: 7645973984921475799}
 --- !u!1 &1912985585540615290
 GameObject:
@@ -1636,14 +1637,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GridLayoutGroup
   m_Padding:
-    m_Left: 150
-    m_Right: 150
+    m_Left: 50
+    m_Right: 0
     m_Top: 30
     m_Bottom: 30
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 110, y: 165}
+  m_CellSize: {x: 140, y: 210}
   m_Spacing: {x: 100, y: 100}
   m_Constraint: 1
   m_ConstraintCount: 8

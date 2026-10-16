@@ -176,7 +176,7 @@ public class SquadUi : UiBase
         if (_panelSubRectTransform != null)
         {
             Vector2 closedPos = _panelSubRectTransform.anchoredPosition;
-            closedPos.y = -200f;
+            closedPos.y = -250f;
             _panelSubRectTransform.anchoredPosition = closedPos;
             isSubPanelOpen = false;
         }
@@ -409,7 +409,7 @@ public class SquadUi : UiBase
 
             else
             {
-                currentPos.y = -200f;
+                currentPos.y = -250f;
                 _panelSubRectTransform.anchoredPosition = currentPos;
                 isSubPanelOpen = false;
             }
