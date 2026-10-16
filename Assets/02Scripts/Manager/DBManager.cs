@@ -8,6 +8,7 @@ public class DBManager : MonoBehaviour
     public static DBManager Instance { get; private set; }
 
     public string CurrentUserName { get; private set; }
+    public string CurrentUserId { get; private set; }
 
     private void Awake()
     {
@@ -140,6 +141,7 @@ public class DBManager : MonoBehaviour
                     if (result != null)
                     {
                         CurrentUserName = result.ToString();
+                        CurrentUserId = userId;
                         return true;
                     }
 
