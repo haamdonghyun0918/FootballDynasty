@@ -225,7 +225,7 @@ public class DBManager : MonoBehaviour
         return cardList;
     }
 
-    public bool InsterUserCard(string userId, string playerId)
+    public bool InsertUserCard(string userId, string playerId)
     {
         string connString = DBConfig.GetConnection();
 
