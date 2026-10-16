@@ -233,7 +233,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardInventoryUi
   _cardContent: {fileID: 8297371743560539364}
-  button_Close: {fileID: 7645973984921475799}
+  _buttonClose: {fileID: 7645973984921475799}
+  _buttonNext: {fileID: 6533093782290513760}
+  _buttonPrevious: {fileID: 6375779230456912594}
+  inputField_Page: {fileID: 2455279221546774617}
+  inputField_Name: {fileID: 8838877839892287585}
+  _buttonPosition: {fileID: 2408434440584567290}
+  _buttonTeam: {fileID: 8314319351168448642}
 --- !u!1 &1912985585540615290
 GameObject:
   m_ObjectHideFlags: 0

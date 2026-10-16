@@ -18,14 +18,14 @@ public class TeamFilterUi : UiBase
 
     private const int _initialPoolSize = 21;
 
-    private CardDictionaryUi _cardDictionaryUi;
+    private ICardFilterable _applyTarget;
     private bool _isInitialized = false;
 
     private string _selectedTeamName = string.Empty;
 
-    public void Init(CardDictionaryUi cardDictionaryUi, string currentSelectedTeam)
+    public void Init(ICardFilterable applyTarget, string currentSelectedTeam)
     {
-        _cardDictionaryUi = cardDictionaryUi;
+        _applyTarget = applyTarget;
         _selectedTeamName = currentSelectedTeam;
         InitializeAndRefresh().Forget();
     }
@@ -156,9 +156,9 @@ public class TeamFilterUi : UiBase
 
     private void OnClickConfirm()
     {
-        if (_cardDictionaryUi != null)
+        if (_applyTarget != null)
         {
-            _cardDictionaryUi.ApplyTeamFilter(_selectedTeamName);
+            _applyTarget.ApplyTeamFilter(_selectedTeamName);
         }
 
         UiManager.Instance.CloseUi<TeamFilterUi>();

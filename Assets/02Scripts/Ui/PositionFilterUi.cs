@@ -28,11 +28,11 @@ public class PositionFilterUi : UiBase
     private bool _isDf = false;
     private bool _isGk = false;
 
-    private CardDictionaryUi _applyDictionary;
+    private ICardFilterable _applyTarget;
 
-    public void Init(CardDictionaryUi apply, bool total, bool fw, bool mf, bool df, bool gk)
+    public void Init(ICardFilterable applyTarget, bool total, bool fw, bool mf, bool df, bool gk)
     {
-        _applyDictionary = apply;
+        _applyTarget = applyTarget;
         _isTotal = total;
         _isFw = fw;
         _isMf = mf;
@@ -86,9 +86,9 @@ public class PositionFilterUi : UiBase
 
     private void OnClickConfirm()
     {
-        if (_applyDictionary != null)
+        if (_applyTarget != null)
         {
-            _applyDictionary.ApplyFilter(_isTotal, _isFw, _isMf, _isDf, _isGk);
+            _applyTarget.ApplyPositionFilter(_isTotal, _isFw, _isMf, _isDf, _isGk);
         }
 
         UiManager.Instance.CloseUi<PositionFilterUi>();

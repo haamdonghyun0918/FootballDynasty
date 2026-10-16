@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class CardDictionaryUi : UiBase
+public class CardDictionaryUi : UiBase, ICardFilterable
 {
     [SerializeField] private Transform _cardContent;
     private string cardPrefabAddress = "Card";
@@ -139,7 +139,7 @@ public class CardDictionaryUi : UiBase
         UiManager.Instance.CloseUi<CardDictionaryUi>();
     }
 
-    public void ApplyFilter(bool total, bool fw, bool mf, bool df, bool gk)
+    public void ApplyPositionFilter(bool total, bool fw, bool mf, bool df, bool gk)
     {
         _filterTotal = total;
         _filterFw = fw;
