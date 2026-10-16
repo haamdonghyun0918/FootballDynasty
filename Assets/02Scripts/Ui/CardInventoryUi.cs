@@ -2,13 +2,13 @@
 
 public class CardInventoryUi : UiBase
 {
-    [SerializeField] private UiButton _buttonClose;
+    [SerializeField] private UiButton button_Close;
 
     private void OnEnable()
     {
-        if (_buttonClose != null)
+        if (button_Close != null)
         {
-            _buttonClose.BindOnClickButtonEvent(OnClickClose);
+            button_Close.BindOnClickButtonEvent(OnClickClose);
         }
     }
 

@@ -41,6 +41,11 @@ public class MainUi : UiBase
         {
             button_Manage.BindOnClickButtonEvent(OnClickCard);
         }
+
+        if (button_PickUp)
+        {
+            button_PickUp.BindOnClickButtonEvent(OnClickPickUp);
+        }
     }
 
     private async void OnClickDictionary()
@@ -56,5 +61,10 @@ public class MainUi : UiBase
     private async void OnClickCard()
     {
         await UiManager.Instance.OpenUi<CardInventoryUi>();
+    }
+
+    private async void OnClickPickUp()
+    {
+        await UiManager.Instance.OpenUi<PickUpUi>();
     }
 }
