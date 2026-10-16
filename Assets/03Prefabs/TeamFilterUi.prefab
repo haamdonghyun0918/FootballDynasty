@@ -692,6 +692,7 @@ MonoBehaviour:
   _teamContent: {fileID: 7637796984793019982}
   _buttonClose: {fileID: 4854952178559668727}
   _buttonConfirm: {fileID: 1576445090524022459}
+  inputField_TeamName: {fileID: 5434220508070473331}
 --- !u!1 &7623742375312142988
 GameObject:
   m_ObjectHideFlags: 0

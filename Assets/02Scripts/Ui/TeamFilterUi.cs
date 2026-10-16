@@ -1,12 +1,15 @@
 ﻿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class TeamFilterUi : UiBase
 {
     [SerializeField] private Transform _teamContent;
     [SerializeField] private UiButton _buttonClose;
     [SerializeField] private UiButton _buttonConfirm;
+    [SerializeField] private TMP_InputField inputField_TeamName;
 
     private string teamSlotPrefabAddress = "TeamSlot";
 
@@ -37,6 +40,22 @@ public class TeamFilterUi : UiBase
         if (_buttonConfirm != null)
         {
             _buttonConfirm.BindOnClickButtonEvent(OnClickConfirm);
+        }
+
+        if (inputField_TeamName != null)
+        {
+            inputField_TeamName.text = string.Empty;
+            inputField_TeamName.onSelect.AddListener(OnTeamNameSelect);
+            inputField_TeamName.onEndEdit.AddListener(OnTeamNameEndEdit);
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (inputField_TeamName != null)
+        {
+            inputField_TeamName.onSelect.RemoveListener(OnTeamNameSelect);
+            inputField_TeamName.onEndEdit.RemoveListener(OnTeamNameEndEdit);
         }
     }
 
@@ -79,12 +98,30 @@ public class TeamFilterUi : UiBase
 
     private void RefreshSlots()
     {
+        string searchKeyword = string.Empty;
+
+        if (inputField_TeamName != null)
+        {
+            searchKeyword = inputField_TeamName.text.Trim();
+        }
+
+        List<string> filteredTeams = new List<string>();
+
+        foreach (var team in _teamList)
+        {
+            bool matchesTeam = string.IsNullOrEmpty(searchKeyword) || (team != null && team.Contains(searchKeyword));
+            if (matchesTeam)
+            {
+                filteredTeams.Add(team);
+            }
+        }
+
         for (int i = 0; i < _slotPool.Count; i++)
         {
-            if (i < _teamList.Count)
+            if (i < filteredTeams.Count)
             {
                 _slotPool[i].gameObject.SetActive(true);
-                _slotPool[i].SetUpTeamSlot(_teamList[i], _selectedTeamName, OnSelectedTeam);
+                _slotPool[i].SetUpTeamSlot(filteredTeams[i], _selectedTeamName, OnSelectedTeam);
             }
 
             else
@@ -98,6 +135,23 @@ public class TeamFilterUi : UiBase
     {
         _selectedTeamName = teamName;
         RefreshSlots();
+    }
+
+    private void OnTeamNameSelect(string text)
+    {
+        if (inputField_TeamName != null)
+        {
+            inputField_TeamName.text = string.Empty;
+        }
+    }
+
+    private void OnTeamNameEndEdit(string keyword)
+    {
+        RefreshSlots();
+        if (EventSystem.current != null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     private void OnClickConfirm()
