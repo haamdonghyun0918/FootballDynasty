@@ -210,7 +210,6 @@ RectTransform:
   - {fileID: 1214334436328833615}
   - {fileID: 5473932140530219238}
   - {fileID: 2323306262775127075}
-  - {fileID: 4802944025393610307}
   - {fileID: 1606754264240252752}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -231,6 +230,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbce0db38746994428e2c20787002773, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SquadFilterUi
+  _cardContent: {fileID: 8297371743560539364}
+  _buttonClose: {fileID: 7645973984921475799}
+  _buttonNext: {fileID: 6533093782290513760}
+  _buttonPrevious: {fileID: 6375779230456912594}
+  inputField_Page: {fileID: 2455279221546774617}
+  inputField_Name: {fileID: 8838877839892287585}
+  _buttonTeam: {fileID: 8314319351168448642}
 --- !u!1 &1912985585540615290
 GameObject:
   m_ObjectHideFlags: 0
@@ -797,17 +803,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5561748810979035369}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5115730479107338338}
-  m_Father: {fileID: 2920805795212904792}
+  m_Father: {fileID: 2323306262775127075}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -860, y: 364.2815}
+  m_AnchoredPosition: {x: 0, y: 0.28149414}
   m_SizeDelta: {x: 160, y: 57.2354}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7699808670181045890
@@ -1550,7 +1556,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 4802944025393610307}
   m_Father: {fileID: 2920805795212904792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}

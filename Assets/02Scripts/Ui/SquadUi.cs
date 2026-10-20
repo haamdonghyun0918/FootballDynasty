@@ -1,5 +1,8 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class SquadUi : UiBase
 {
@@ -27,10 +30,19 @@ public class SquadUi : UiBase
     [Header("Substitute")]
     [SerializeField] private RectTransform _panelSubRectTransform;
     [SerializeField] private UiButton _buttonSubstitute;
+    [SerializeField] private GameObject[] _subSlots;
     private bool isSubPanelOpen = false;
+
+    private string cardPrefabAddress = "Card";
+
+    private Dictionary<GameObject, UserCardData> _squadSlotDataMap = new Dictionary<GameObject, UserCardData>();
+    private Dictionary<GameObject, Card> _squadSlotCardMap = new Dictionary<GameObject, Card>();
+    private GameObject _currentSelectedSlot = null;
 
     private void OnEnable()
     {
+        BindSlotButtons();
+
         if (_buttonClose != null)
         {
             _buttonClose.BindOnClickButtonEvent(OnClickClose);
@@ -112,7 +124,6 @@ public class SquadUi : UiBase
             {
                 _buttonSubstitute.gameObject.SetActive(false);
             }
-
         }
 
         else
@@ -132,40 +143,7 @@ public class SquadUi : UiBase
                 _buttonSubstitute.gameObject.SetActive(true);
             }
 
-            if (currentFormation == "4-3-3")
-            {
-                SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
-                SetSelectedSlotsActive(_slotMFs, new int[] { 0, 2, 4 });
-                SetSelectedSlotsActive(_slotFWs, new int[] { 0, 2, 4 });
-            }
-
-            else if (currentFormation == "4-4-2")
-            {
-                SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
-                SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 3, 4 });
-                SetSelectedSlotsActive(_slotFWs, new int[] { 1, 3 });
-            }
-
-            else if (currentFormation == "4-5-1")
-            {
-                SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
-                SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 2, 3, 4 });
-                SetSelectedSlotsActive(_slotFWs, new int[] { 2 });
-            }
-
-            else if (currentFormation == "3-5-2")
-            {
-                SetSelectedSlotsActive(_slotDFs, new int[] { 1, 2, 3 });
-                SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 2, 3, 4 });
-                SetSelectedSlotsActive(_slotFWs, new int[] { 1, 3 });
-            }
-
-            else if (currentFormation == "3-4-3")
-            {
-                SetSelectedSlotsActive(_slotDFs, new int[] { 1, 2, 3 });
-                SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 3, 4 });
-                SetSelectedSlotsActive(_slotFWs, new int[] { 0, 2, 4 });
-            }
+            ApplyFormationSlots(currentFormation);
         }
 
         if (_buttonSubstitute != null)
@@ -180,6 +158,217 @@ public class SquadUi : UiBase
             _panelSubRectTransform.anchoredPosition = closedPos;
             isSubPanelOpen = false;
         }
+    }
+
+    private void BindSlotButtons()
+    {
+        BindSingleSlot(_slotGK);
+
+        if (_slotDFs != null)
+        {
+            for (int i = 0; i < _slotDFs.Length; i++) BindSingleSlot(_slotDFs[i]);
+        }
+
+        if (_slotMFs != null)
+        {
+            for (int i = 0; i < _slotMFs.Length; i++) BindSingleSlot(_slotMFs[i]);
+        }
+
+        if (_slotFWs != null)
+        {
+            for (int i = 0; i < _slotFWs.Length; i++) BindSingleSlot(_slotFWs[i]);
+        }
+
+        if (_subSlots != null)
+        {
+            for (int i = 0; i < _subSlots.Length; i++) BindSingleSlot(_subSlots[i]);
+        }
+    }
+
+    private void BindSingleSlot(GameObject slotObj)
+    {
+        if (slotObj == null)
+        {
+            return;
+        }
+
+        UiButton slotButton = slotObj.GetComponent<UiButton>();
+        if (slotButton != null)
+        {
+            slotButton.BindOnClickButtonEvent(OnSlotClickedHandler);
+        }
+    }
+
+    private void OnSlotClickedHandler()
+    {
+        GameObject clickedObj = EventSystem.current.currentSelectedGameObject;
+        if (clickedObj == null)
+        {
+            return;
+        }
+
+        Transform curTransform = clickedObj.transform;
+
+        while (curTransform != null && curTransform.GetComponent<UiButton>() == null)
+        {
+            curTransform = curTransform.parent;
+        }
+
+        if (curTransform != null)
+        {
+            OpenFilterForSlot(curTransform.gameObject);
+        }
+    }
+
+    private void OpenFilterForSlot(GameObject slotObj)
+    {
+        _currentSelectedSlot = slotObj;
+        string posFilter = GetPositionOfSlot(slotObj);
+
+        List<string> excludedIds = new List<string>();
+
+        foreach (var pair in _squadSlotDataMap)
+        {
+            if (pair.Key != slotObj && pair.Value != null)
+            {
+                excludedIds.Add(pair.Value.GetHashCode().ToString());
+            }
+        }
+
+        OpenFilterUiAsync(posFilter, excludedIds).Forget();
+    }
+
+    private async UniTaskVoid OpenFilterUiAsync(string posFilter, List<string> excludedIds)
+    {
+        var filterUi = await UiManager.Instance.OpenUi<SquadFilterUi>();
+        if (filterUi != null)
+        {
+            filterUi.Init(posFilter, excludedIds, OnCardSelectedFromFilter);
+        }
+    }
+
+    private void OnCardSelectedFromFilter(UserCardData selectedUserCard)
+    {
+        if (_currentSelectedSlot == null || selectedUserCard == null)
+        {
+            return;
+        }
+
+        SetCardToSlot(_currentSelectedSlot, selectedUserCard).Forget();
+    }
+
+    private async UniTaskVoid SetCardToSlot(GameObject slotObj, UserCardData userCardData)
+    {
+        _squadSlotDataMap[slotObj] = userCardData;
+
+        Card card;
+        if (_squadSlotCardMap.ContainsKey(slotObj) && _squadSlotCardMap[slotObj] != null)
+        {
+            card = _squadSlotCardMap[slotObj];
+        }
+
+        else
+        {
+            GameObject cardObj = await ResourceManager.Instance.Instantiate(cardPrefabAddress, slotObj.transform);
+            card = cardObj.GetComponent<Card>();
+            _squadSlotCardMap[slotObj] = card;
+        }
+
+        card.gameObject.SetActive(true);
+        card.SetUpCard(userCardData.StaticData);
+        card.OnClickCardAction = OnPlacedCardClicked;
+    }
+
+    private void OnPlacedCardClicked(Card clickedCard)
+    {
+        foreach (var pair in _squadSlotCardMap)
+        {
+            if (pair.Value == clickedCard)
+            {
+                OpenFilterForSlot(pair.Key);
+                break;
+            }
+        }
+    }
+
+    private string GetPositionOfSlot(GameObject slotObj)
+    {
+        if (slotObj == _slotGK)
+        {
+            return "GK";
+        }
+
+        if (_slotDFs != null)
+        {
+            for (int i = 0; i < _slotDFs.Length; i++)
+            {
+                if (_slotDFs[i] == slotObj) return "DF";
+            }
+        }
+
+        if (_slotMFs != null)
+        {
+            for (int i = 0; i < _slotMFs.Length; i++)
+            {
+                if (_slotMFs[i] == slotObj) return "MF";
+            }
+        }
+
+        if (_slotFWs != null)
+        {
+            for (int i = 0; i < _slotFWs.Length; i++)
+            {
+                if (_slotFWs[i] == slotObj) return "FW";
+            }
+        }
+
+        if (_subSlots != null)
+        {
+            for (int i = 0; i < _subSlots.Length; i++)
+            {
+                if (_subSlots[i] == slotObj)
+                {
+                    string slotName = slotObj.name;
+
+                    if (slotName.Contains("GK"))
+                    {
+                        return "GK";
+                    }
+
+                    else if (slotName.Contains("DF"))
+                    {
+                        return "DF";
+                    }
+
+                    else if (slotName.Contains("MF"))
+                    {
+                        return "MF";
+                    }
+
+                    else if (slotName.Contains("FW"))
+                    {
+                        return "FW";
+                    }
+                }
+            }
+        }
+
+        return string.Empty;
+    }
+
+    private void ResetSquadData()
+    {
+        _squadSlotDataMap.Clear();
+
+        foreach (var pair in _squadSlotCardMap)
+        {
+            if (pair.Value != null)
+            {
+                pair.Value.gameObject.SetActive(false);
+            }
+        }
+
+        _squadSlotCardMap.Clear();
     }
 
     private void OnClickFormation()
@@ -197,6 +386,46 @@ public class SquadUi : UiBase
                 _formationListPanel.SetActive(false);
                 isDropdownOpen = false;
             }
+        }
+    }
+
+    private void ApplyFormationSlots(string formationName)
+    {
+        ResetSquadData();
+
+        if (formationName == "4-3-3")
+        {
+            SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
+            SetSelectedSlotsActive(_slotMFs, new int[] { 0, 2, 4 });
+            SetSelectedSlotsActive(_slotFWs, new int[] { 0, 2, 4 });
+        }
+
+        else if (formationName == "4-4-2")
+        {
+            SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
+            SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 3, 4 });
+            SetSelectedSlotsActive(_slotFWs, new int[] { 1, 3 });
+        }
+
+        else if (formationName == "4-5-1")
+        {
+            SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
+            SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 2, 3, 4 });
+            SetSelectedSlotsActive(_slotFWs, new int[] { 2 });
+        }
+
+        else if (formationName == "3-5-2")
+        {
+            SetSelectedSlotsActive(_slotDFs, new int[] { 1, 2, 3 });
+            SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 2, 3, 4 });
+            SetSelectedSlotsActive(_slotFWs, new int[] { 1, 3 });
+        }
+
+        else if (formationName == "3-4-3")
+        {
+            SetSelectedSlotsActive(_slotDFs, new int[] { 1, 2, 3 });
+            SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 3, 4 });
+            SetSelectedSlotsActive(_slotFWs, new int[] { 0, 2, 4 });
         }
     }
 
@@ -226,10 +455,7 @@ public class SquadUi : UiBase
             _buttonSubstitute.gameObject.SetActive(true);
         }
 
-        SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
-        SetSelectedSlotsActive(_slotMFs, new int[] { 0, 2, 4 });
-        SetSelectedSlotsActive(_slotFWs, new int[] { 0, 2, 4 });
-
+        ApplyFormationSlots("4-3-3");
         CloseDropdownPanel();
     }
 
@@ -259,10 +485,7 @@ public class SquadUi : UiBase
             _buttonSubstitute.gameObject.SetActive(true);
         }
 
-        SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
-        SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 3, 4 });
-        SetSelectedSlotsActive(_slotFWs, new int[] { 1, 3 });
-
+        ApplyFormationSlots("4-4-2");
         CloseDropdownPanel();
     }
 
@@ -292,10 +515,7 @@ public class SquadUi : UiBase
             _buttonSubstitute.gameObject.SetActive(true);
         }
 
-        SetSelectedSlotsActive(_slotDFs, new int[] { 0, 1, 3, 4 });
-        SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 2, 3, 4 });
-        SetSelectedSlotsActive(_slotFWs, new int[] { 2 });
-
+        ApplyFormationSlots("4-5-1");
         CloseDropdownPanel();
     }
 
@@ -325,10 +545,7 @@ public class SquadUi : UiBase
             _buttonSubstitute.gameObject.SetActive(true);
         }
 
-        SetSelectedSlotsActive(_slotDFs, new int[] { 1, 2, 3 });
-        SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 2, 3, 4 });
-        SetSelectedSlotsActive(_slotFWs, new int[] { 1, 3 });
-
+        ApplyFormationSlots("3-5-2");
         CloseDropdownPanel();
     }
 
@@ -358,10 +575,7 @@ public class SquadUi : UiBase
             _buttonSubstitute.gameObject.SetActive(true);
         }
 
-        SetSelectedSlotsActive(_slotDFs, new int[] { 1, 2, 3 });
-        SetSelectedSlotsActive(_slotMFs, new int[] { 0, 1, 3, 4 });
-        SetSelectedSlotsActive(_slotFWs, new int[] { 0, 2, 4 });
-
+        ApplyFormationSlots("3-4-3");
         CloseDropdownPanel();
     }
 
