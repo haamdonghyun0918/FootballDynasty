@@ -60,6 +60,7 @@ MonoBehaviour:
   text_Defoverall: {fileID: 7417802889454571044}
   image_Team: {fileID: 3752974243216636971}
   image_Pos: {fileID: 40999746045051899}
+  _buttonCard: {fileID: 1017712482631446974}
 --- !u!1 &674371121440476953
 GameObject:
   m_ObjectHideFlags: 0
@@ -121,7 +122,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

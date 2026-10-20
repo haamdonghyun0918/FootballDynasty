@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using System;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
-using Cysharp.Threading.Tasks;
 
 public class Card : MonoBehaviour
 {
@@ -18,6 +19,14 @@ public class Card : MonoBehaviour
 
     [Header("Function Button")]
     [SerializeField] private UiButton _buttonCard;
+    public Action<Card> OnClickCardAction;
+
+    public UserCardData TargetUserCardData { get; private set; }
+
+    public void SetTargetUserCardData(UserCardData userCardData)
+    {
+        TargetUserCardData = userCardData;
+    }
 
     private void OnEnable()
     {
@@ -25,6 +34,12 @@ public class Card : MonoBehaviour
         {
             _buttonCard.BindOnClickButtonEvent(OnClickCard);
         }
+    }
+
+    private void OnDisable()
+    {
+        OnClickCardAction = null;
+        TargetUserCardData = null;
     }
 
     public void SetUpCard(PlayerData playerData)
@@ -82,6 +97,6 @@ public class Card : MonoBehaviour
 
     private void OnClickCard()
     {
-
+        OnClickCardAction?.Invoke(this);
     }
 }
