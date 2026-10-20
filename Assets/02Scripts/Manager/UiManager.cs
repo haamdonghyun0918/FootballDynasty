@@ -31,9 +31,22 @@ public class UiManager : MonoBehaviour
     {
         Type uiType = typeof(T);
 
+        while (_creatingUiTypes.Contains(uiType))
+        {
+            await UniTask.Yield();
+        }
+
         if (_createdUiDic.ContainsKey(uiType) == false)
         {
-            await CreateUi<T>();
+            _creatingUiTypes.Add(uiType);
+            try
+            {
+                await CreateUi<T>();
+            }
+            finally
+            {
+                _creatingUiTypes.Remove(uiType);
+            }
         }
 
         if (_createdUiDic.TryGetValue(uiType, out UiBase createdUi) == false)
@@ -41,7 +54,6 @@ public class UiManager : MonoBehaviour
             Debug.LogError($"[UiManager]: {uiType.Name} UI를 열 수 없습니다.");
             return null;
         }
-
 
         T openedUi = _createdUiDic[uiType] as T;
 
@@ -96,7 +108,15 @@ public class UiManager : MonoBehaviour
 
         if (uiBase != null)
         {
-            _createdUiDic.Add(uiType, uiBase);
+            if (_createdUiDic.ContainsKey(uiType) == false)
+            {
+                _createdUiDic.Add(uiType, uiBase);
+            }
+
+            else
+            {
+                Destroy(gObj);
+            }
         }
 
         else
