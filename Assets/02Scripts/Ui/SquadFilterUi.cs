@@ -183,7 +183,7 @@ public class SquadFilterUi : UiBase, ICardFilterable
                 continue;
             }
 
-            if (_excludedUserCardIds.Contains(userCard.GetHashCode().ToString()))
+            if (_excludedUserCardIds.Contains(userCard.InstanceId.ToString()))
             {
                 continue;
             }

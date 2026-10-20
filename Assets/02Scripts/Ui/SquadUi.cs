@@ -231,7 +231,7 @@ public class SquadUi : UiBase
         {
             if (pair.Key != slotObj && pair.Value != null)
             {
-                excludedIds.Add(pair.Value.GetHashCode().ToString());
+                excludedIds.Add(pair.Value.InstanceId.ToString());
             }
         }
 
