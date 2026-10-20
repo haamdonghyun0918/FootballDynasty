@@ -150,6 +150,7 @@ GameObject:
   - component: {fileID: 6315103074707203588}
   - component: {fileID: 126746378804035582}
   - component: {fileID: 4378145462590950336}
+  - component: {fileID: 6641702905139160165}
   m_Layer: 5
   m_Name: Slot_DF(4)
   m_TagString: Untagged
@@ -275,6 +276,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &6641702905139160165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 748403344561045450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 4378145462590950336}
+  _slotPosition: DF
 --- !u!1 &795226676499356669
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,6 +303,7 @@ GameObject:
   - component: {fileID: 6856200605088531436}
   - component: {fileID: 6715096152110079571}
   - component: {fileID: 2604250231809020162}
+  - component: {fileID: 4345094489113734013}
   m_Layer: 5
   m_Name: Slot_DF(3)
   m_TagString: Untagged
@@ -413,6 +429,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &4345094489113734013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 795226676499356669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 2604250231809020162}
+  _slotPosition: DF
 --- !u!1 &797100465772574520
 GameObject:
   m_ObjectHideFlags: 0
@@ -701,6 +731,7 @@ GameObject:
   - component: {fileID: 223684747470321114}
   - component: {fileID: 363562617221771748}
   - component: {fileID: 8922165606191466013}
+  - component: {fileID: 3153342797883035768}
   m_Layer: 5
   m_Name: Slot_Sub_FW(2)
   m_TagString: Untagged
@@ -826,6 +857,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &3153342797883035768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1370929038177743494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 8922165606191466013}
+  _slotPosition: FW
 --- !u!1 &1594011616525476914
 GameObject:
   m_ObjectHideFlags: 0
@@ -976,6 +1021,7 @@ GameObject:
   - component: {fileID: 7825433113124877320}
   - component: {fileID: 4651422863178019172}
   - component: {fileID: 274058556092580299}
+  - component: {fileID: 6062529608480275101}
   m_Layer: 5
   m_Name: Slot_FW(1)
   m_TagString: Untagged
@@ -1101,6 +1147,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &6062529608480275101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1596227953917299437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 274058556092580299}
+  _slotPosition: FW
 --- !u!1 &1669026319354630606
 GameObject:
   m_ObjectHideFlags: 0
@@ -1251,6 +1311,7 @@ GameObject:
   - component: {fileID: 2505455172500674002}
   - component: {fileID: 5739980413407023323}
   - component: {fileID: 4453014117846656273}
+  - component: {fileID: 8740937752496097053}
   m_Layer: 5
   m_Name: Slot_MF(2)
   m_TagString: Untagged
@@ -1376,6 +1437,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &8740937752496097053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1839699610331774859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 4453014117846656273}
+  _slotPosition: MF
 --- !u!1 &1898292822680422796
 GameObject:
   m_ObjectHideFlags: 0
@@ -1486,6 +1561,7 @@ GameObject:
   - component: {fileID: 4440475477136244903}
   - component: {fileID: 4856124333979824720}
   - component: {fileID: 1713589560146940359}
+  - component: {fileID: 8232204880740840369}
   m_Layer: 5
   m_Name: Slot_FW(3)
   m_TagString: Untagged
@@ -1611,6 +1687,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &8232204880740840369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1995019161315518441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 1713589560146940359}
+  _slotPosition: FW
 --- !u!1 &2237005799223930859
 GameObject:
   m_ObjectHideFlags: 0
@@ -1624,6 +1714,7 @@ GameObject:
   - component: {fileID: 631596233515469038}
   - component: {fileID: 593879563599518171}
   - component: {fileID: 2083435211672051522}
+  - component: {fileID: 7985738307767887871}
   m_Layer: 5
   m_Name: Slot_Sub_FW(1)
   m_TagString: Untagged
@@ -1749,6 +1840,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &7985738307767887871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2237005799223930859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 2083435211672051522}
+  _slotPosition: FW
 --- !u!1 &2259004373491558475
 GameObject:
   m_ObjectHideFlags: 0
@@ -1762,6 +1867,7 @@ GameObject:
   - component: {fileID: 8867265243534097494}
   - component: {fileID: 6366345227561314590}
   - component: {fileID: 224822501488820262}
+  - component: {fileID: 2113812425994138764}
   m_Layer: 5
   m_Name: Slot_FW(2)
   m_TagString: Untagged
@@ -1887,6 +1993,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &2113812425994138764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2259004373491558475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 224822501488820262}
+  _slotPosition: FW
 --- !u!1 &2325226875334402104
 GameObject:
   m_ObjectHideFlags: 0
@@ -2861,6 +2981,7 @@ GameObject:
   - component: {fileID: 3180263445940472402}
   - component: {fileID: 1345817867949633527}
   - component: {fileID: 6277699429209107829}
+  - component: {fileID: 2885781440163140271}
   m_Layer: 5
   m_Name: Slot_Sub_MF(1)
   m_TagString: Untagged
@@ -2986,6 +3107,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &2885781440163140271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3186566358153351942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 6277699429209107829}
+  _slotPosition: MF
 --- !u!1 &3198789363843743281
 GameObject:
   m_ObjectHideFlags: 0
@@ -3684,6 +3819,7 @@ GameObject:
   - component: {fileID: 2425099837727398806}
   - component: {fileID: 7811929671139611843}
   - component: {fileID: 2187790556463573597}
+  - component: {fileID: 6810524899199093030}
   m_Layer: 5
   m_Name: Slot_MF(1)
   m_TagString: Untagged
@@ -3809,6 +3945,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &6810524899199093030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3366857578494228188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 2187790556463573597}
+  _slotPosition: MF
 --- !u!1 &4071695800509748580
 GameObject:
   m_ObjectHideFlags: 0
@@ -4233,6 +4383,7 @@ GameObject:
   - component: {fileID: 8695859112992333643}
   - component: {fileID: 9074627425179909240}
   - component: {fileID: 5028691594272286121}
+  - component: {fileID: 7829893939379761106}
   m_Layer: 5
   m_Name: Slot_FW(5)
   m_TagString: Untagged
@@ -4358,6 +4509,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &7829893939379761106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4252996968629279058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 5028691594272286121}
+  _slotPosition: FW
 --- !u!1 &4326313645661198967
 GameObject:
   m_ObjectHideFlags: 0
@@ -5005,6 +5170,7 @@ GameObject:
   - component: {fileID: 3826047750993953250}
   - component: {fileID: 1025042315006964946}
   - component: {fileID: 721060100823472804}
+  - component: {fileID: 679183552014876423}
   m_Layer: 5
   m_Name: Slot_Sub_DF(2)
   m_TagString: Untagged
@@ -5130,6 +5296,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &679183552014876423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4838460497699170120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 721060100823472804}
+  _slotPosition: DF
 --- !u!1 &4854502261574164440
 GameObject:
   m_ObjectHideFlags: 0
@@ -5435,6 +5615,7 @@ GameObject:
   - component: {fileID: 2878805066714404564}
   - component: {fileID: 2867013435371208396}
   - component: {fileID: 4491746596870012755}
+  - component: {fileID: 570567576828983795}
   m_Layer: 5
   m_Name: Slot_DF(5)
   m_TagString: Untagged
@@ -5560,6 +5741,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &570567576828983795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5066991859441931555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 4491746596870012755}
+  _slotPosition: DF
 --- !u!1 &5144298075047996883
 GameObject:
   m_ObjectHideFlags: 0
@@ -5573,6 +5768,7 @@ GameObject:
   - component: {fileID: 7942021088830389577}
   - component: {fileID: 7684085421757167214}
   - component: {fileID: 8080424669796223764}
+  - component: {fileID: 3668111853387082662}
   m_Layer: 5
   m_Name: Slot_Sub_GK
   m_TagString: Untagged
@@ -5698,6 +5894,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &3668111853387082662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5144298075047996883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 8080424669796223764}
+  _slotPosition: GK
 --- !u!1 &5157997744937315991
 GameObject:
   m_ObjectHideFlags: 0
@@ -5711,6 +5921,7 @@ GameObject:
   - component: {fileID: 5099199474538350875}
   - component: {fileID: 7069691591141147457}
   - component: {fileID: 4676181522508715015}
+  - component: {fileID: 8791240742187408548}
   m_Layer: 5
   m_Name: Slot_Sub_DF(1)
   m_TagString: Untagged
@@ -5836,6 +6047,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &8791240742187408548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5157997744937315991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 4676181522508715015}
+  _slotPosition: DF
 --- !u!1 &5305726516533423680
 GameObject:
   m_ObjectHideFlags: 0
@@ -6673,6 +6898,7 @@ GameObject:
   - component: {fileID: 954644262117100692}
   - component: {fileID: 7008405230366548944}
   - component: {fileID: 3759934124820249687}
+  - component: {fileID: 5608432172344408573}
   m_Layer: 5
   m_Name: Slot_MF(3)
   m_TagString: Untagged
@@ -6798,6 +7024,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &5608432172344408573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6085398570314892675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 3759934124820249687}
+  _slotPosition: MF
 --- !u!1 &6147743527486806097
 GameObject:
   m_ObjectHideFlags: 0
@@ -7125,6 +7365,7 @@ GameObject:
   - component: {fileID: 1650637288650083615}
   - component: {fileID: 2704948708052322671}
   - component: {fileID: 7551856661241693676}
+  - component: {fileID: 2415143840588843950}
   m_Layer: 5
   m_Name: Slot_FW(4)
   m_TagString: Untagged
@@ -7250,6 +7491,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &2415143840588843950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6307658707107779920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 7551856661241693676}
+  _slotPosition: FW
 --- !u!1 &6403687736781903457
 GameObject:
   m_ObjectHideFlags: 0
@@ -7263,6 +7518,7 @@ GameObject:
   - component: {fileID: 8882391596044391108}
   - component: {fileID: 9159688513357606508}
   - component: {fileID: 7258735320253901105}
+  - component: {fileID: 99820230951291089}
   m_Layer: 5
   m_Name: Slot_Sub_MF(3)
   m_TagString: Untagged
@@ -7388,6 +7644,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &99820230951291089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6403687736781903457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 7258735320253901105}
+  _slotPosition: MF
 --- !u!1 &6524654920204466999
 GameObject:
   m_ObjectHideFlags: 0
@@ -7401,6 +7671,7 @@ GameObject:
   - component: {fileID: 2868174390111144539}
   - component: {fileID: 7068262519959682023}
   - component: {fileID: 4650064641586635583}
+  - component: {fileID: 6545037440069735895}
   m_Layer: 5
   m_Name: Slot_DF(2)
   m_TagString: Untagged
@@ -7526,6 +7797,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &6545037440069735895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6524654920204466999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 4650064641586635583}
+  _slotPosition: DF
 --- !u!1 &6622186663365325348
 GameObject:
   m_ObjectHideFlags: 0
@@ -8129,6 +8414,7 @@ GameObject:
   - component: {fileID: 3547160784705591458}
   - component: {fileID: 8176910852343905041}
   - component: {fileID: 4069651340414719600}
+  - component: {fileID: 1677720256246165168}
   m_Layer: 5
   m_Name: Slot_DF(1)
   m_TagString: Untagged
@@ -8254,6 +8540,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &1677720256246165168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7149082119088492350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 4069651340414719600}
+  _slotPosition: DF
 --- !u!1 &7170624161179223636
 GameObject:
   m_ObjectHideFlags: 0
@@ -8267,6 +8567,7 @@ GameObject:
   - component: {fileID: 2202473421102131522}
   - component: {fileID: 97811803856208131}
   - component: {fileID: 2861923886733260561}
+  - component: {fileID: 8055172001171564960}
   m_Layer: 5
   m_Name: Slot_Sub_DF(3)
   m_TagString: Untagged
@@ -8392,6 +8693,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &8055172001171564960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7170624161179223636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 2861923886733260561}
+  _slotPosition: DF
 --- !u!1 &7295892271666337560
 GameObject:
   m_ObjectHideFlags: 0
@@ -8405,6 +8720,7 @@ GameObject:
   - component: {fileID: 5993538184799169146}
   - component: {fileID: 5099722770870055921}
   - component: {fileID: 802513775199028066}
+  - component: {fileID: 1897798387958351340}
   m_Layer: 5
   m_Name: Slot_MF(4)
   m_TagString: Untagged
@@ -8530,6 +8846,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &1897798387958351340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7295892271666337560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 802513775199028066}
+  _slotPosition: MF
 --- !u!1 &7335481947313065389
 GameObject:
   m_ObjectHideFlags: 0
@@ -8543,6 +8873,7 @@ GameObject:
   - component: {fileID: 4046789527620330759}
   - component: {fileID: 9220136296914589606}
   - component: {fileID: 3987890307724197039}
+  - component: {fileID: 1885248403013734356}
   m_Layer: 5
   m_Name: Slot_GK
   m_TagString: Untagged
@@ -8668,6 +8999,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &1885248403013734356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7335481947313065389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 3987890307724197039}
+  _slotPosition: GK
 --- !u!1 &7988574107401808349
 GameObject:
   m_ObjectHideFlags: 0
@@ -8818,6 +9163,7 @@ GameObject:
   - component: {fileID: 2833310855602302003}
   - component: {fileID: 1942377252194649331}
   - component: {fileID: 8118871508916007885}
+  - component: {fileID: 756442373867915602}
   m_Layer: 5
   m_Name: Slot_Sub_MF(2)
   m_TagString: Untagged
@@ -8943,6 +9289,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &756442373867915602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8073142842078151188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 8118871508916007885}
+  _slotPosition: MF
 --- !u!1 &8631080476392501441
 GameObject:
   m_ObjectHideFlags: 0
@@ -9270,6 +9630,7 @@ GameObject:
   - component: {fileID: 1553023699827058834}
   - component: {fileID: 3087820681112036973}
   - component: {fileID: 6173381953834455282}
+  - component: {fileID: 6132226355629959726}
   m_Layer: 5
   m_Name: Slot_MF(5)
   m_TagString: Untagged
@@ -9395,6 +9756,20 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &6132226355629959726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8797022228068060972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 6173381953834455282}
+  _slotPosition: MF
 --- !u!1 &8871824608919658470
 GameObject:
   m_ObjectHideFlags: 0
@@ -9546,6 +9921,7 @@ GameObject:
   - component: {fileID: 6323907722978719476}
   - component: {fileID: 4661784899466169693}
   - component: {fileID: 8700423081007287303}
+  - component: {fileID: 4371348132660685186}
   m_Layer: 5
   m_Name: Slot_Sub_FW(3)
   m_TagString: Untagged
@@ -9671,3 +10047,17 @@ MonoBehaviour:
   Text_Base: {fileID: 0}
   Image_Base: {fileID: 0}
   Image_Select: {fileID: 0}
+--- !u!114 &4371348132660685186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8965223194678160501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699ef4f608665ed42903d155fba68f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadSlot
+  _buttonSlot: {fileID: 8700423081007287303}
+  _slotPosition: FW
