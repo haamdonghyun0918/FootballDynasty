@@ -16,6 +16,17 @@ public class Card : MonoBehaviour
     [SerializeField] private Image image_Team;
     [SerializeField] private Image image_Pos;
 
+    [Header("Function Button")]
+    [SerializeField] private UiButton _buttonCard;
+
+    private void OnEnable()
+    {
+        if (_buttonCard != null)
+        {
+            _buttonCard.BindOnClickButtonEvent(OnClickCard);
+        }
+    }
+
     public void SetUpCard(PlayerData playerData)
     {
         if (playerData == null)
@@ -67,5 +78,10 @@ public class Card : MonoBehaviour
                 Debug.LogWarning($"포지션 이미지를 찾을 수 없습니다: {playerData.Pos}");
             }
         }
+    }
+
+    private void OnClickCard()
+    {
+
     }
 }
