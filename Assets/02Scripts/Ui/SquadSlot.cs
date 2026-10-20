@@ -40,7 +40,7 @@ public class SquadSlot : MonoBehaviour
         _onClickSlotCallback = onClickCallback;
     }
 
-    private async UniTaskVoid SetCardData(UserCardData userCardData)
+    public async UniTaskVoid SetCardData(UserCardData userCardData)
     {
         TargetUserCardData = userCardData;
 
@@ -69,7 +69,7 @@ public class SquadSlot : MonoBehaviour
 
     }
 
-    private void ClearSlot()
+    public void ClearSlot()
     {
         TargetUserCardData = null;
 

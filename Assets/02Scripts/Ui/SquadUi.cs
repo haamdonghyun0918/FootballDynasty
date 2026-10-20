@@ -21,62 +21,30 @@ public class SquadUi : UiBase
     [SerializeField] private UiButton _button343;
 
     [Header("Position Slots(From Left: 1 ~ 5)")]
-    [SerializeField] private GameObject _slotGK;
-    [SerializeField] private GameObject[] _slotDFs;
-    [SerializeField] private GameObject[] _slotMFs;
-    [SerializeField] private GameObject[] _slotFWs;
+    [SerializeField] private SquadSlot _slotGK;
+    [SerializeField] private SquadSlot[] _slotDFs;
+    [SerializeField] private SquadSlot[] _slotMFs;
+    [SerializeField] private SquadSlot[] _slotFWs;
     private bool isDropdownOpen = false;
 
     [Header("Substitute")]
     [SerializeField] private RectTransform _panelSubRectTransform;
     [SerializeField] private UiButton _buttonSubstitute;
-    [SerializeField] private GameObject[] _subSlots;
+    [SerializeField] private SquadSlot[] _subSlots;
     private bool isSubPanelOpen = false;
 
-    private string cardPrefabAddress = "Card";
+    private SquadSlot _currentSelectedSlot = null;
+    private List<SquadSlot> _allSlots = new List<SquadSlot>();
 
-    private Dictionary<GameObject, UserCardData> _squadSlotDataMap = new Dictionary<GameObject, UserCardData>();
-    private Dictionary<GameObject, Card> _squadSlotCardMap = new Dictionary<GameObject, Card>();
-    private GameObject _currentSelectedSlot = null;
+    private void Awake()
+    {
+        CollectAllSlots();
+    }
 
     private void OnEnable()
     {
-        BindSlotButtons();
-
-        if (_buttonClose != null)
-        {
-            _buttonClose.BindOnClickButtonEvent(OnClickClose);
-        }
-
-        if (_buttonFormation != null)
-        {
-            _buttonFormation.BindOnClickButtonEvent(OnClickFormation);
-        }
-
-        if (_button433 != null)
-        {
-            _button433.BindOnClickButtonEvent(OnClick433);
-        }
-
-        if (_button442 != null)
-        {
-            _button442.BindOnClickButtonEvent(OnClick442);
-        }
-
-        if (_button451 != null)
-        {
-            _button451.BindOnClickButtonEvent(OnClick451);
-        }
-
-        if (_button352 != null)
-        {
-            _button352.BindOnClickButtonEvent(OnClick352);
-        }
-
-        if (_button343 != null)
-        {
-            _button343.BindOnClickButtonEvent(OnClick343);
-        }
+        InitSlots();
+        BindButtons();
 
         if (_formationListPanel != null)
         {
@@ -84,36 +52,9 @@ public class SquadUi : UiBase
             isDropdownOpen = false;
         }
 
-        if (currentFormation == "")
+        if (string.IsNullOrEmpty(currentFormation))
         {
-            if (_slotGK != null)
-            {
-                _slotGK.SetActive(false);
-            }
-
-            for (int i = 0; i < _slotDFs.Length; i++)
-            {
-                if (_slotDFs[i] != null)
-                {
-                    _slotDFs[i].SetActive(false);
-                }
-            }
-
-            for (int i = 0; i < _slotMFs.Length; i++)
-            {
-                if (_slotMFs[i] != null)
-                {
-                    _slotMFs[i].SetActive(false);
-                }
-            }
-
-            for (int i = 0; i < _slotFWs.Length; i++)
-            {
-                if (_slotFWs[i] != null)
-                {
-                    _slotFWs[i].SetActive(false);
-                }
-            }
+            SetAllSlotsActive(false);
 
             if (_textFormationButton != null)
             {
@@ -135,7 +76,7 @@ public class SquadUi : UiBase
 
             if (_slotGK != null)
             {
-                _slotGK.SetActive(true);
+                _slotGK.gameObject.SetActive(true);
             }
 
             if (_buttonSubstitute != null)
@@ -144,11 +85,6 @@ public class SquadUi : UiBase
             }
 
             ApplyFormationSlots(currentFormation);
-        }
-
-        if (_buttonSubstitute != null)
-        {
-            _buttonSubstitute.BindOnClickButtonEvent(OnClickSubstitute);
         }
 
         if (_panelSubRectTransform != null)
@@ -160,87 +96,103 @@ public class SquadUi : UiBase
         }
     }
 
-    private void BindSlotButtons()
+    private void OnDisable()
     {
-        BindSingleSlot(_slotGK);
+        UnbindButtons();
+    }
+
+    private void CollectAllSlots()
+    {
+        _allSlots.Clear();
+
+        if (_slotGK != null)
+        {
+            _allSlots.Add(_slotGK);
+        }
 
         if (_slotDFs != null)
         {
-            for (int i = 0; i < _slotDFs.Length; i++) BindSingleSlot(_slotDFs[i]);
+            for (int i = 0; i < _slotDFs.Length; i++)
+            {
+                if (_slotDFs[i] != null)
+                {
+                    _allSlots.Add(_slotDFs[i]);
+                }
+            }
         }
 
         if (_slotMFs != null)
         {
-            for (int i = 0; i < _slotMFs.Length; i++) BindSingleSlot(_slotMFs[i]);
+            for (int i = 0; i < _slotMFs.Length; i++)
+            {
+                if (_slotMFs[i] != null)
+                {
+                    _allSlots.Add(_slotMFs[i]);
+                }
+            }
         }
 
         if (_slotFWs != null)
         {
-            for (int i = 0; i < _slotFWs.Length; i++) BindSingleSlot(_slotFWs[i]);
+            for (int i = 0; i < _slotFWs.Length; i++)
+            {
+                if (_slotFWs[i] != null)
+                {
+                    _allSlots.Add(_slotFWs[i]);
+                }
+            }
         }
 
         if (_subSlots != null)
         {
-            for (int i = 0; i < _subSlots.Length; i++) BindSingleSlot(_subSlots[i]);
+            for (int i = 0; i < _subSlots.Length; i++)
+            {
+                if (_subSlots[i] != null)
+                {
+                    _allSlots.Add(_subSlots[i]);
+                }
+            }
         }
     }
 
-    private void BindSingleSlot(GameObject slotObj)
+    private void InitSlots()
     {
-        if (slotObj == null)
+        for (int i = 0; i < _allSlots.Count; i++)
+        {
+            if (_allSlots[i] != null)
+            {
+                _allSlots[i].Init(_allSlots[i].SlotPosition, OnSlotClicked);
+            }
+        }
+    }
+
+    private void OnSlotClicked(SquadSlot clickedSlot)
+    {
+        if (clickedSlot == null)
         {
             return;
         }
 
-        UiButton slotButton = slotObj.GetComponent<UiButton>();
-        if (slotButton != null)
-        {
-            slotButton.BindOnClickButtonEvent(OnSlotClickedHandler);
-        }
-    }
-
-    private void OnSlotClickedHandler()
-    {
-        GameObject clickedObj = EventSystem.current.currentSelectedGameObject;
-        if (clickedObj == null)
-        {
-            return;
-        }
-
-        Transform curTransform = clickedObj.transform;
-
-        while (curTransform != null && curTransform.GetComponent<UiButton>() == null)
-        {
-            curTransform = curTransform.parent;
-        }
-
-        if (curTransform != null)
-        {
-            OpenFilterForSlot(curTransform.gameObject);
-        }
-    }
-
-    private void OpenFilterForSlot(GameObject slotObj)
-    {
-        _currentSelectedSlot = slotObj;
-        string posFilter = GetPositionOfSlot(slotObj);
-
+        _currentSelectedSlot = clickedSlot;
         List<string> excludedIds = new List<string>();
 
-        foreach (var pair in _squadSlotDataMap)
+        for (int i = 0; i < _allSlots.Count; i++)
         {
-            if (pair.Key != slotObj && pair.Value != null)
+            SquadSlot slot = _allSlots[i];
+
+            if (slot != clickedSlot && slot.TargetUserCardData != null)
             {
-                excludedIds.Add(pair.Value.InstanceId.ToString());
+                excludedIds.Add(slot.TargetUserCardData.InstanceId.ToString());
             }
         }
 
-        OpenFilterUiAsync(posFilter, excludedIds).Forget();
+        OpenFilterUiAsync(clickedSlot.SlotPosition, excludedIds).Forget();
     }
 
     private async UniTaskVoid OpenFilterUiAsync(string posFilter, List<string> excludedIds)
     {
         var filterUi = await UiManager.Instance.OpenUi<SquadFilterUi>();
+
         if (filterUi != null)
         {
             filterUi.Init(posFilter, excludedIds, OnCardSelectedFromFilter);
@@ -254,137 +206,75 @@ public class SquadUi : UiBase
             return;
         }
 
-        SetCardToSlot(_currentSelectedSlot, selectedUserCard).Forget();
+        _currentSelectedSlot.SetCardData(selectedUserCard).Forget();
     }
 
-    private async UniTaskVoid SetCardToSlot(GameObject slotObj, UserCardData userCardData)
+    private void SetAllSlotsActive(bool isActive)
     {
-        _squadSlotDataMap[slotObj] = userCardData;
-
-        Card card;
-        if (_squadSlotCardMap.ContainsKey(slotObj) && _squadSlotCardMap[slotObj] != null)
+        if (_slotGK != null)
         {
-            card = _squadSlotCardMap[slotObj];
+            _slotGK.gameObject.SetActive(isActive);
         }
 
-        else
-        {
-            GameObject cardObj = await ResourceManager.Instance.Instantiate(cardPrefabAddress, slotObj.transform);
-            card = cardObj.GetComponent<Card>();
-            _squadSlotCardMap[slotObj] = card;
-        }
-
-        card.gameObject.SetActive(true);
-        card.SetUpCard(userCardData.StaticData);
-        card.OnClickCardAction = OnPlacedCardClicked;
+        SetSlotArrayActive(_slotDFs, isActive);
+        SetSlotArrayActive(_slotMFs, isActive);
+        SetSlotArrayActive(_slotFWs, isActive);
+        SetSlotArrayActive(_subSlots, isActive);
     }
 
-    private void OnPlacedCardClicked(Card clickedCard)
+    private void SetSlotArrayActive(SquadSlot[] slots, bool isActive)
     {
-        foreach (var pair in _squadSlotCardMap)
+        if (slots == null)
         {
-            if (pair.Value == clickedCard)
+            return;
+        }
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i] != null)
             {
-                OpenFilterForSlot(pair.Key);
-                break;
+                slots[i].gameObject.SetActive(isActive);
             }
         }
     }
 
-    private string GetPositionOfSlot(GameObject slotObj)
+    private void SetSelectedSlotsActive(SquadSlot[] slots, int[] activeIndices)
     {
-        if (slotObj == _slotGK)
+        if (slots == null)
         {
-            return "GK";
+            return;
         }
 
-        if (_slotDFs != null)
+        for (int i = 0; i < slots.Length; i++)
         {
-            for (int i = 0; i < _slotDFs.Length; i++)
+            if (slots[i] != null)
             {
-                if (_slotDFs[i] == slotObj) return "DF";
+                slots[i].gameObject.SetActive(false);
             }
         }
 
-        if (_slotMFs != null)
+        if (activeIndices == null)
         {
-            for (int i = 0; i < _slotMFs.Length; i++)
-            {
-                if (_slotMFs[i] == slotObj) return "MF";
-            }
+            return;
         }
 
-        if (_slotFWs != null)
+        for (int i = 0; i < activeIndices.Length; i++)
         {
-            for (int i = 0; i < _slotFWs.Length; i++)
+            int targetIndex = activeIndices[i];
+            if (targetIndex >= 0 && targetIndex < slots.Length && slots[targetIndex] != null)
             {
-                if (_slotFWs[i] == slotObj) return "FW";
+                slots[targetIndex].gameObject.SetActive(true);
             }
         }
-
-        if (_subSlots != null)
-        {
-            for (int i = 0; i < _subSlots.Length; i++)
-            {
-                if (_subSlots[i] == slotObj)
-                {
-                    string slotName = slotObj.name;
-
-                    if (slotName.Contains("GK"))
-                    {
-                        return "GK";
-                    }
-
-                    else if (slotName.Contains("DF"))
-                    {
-                        return "DF";
-                    }
-
-                    else if (slotName.Contains("MF"))
-                    {
-                        return "MF";
-                    }
-
-                    else if (slotName.Contains("FW"))
-                    {
-                        return "FW";
-                    }
-                }
-            }
-        }
-
-        return string.Empty;
     }
 
     private void ResetSquadData()
     {
-        _squadSlotDataMap.Clear();
-
-        foreach (var pair in _squadSlotCardMap)
+        for (int i = 0; i < _allSlots.Count; i++)
         {
-            if (pair.Value != null)
+            if (_allSlots[i] != null)
             {
-                pair.Value.gameObject.SetActive(false);
-            }
-        }
-
-        _squadSlotCardMap.Clear();
-    }
-
-    private void OnClickFormation()
-    {
-        if (_formationListPanel != null)
-        {
-            if (isDropdownOpen == false)
-            {
-                _formationListPanel.SetActive(true);
-                isDropdownOpen = true;
-            }
-
-            else
-            {
-                _formationListPanel.SetActive(false);
-                isDropdownOpen = false;
+                _allSlots[i].ClearSlot();
             }
         }
     }
@@ -429,145 +319,144 @@ public class SquadUi : UiBase
         }
     }
 
-    private void OnClick433()
+    private void BindButtons()
     {
-        if (currentFormation == "4-3-3")
+        if (_buttonClose != null)
         {
-            CloseDropdownPanel();
-            return;
+            _buttonClose.BindOnClickButtonEvent(OnClickClose);
         }
 
-        Debug.Log("4-3-3 포메이션 선택됨");
-        currentFormation = "4-3-3";
-
-        if (_textFormationButton != null)
+        if (_buttonFormation != null)
         {
-            _textFormationButton.text = "4-3-3";
+            _buttonFormation.BindOnClickButtonEvent(OnClickFormation);
+        }
+        if (_buttonSubstitute != null)
+        {
+            _buttonSubstitute.BindOnClickButtonEvent(OnClickSubstitute);
         }
 
-        if (_slotGK != null)
+        if (_button433 != null)
         {
-            _slotGK.SetActive(true);
+            _button433.BindOnClickButtonEvent(OnClick433);
+        }
+
+        if (_button442 != null)
+        {
+            _button442.BindOnClickButtonEvent(OnClick442);
+        }
+
+        if (_button451 != null)
+        {
+            _button451.BindOnClickButtonEvent(OnClick451);
+        }
+
+        if (_button352 != null)
+        {
+            _button352.BindOnClickButtonEvent(OnClick352);
+        }
+
+        if (_button343 != null)
+        {
+            _button343.BindOnClickButtonEvent(OnClick343);
+        }
+    }
+
+    private void UnbindButtons()
+    {
+        if (_buttonClose != null)
+        {
+            _buttonClose.UnBindOnClickButtonEvent(OnClickClose);
+        }
+
+        if (_buttonFormation != null)
+        {
+            _buttonFormation.UnBindOnClickButtonEvent(OnClickFormation);
         }
 
         if (_buttonSubstitute != null)
         {
-            _buttonSubstitute.gameObject.SetActive(true);
+            _buttonSubstitute.UnBindOnClickButtonEvent(OnClickSubstitute);
         }
 
-        ApplyFormationSlots("4-3-3");
-        CloseDropdownPanel();
+        if (_button433 != null)
+        {
+            _button433.UnBindOnClickButtonEvent(OnClick433);
+        }
+
+        if (_button442 != null)
+        {
+            _button442.UnBindOnClickButtonEvent(OnClick442);
+        }
+
+        if (_button451 != null)
+        {
+            _button451.UnBindOnClickButtonEvent(OnClick451);
+        }
+
+        if (_button352 != null)
+        {
+            _button352.UnBindOnClickButtonEvent(OnClick352);
+        }
+
+        if (_button343 != null)
+        {
+            _button343.UnBindOnClickButtonEvent(OnClick343);
+        }
+    }
+
+    private void OnClickFormation()
+    {
+        if (_formationListPanel != null)
+        {
+            isDropdownOpen = !isDropdownOpen;
+            _formationListPanel.SetActive(isDropdownOpen);
+        }
+    }
+
+    private void OnClick433()
+    {
+        ChangeFormation("4-3-3");
     }
 
     private void OnClick442()
     {
-        if (currentFormation == "4-4-2")
-        {
-            CloseDropdownPanel();
-            return;
-        }
-
-        Debug.Log("4-4-2 포메이션 선택됨");
-        currentFormation = "4-4-2";
-
-        if (_textFormationButton != null)
-        {
-            _textFormationButton.text = "4-4-2";
-        }
-
-        if (_slotGK != null)
-        {
-            _slotGK.SetActive(true);
-        }
-
-        if (_buttonSubstitute != null)
-        {
-            _buttonSubstitute.gameObject.SetActive(true);
-        }
-
-        ApplyFormationSlots("4-4-2");
-        CloseDropdownPanel();
+        ChangeFormation("4-4-2");
     }
 
     private void OnClick451()
     {
-        if (currentFormation == "4-5-1")
-        {
-            CloseDropdownPanel();
-            return;
-        }
-
-        Debug.Log("4-5-1 포메이션 선택됨");
-        currentFormation = "4-5-1";
-
-        if (_textFormationButton != null)
-        {
-            _textFormationButton.text = "4-5-1";
-        }
-
-        if (_slotGK != null)
-        {
-            _slotGK.SetActive(true);
-        }
-
-        if (_buttonSubstitute != null)
-        {
-            _buttonSubstitute.gameObject.SetActive(true);
-        }
-
-        ApplyFormationSlots("4-5-1");
-        CloseDropdownPanel();
+        ChangeFormation("4-5-1");
     }
 
     private void OnClick352()
     {
-        if (currentFormation == "3-5-2")
-        {
-            CloseDropdownPanel();
-            return;
-        }
-
-        Debug.Log("3-5-2 포메이션 선택됨");
-        currentFormation = "3-5-2";
-
-        if (_textFormationButton != null)
-        {
-            _textFormationButton.text = "3-5-2";
-        }
-
-        if (_slotGK != null)
-        {
-            _slotGK.SetActive(true);
-        }
-
-        if (_buttonSubstitute != null)
-        {
-            _buttonSubstitute.gameObject.SetActive(true);
-        }
-
-        ApplyFormationSlots("3-5-2");
-        CloseDropdownPanel();
+        ChangeFormation("3-5-2");
     }
 
     private void OnClick343()
     {
-        if (currentFormation == "3-4-3")
+        ChangeFormation("3-4-3");
+    }
+
+    private void ChangeFormation(string formationName)
+    {
+        if (currentFormation == formationName)
         {
             CloseDropdownPanel();
             return;
         }
 
-        Debug.Log("3-4-3 포메이션 선택됨");
-        currentFormation = "3-4-3";
+        Debug.Log($"{formationName} 포메이션 선택됨");
+        currentFormation = formationName;
 
         if (_textFormationButton != null)
         {
-            _textFormationButton.text = "3-4-3";
+            _textFormationButton.text = formationName;
         }
 
         if (_slotGK != null)
         {
-            _slotGK.SetActive(true);
+            _slotGK.gameObject.SetActive(true);
         }
 
         if (_buttonSubstitute != null)
@@ -575,28 +464,8 @@ public class SquadUi : UiBase
             _buttonSubstitute.gameObject.SetActive(true);
         }
 
-        ApplyFormationSlots("3-4-3");
+        ApplyFormationSlots(formationName);
         CloseDropdownPanel();
-    }
-
-    private void SetSelectedSlotsActive(GameObject[] slots, int[] actives)
-    {
-        for (int i = 0; i < slots.Length; i++)
-        {
-            if (slots[i] != null)
-            {
-                slots[i].SetActive(false);
-            }
-        }
-
-        for (int i = 0; i < actives.Length; i++)
-        {
-            int targetIndex = actives[i];
-            if (targetIndex >= 0 && targetIndex < slots.Length && slots[targetIndex] != null)
-            {
-                slots[targetIndex].SetActive(true);
-            }
-        }
     }
 
     private void CloseDropdownPanel()
@@ -613,20 +482,9 @@ public class SquadUi : UiBase
         if (_panelSubRectTransform != null)
         {
             Vector2 currentPos = _panelSubRectTransform.anchoredPosition;
-
-            if (isSubPanelOpen == false)
-            {
-                currentPos.y = 0f;
-                _panelSubRectTransform.anchoredPosition = currentPos;
-                isSubPanelOpen = true;
-            }
-
-            else
-            {
-                currentPos.y = -250f;
-                _panelSubRectTransform.anchoredPosition = currentPos;
-                isSubPanelOpen = false;
-            }
+            isSubPanelOpen = !isSubPanelOpen;
+            currentPos.y = isSubPanelOpen ? 0f : -250f;
+            _panelSubRectTransform.anchoredPosition = currentPos;
         }
     }
 
