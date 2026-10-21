@@ -37,12 +37,18 @@ public class UiButton : MonoBehaviour
     {
         if (Button_Base != null)
         {
+            ColorBlock colors = Button_Base.colors;
+            colors.disabledColor = colors.normalColor;
+            Button_Base.colors = colors;
             return;
         }
         var button = this.gameObject.GetComponentInChildren<Button>();
         if (button != null)
         {
             this.Button_Base = button;
+            ColorBlock colors = Button_Base.colors;
+            colors.disabledColor = colors.normalColor;
+            Button_Base.colors = colors;
         }
     }
 
@@ -73,6 +79,14 @@ public class UiButton : MonoBehaviour
         {
             bool currentActive = Image_Select.gameObject.activeSelf;
             Image_Select.gameObject.SetActive(!currentActive);
+        }
+    }
+
+    public void SetInteractable(bool isInteractable)
+    {
+        if (Button_Base != null)
+        {
+            Button_Base.interactable = isInteractable;
         }
     }
 }

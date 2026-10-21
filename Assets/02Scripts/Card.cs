@@ -33,6 +33,7 @@ public class Card : MonoBehaviour
         if (_buttonCard != null)
         {
             _buttonCard.BindOnClickButtonEvent(OnClickCard);
+            _buttonCard.SetInteractable(false);
         }
     }
 
@@ -40,6 +41,26 @@ public class Card : MonoBehaviour
     {
         OnClickCardAction = null;
         TargetUserCardData = null;
+    }
+
+    public void EnableCardButton(Action<Card> clickAction)
+    {
+        OnClickCardAction = clickAction;
+
+        if (_buttonCard != null)
+        {
+            _buttonCard.SetInteractable(true);
+        }
+    }
+
+    public void DisableCardButton()
+    {
+        OnClickCardAction = null;
+
+        if (_buttonCard != null)
+        {
+            _buttonCard.SetInteractable(false);
+        }
     }
 
     public void SetUpCard(PlayerData playerData)
