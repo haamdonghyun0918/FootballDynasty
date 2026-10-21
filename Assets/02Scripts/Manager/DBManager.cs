@@ -260,4 +260,125 @@ public class DBManager : MonoBehaviour
         }
         return false;
     }
+
+    public bool SaveUserFormation(string userId, string formation)
+    {
+        string connString = DBConfig.GetConnection();
+        
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                string query = "UPDATE userinfo SET Formation = @formation WHERE UserId = @userId";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@formation", formation);
+                    cmd.Parameters.AddWithValue("@userId", userId);
+
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"포메이션 저장 실패: {ex.Message}");
+                return false;
+            }
+        }
+    }
+
+    public string GetUserFormation(string userId)
+    {
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                string query = "SELECT Formation FROM userinfo WHERE UserId = @userId";
+
+                using ( MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    object result = cmd.ExecuteScalar();
+
+                    return result != null ? result.ToString() : string.Empty;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"포메이션 조회 실패: {ex.Message}");
+                return string.Empty;
+            }
+        }
+    }
+
+    public bool SaveUserSquadSlot(string userId, string slotKey, int instanceId)
+    {
+        string connString = DBConfig.GetConnection();
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+                
+                string query = @"INSERT INTO usersquad (UserId, SlotKey, InstanceId) VALUES (@userId, @slotKey, @instanceId) ON DUPLICATE KEY UPDATE InstanceId = @instanceId";
+                
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("@slotKey", slotKey);
+                    cmd.Parameters.AddWithValue("@instanceId", instanceId);
+                    cmd.ExecuteNonQuery();
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"스쿼드 슬롯 저장 실패 ({slotKey}): {ex.Message}");
+                return false;
+            }
+        }
+    }
+
+    public Dictionary<string, int> GetUserSquadSlots(string userId)
+    {
+        Dictionary<string, int> squadDict = new Dictionary<string, int>();
+        
+        string connString = DBConfig.GetConnection();
+        
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+                
+                string query = "SELECT SlotKey, InstanceId FROM usersquad WHERE UserId = @userId";
+                
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string slotKey = reader.GetString("SlotKey");
+                            int instanceId = reader.IsDBNull(reader.GetOrdinal("InstanceId")) ? -1 : reader.GetInt32("InstanceId");
+                            squadDict[slotKey] = instanceId;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"스쿼드 슬롯 조회 실패: {ex.Message}");
+            }
+        }
+        return squadDict;
+    }
 }
