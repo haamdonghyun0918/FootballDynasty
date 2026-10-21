@@ -240,8 +240,8 @@ public class SquadFilterUi : UiBase, ICardFilterable
 
                     _cardPool[i].gameObject.SetActive(true);
                     _cardPool[i].SetTargetUserCardData(cardData);
-                    _cardPool[i].OnClickCardAction = OnSelectCardFromFilter;
                     _cardPool[i].SetUpCard(cardData.StaticData);
+                    _cardPool[i].EnableCardButton(OnSelectCardFromFilter);
                 }
 
                 else

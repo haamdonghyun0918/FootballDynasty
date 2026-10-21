@@ -65,6 +65,7 @@ public class SquadSlot : MonoBehaviour
             SpawnedCard.gameObject.SetActive(true);
             SpawnedCard.SetTargetUserCardData(userCardData);
             SpawnedCard.SetUpCard(userCardData.StaticData);
+            SpawnedCard.EnableCardButton(OnClickSpawnedCard);
         }
 
     }
@@ -80,6 +81,14 @@ public class SquadSlot : MonoBehaviour
     }
 
     private void OnClickSlot()
+    {
+        if (_onClickSlotCallback != null)
+        {
+            _onClickSlotCallback.Invoke(this);
+        }
+    }
+
+    private void OnClickSpawnedCard(Card clickedCard)
     {
         if (_onClickSlotCallback != null)
         {

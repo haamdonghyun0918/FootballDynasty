@@ -465,6 +465,7 @@ public class SquadUi : UiBase
         }
 
         ApplyFormationSlots(formationName);
+        SetSlotArrayActive(_subSlots, true);
         CloseDropdownPanel();
     }
 
