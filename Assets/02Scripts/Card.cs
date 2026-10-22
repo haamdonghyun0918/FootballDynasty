@@ -6,20 +6,29 @@ using UnityEngine.UI;
 
 public class Card : MonoBehaviour
 {
-    [Header("Card Text")]
+    [Header("Card Front, Back")]
+    [SerializeField] private GameObject card_Front;
+    [SerializeField] private GameObject card_Back;
+
+
+    [Header("Card Common")]
+    [SerializeField] private Image image_Player;
     [SerializeField] private TMP_Text text_Name;
-    [SerializeField] private TMP_Text text_Season;
     [SerializeField] private TMP_Text text_Attoverall;
     [SerializeField] private TMP_Text text_Midoverall;
     [SerializeField] private TMP_Text text_Defoverall;
+    [SerializeField] private UiButton _buttonCard;
+    public Action<Card> OnClickCardAction;
 
-    [Header("Card Image")]
+    [Header("Card Front Image")]
+    [SerializeField] private TMP_Text text_Season;
     [SerializeField] private Image image_Team;
     [SerializeField] private Image image_Pos;
 
-    [Header("Function Button")]
-    [SerializeField] private UiButton _buttonCard;
-    public Action<Card> OnClickCardAction;
+    [Header("Card Back Skill")]
+    [SerializeField] private Image skill_FW;
+    [SerializeField] private Image skill_MF;
+    [SerializeField] private Image skill_DF;
 
     public UserCardData TargetUserCardData { get; private set; }
 
@@ -63,6 +72,19 @@ public class Card : MonoBehaviour
         }
     }
 
+    public void SetCardBase(bool isFront)
+    {
+        if (card_Front != null)
+        {
+            card_Front.SetActive(isFront);
+        }
+
+        if (card_Back != null)
+        {
+            card_Back.SetActive(isFront == false);
+        }
+    }
+
     public void SetUpCard(PlayerData playerData)
     {
         if (playerData == null)
@@ -70,6 +92,8 @@ public class Card : MonoBehaviour
             Debug.LogError("선수 데이터가 존재하지 않습니다.");
             return;
         }
+
+        SetCardBase(true);
 
         text_Name.text = playerData.Name;
         text_Season.text = playerData.Season;
