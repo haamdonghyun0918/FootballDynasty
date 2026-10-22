@@ -174,7 +174,10 @@ public class CardInventoryUi : UiBase, ICardFilterable
         foreach (var userCard in _myCardList)
         {
             PlayerData player = userCard.StaticData;
-            if (player == null) continue;
+            if (player == null)
+            {
+                continue;
+            }
 
             bool matchesName = string.IsNullOrEmpty(searchKeyword) || (player.Name != null && player.Name.Contains(searchKeyword));
 
@@ -183,12 +186,28 @@ public class CardInventoryUi : UiBase, ICardFilterable
             {
                 matchesPosition = true;
             }
+
             else
             {
-                if (_filterFw && player.Pos == "FW") matchesPosition = true;
-                if (_filterMf && player.Pos == "MF") matchesPosition = true;
-                if (_filterDf && player.Pos == "DF") matchesPosition = true;
-                if (_filterGk && player.Pos == "GK") matchesPosition = true;
+                if (_filterFw && player.Pos == "FW")
+                {
+                    matchesPosition = true;
+                }
+
+                if (_filterMf && player.Pos == "MF")
+                {
+                    matchesPosition = true;
+                }
+
+                if (_filterDf && player.Pos == "DF")
+                {
+                    matchesPosition = true;
+                }
+
+                if (_filterGk && player.Pos == "GK")
+                {
+                    matchesPosition = true;
+                }
             }
 
             bool matchesTeam = string.IsNullOrEmpty(_selectedTeamName) || player.Team == _selectedTeamName;
@@ -206,6 +225,7 @@ public class CardInventoryUi : UiBase, ICardFilterable
     private async UniTaskVoid InitializeAndRefresh()
     {
         string currentUserId = DBManager.Instance.CurrentUserId;
+
         if (string.IsNullOrEmpty(currentUserId))
         {
             Debug.LogError("[CardInventoryUi] 로그인된 유저 ID가 없습니다!");
@@ -239,6 +259,7 @@ public class CardInventoryUi : UiBase, ICardFilterable
                 if (cardObj != null)
                 {
                     Card card;
+
                     if (cardObj.TryGetComponent<Card>(out card))
                     {
                         _cardPool.Add(card);
@@ -301,7 +322,9 @@ public class CardInventoryUi : UiBase, ICardFilterable
                 {
                     _cardPool[i].gameObject.SetActive(true);
                     _cardPool[i].SetUpCard(_filteredCardList[dataIndex].StaticData);
+                    _cardPool[i].EnableCardButton(CardFlip);
                 }
+
                 else
                 {
                     _cardPool[i].gameObject.SetActive(false);
@@ -382,5 +405,13 @@ public class CardInventoryUi : UiBase, ICardFilterable
         }
 
         EventSystem.current.SetSelectedGameObject(null);
+    }
+
+    private void CardFlip(Card clickedCard)
+    {
+        if (clickedCard != null)
+        {
+            clickedCard.FlipCard().Forget();
+        }
     }
 }

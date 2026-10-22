@@ -3,6 +3,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class Card : MonoBehaviour
 {
@@ -31,6 +32,9 @@ public class Card : MonoBehaviour
     [SerializeField] private Image skill_DF;
 
     public UserCardData TargetUserCardData { get; private set; }
+
+    private bool _isFront = true;
+    private bool _isFlipping = false;
 
     public void SetTargetUserCardData(UserCardData userCardData)
     {
@@ -138,6 +142,25 @@ public class Card : MonoBehaviour
                 Debug.LogWarning($"포지션 이미지를 찾을 수 없습니다: {playerData.Pos}");
             }
         }
+    }
+
+    public async UniTaskVoid FlipCard()
+    {
+        if (_isFlipping)
+        {
+            return;
+        }
+        _isFlipping = true;
+
+        float duration = 0.2f;
+        await transform.DOScaleX(0f, duration / 2f).AsyncWaitForCompletion();
+
+        _isFront = _isFront == false;
+        SetCardBase(_isFront);
+
+        await transform.DOScaleX(1f, duration / 2f).AsyncWaitForCompletion();
+
+        _isFlipping = false;
     }
 
     private void OnClickCard()
