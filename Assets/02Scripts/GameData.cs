@@ -17,4 +17,5 @@ public class PlayerData : GameDataBase
     public string League;
     public string Team;
     public string Season;
+    public string ImageAddress;
 }
