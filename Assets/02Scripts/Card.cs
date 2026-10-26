@@ -142,6 +142,22 @@ public class Card : MonoBehaviour
                 Debug.LogWarning($"포지션 이미지를 찾을 수 없습니다: {playerData.Pos}");
             }
         }
+
+        if (image_Player != null && (string.IsNullOrEmpty(playerData.ImageAddress) == false))
+        {
+            Sprite playerSprite = await ResourceManager.Instance.LoadAsset<Sprite>(playerData.ImageAddress);
+
+            if (playerSprite != null)
+            {
+                image_Player.sprite = playerSprite;
+                image_Player.gameObject.SetActive(true);
+            }
+
+            else
+            {
+                Debug.Log($"포지션 이미지를 찾을 수 없습니다: {playerData.Pos}");
+            }
+        }
     }
 
     public async UniTaskVoid FlipCard()
