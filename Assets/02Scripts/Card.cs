@@ -101,10 +101,14 @@ public class Card : MonoBehaviour
 
         text_Name.text = playerData.Name;
         text_Season.text = playerData.Season;
-
         text_Attoverall.text = playerData.Att.ToString();
         text_Midoverall.text = playerData.Mid.ToString();
         text_Defoverall.text = playerData.Def.ToString();
+
+        if (image_Player != null)
+        {
+            image_Player.sprite = null;
+        }
 
         LoadCardImagesAsync(playerData).Forget();
     }

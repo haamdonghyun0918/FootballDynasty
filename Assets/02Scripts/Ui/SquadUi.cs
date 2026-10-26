@@ -176,18 +176,42 @@ public class SquadUi : UiBase
 
         _currentSelectedSlot = clickedSlot;
         List<string> excludedIds = new List<string>();
+        bool isClickedSub = IsSubSlot(clickedSlot);
 
         for (int i = 0; i < _allSlots.Count; i++)
         {
             SquadSlot slot = _allSlots[i];
 
-            if (slot != clickedSlot && slot.TargetUserCardData != null)
+            if (slot == clickedSlot)
             {
+                continue;
+            }
+
+            if (slot.TargetUserCardData != null)
+            {
+                bool isTargetSub = IsSubSlot(slot);
                 excludedIds.Add(slot.TargetUserCardData.InstanceId.ToString());
             }
         }
 
         OpenFilterUiAsync(clickedSlot.SlotPosition, excludedIds).Forget();
+    }
+
+    private bool IsSubSlot(SquadSlot targetSlot)
+    {
+        if (_subSlots == null)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < _subSlots.Length; i++)
+        {
+            if (_subSlots[i] == targetSlot)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private async UniTaskVoid OpenFilterUiAsync(string posFilter, List<string> excludedIds)
