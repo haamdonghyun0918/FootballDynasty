@@ -1,0 +1,137 @@
+[
+  {
+    "Id": "Skill_01",
+    "Name": "언더독",
+    "Pos": "FW",
+    "Description": "상대 선수보다 능력치가 낮을 시 공격 능력치를 10 증가시킵니다.",
+    "Increase": 10,
+    "Decrease": 0,
+    "ImageAddress": "Skill_01"
+  },
+  {
+    "Id": "Skill_02",
+    "Name": "언더독",
+    "Pos": "MF",
+    "Description": "상대 선수보다 능력치가 낮을 시 미드 능력치를 10 증가시킵니다.",
+    "Increase": 10,
+    "Decrease": 0,
+    "ImageAddress": "Skill_02"
+  },
+  {
+    "Id": "Skill_03",
+    "Name": "언더독",
+    "Pos": "DF",
+    "Description": "상대 선수보다 능력치가 낮을 시 수비 능력치를 10 증가시킵니다.",
+    "Increase": 10,
+    "Decrease": 0,
+    "ImageAddress": "Skill_03"
+  },
+  {
+    "Id": "Skill_04",
+    "Name": "탑독",
+    "Pos": "FW",
+    "Description": "상대 선수보다 능력치가 높을 시 상대 수비 능력치를 10 감소시킵니다.",
+    "Increase": 0,
+    "Decrease": 10,
+    "ImageAddress": "Skill_04"
+  },
+  {
+    "Id": "Skill_05",
+    "Name": "탑독",
+    "Pos": "MF",
+    "Description": "상대 선수보다 능력치가 높을 시 상대 미드 능력치를 10 감소시킵니다.",
+    "Increase": 0,
+    "Decrease": 10,
+    "ImageAddress": "Skill_05"
+  },
+  {
+    "Id": "Skill_06",
+    "Name": "탑독",
+    "Pos": "DF",
+    "Description": "상대 선수보다 능력치가 높을 시 공격 능력치를 10 감소시킵니다.",
+    "Increase": 0,
+    "Decrease": 10,
+    "ImageAddress": "Skill_06"
+  },
+  {
+    "Id": "Skill_07",
+    "Name": "원터치 피니시",
+    "Pos": "FW",
+    "Description": "공격 능력치를 5 증가시키고 상대 수비 능력치를 5 감소시킵니다.",
+    "Increase": 5,
+    "Decrease": 5,
+    "ImageAddress": "Skill_07"
+  },
+  {
+    "Id": "Skill_08",
+    "Name": "아크로바틱",
+    "Pos": "FW",
+    "Description": "공격 능력치를 15 증가시킵니다. 단, 상대 수비 능력치가 더 높다면 5 증가합니다.",
+    "Increase": 15,
+    "Decrease": 0,
+    "ImageAddress": "Skill_08"
+  },
+  {
+    "Id": "Skill_09",
+    "Name": "주장의 품격",
+    "Pos": "FW",
+    "Description": "이 선수가 주장일 시 전체 능력치를 5 증가시킵니다. 승리할 시 2점을 얻습니다. 패배할 시 1점을 잃습니다.",
+    "Increase": 5,
+    "Decrease": 0,
+    "ImageAddress": "Skill_09"
+  },
+  {
+    "Id": "Skill_10",
+    "Name": "주장의 품격",
+    "Pos": "MF",
+    "Description": "이 선수가 주장일 시 전체 능력치를 5 증가시킵니다. 승리할 시 2점을 얻습니다. 패배할 시 2점을 잃습니다.",
+    "Increase": 5,
+    "Decrease": 0,
+    "ImageAddress": "Skill_10"
+  },
+  {
+    "Id": "Skill_11",
+    "Name": "주장의 품격",
+    "Pos": "DF",
+    "Description": "이 선수가 주장일 시 전체 능력치를 5 증가시킵니다. 승리할 시 2점을 얻습니다. 패배할 시 3점을 잃습니다.",
+    "Increase": 5,
+    "Decrease": 0,
+    "ImageAddress": "Skill_11"
+  },
+  {
+    "Id": "Skill_12",
+    "Name": "마에스테로",
+    "Pos": "MF",
+    "Description": "미드 능력치를 5 증가시키고 상대 선수의 미드 능력치를 5 감소시킵니다.",
+    "Increase": 5,
+    "Decrease": 5,
+    "ImageAddress": "Skill_12"
+  },
+  {
+    "Id": "Skill_13",
+    "Name": "킬패스",
+    "Pos": "MF",
+    "Description": "미드 능력치를 15 증가시킵니다. 단, 상대 미드 능력치가 더 높다면 5 증가합니다.",
+    "Increase": 15,
+    "Decrease": 0,
+    "ImageAddress": "Skill_13"
+  },
+  {
+    "Id": "Skill_14",
+    "Name": "압박수비",
+    "Pos": "DF",
+    "Description": "수비 능력치를 5 증사시키고 상대 공격 능력치를 5 감소시킵니다.",
+    "Increase": 5,
+    "Decrease": 5,
+    "ImageAddress": "Skill_14"
+  },
+  {
+    "Id": "Skill_15",
+    "Name": "슬라이딩 태클",
+    "Pos": "DF",
+    "Description": "수비 능력치를 15 증가시킵니다. 단, 상대 공격 능력치가 더 높다면 5 증가합니다.",
+    "Increase": 15,
+    "Decrease": 0,
+    "ImageAddress": "Skill_15"
+  }
+]
