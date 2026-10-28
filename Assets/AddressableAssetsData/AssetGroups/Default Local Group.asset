@@ -150,6 +150,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0dda9a3d9dc899a42984640d3e6a08c0
+    m_Address: Skill_06
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0e042b2cf7e1037458e6aa842611d489
     m_Address: Player_106
     m_ReadOnly: 0
@@ -415,6 +420,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 27d57118d14d8e9439cdf4138a038c01
+    m_Address: Skill_11
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 283846ef977914548a34224fe5947475
     m_Address: Player_199
     m_ReadOnly: 0
@@ -575,6 +585,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3e41f69a24527a44e97ae64ae9a591dd
+    m_Address: Skill_07
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3e814b2f7681e92419da7e98929f5423
     m_Address: Player_348
     m_ReadOnly: 0
@@ -707,6 +722,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4a0e022c1eeccce4b8da16bdfc5bb4ff
     m_Address: Player_179
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4a776cb414175d94d81cd51d83cc96d4
+    m_Address: Skill_08
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -1025,6 +1045,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 68836ccbe9080824386fa0b036ddb165
+    m_Address: Skill_05
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 68851452c31bdea49a36ed007768cb32
     m_Address: "\uCF00\uC774\uD504\uD0C0\uC6B4 \uB77C\uC774\uC5B8\uC988"
     m_ReadOnly: 0
@@ -1252,6 +1277,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 81aee5302815f3a47a3f3d05ef98b483
     m_Address: Player_291
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 829ec39fb2e2d924d95771861da24403
+    m_Address: Skill_15
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -1520,6 +1550,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 99597d36937253b4fb7d53ccfba2f709
+    m_Address: Skill_12
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9ae7c24a33dfc474ba5aa77a19027b0f
     m_Address: Player_63
     m_ReadOnly: 0
@@ -1630,6 +1665,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a547395f637392347b3ea8b526c8f2f6
+    m_Address: Skill_09
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a5731768d21084d428ecaf20a4ab7388
+    m_Address: Skill_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a8faed2c787c98a4bb276311fa03055b
     m_Address: "\uB3C4\uCFC4 \uC774\uAE00\uC2A4"
     m_ReadOnly: 0
@@ -1677,6 +1722,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: acc5cc04363c7a041b4fa186d07e942a
     m_Address: Player_231
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: acc74531ad5103745ad828a250095b87
+    m_Address: Skill_03
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -1750,6 +1800,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b474c877c51497c479c43e0c2a771767
+    m_Address: Skill_04
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b4d69edbf58f249489ac00de0852f286
     m_Address: Player_216
     m_ReadOnly: 0
@@ -1807,6 +1862,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bb366585d63f40846be2056082f1da56
     m_Address: Player_371
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb3f94a9c5e01594da1afde3ae322ca8
+    m_Address: Skill_10
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -1942,6 +2002,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c54a72cf62bcc2e4f81cd138cb8c6636
     m_Address: Player_164
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c644f906035d1f947b75f960f4fc25ed
+    m_Address: Skill_14
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -2235,6 +2300,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ea789a687d947c244bbad8982edc07cc
+    m_Address: Skill_13
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: eae670329ca42e543b4ff6a13ed8cb11
     m_Address: Player_211
     m_ReadOnly: 0
@@ -2262,6 +2332,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ecff40731f0b31e498158867c41458ba
     m_Address: Player_124
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ed2d5538ef0af144caca07632a9f7a88
+    m_Address: Skill_02
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
