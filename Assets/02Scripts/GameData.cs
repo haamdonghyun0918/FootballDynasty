@@ -27,4 +27,5 @@ public class SkillData : GameDataBase
     public string Description;
     public int Increase;
     public int Decrease;
+    public string ImageAddress;
 }

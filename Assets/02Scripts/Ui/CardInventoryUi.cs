@@ -321,7 +321,7 @@ public class CardInventoryUi : UiBase, ICardFilterable
                 if (dataIndex < _filteredCardList.Count)
                 {
                     _cardPool[i].gameObject.SetActive(true);
-                    _cardPool[i].SetUpCard(_filteredCardList[dataIndex].StaticData);
+                    _cardPool[i].SetUpCard(_filteredCardList[dataIndex]);
                     _cardPool[i].EnableCardButton(CardFlip);
                 }
 

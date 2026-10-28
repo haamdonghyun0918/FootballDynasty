@@ -89,6 +89,7 @@ public class Card : MonoBehaviour
         }
     }
 
+    // 카드 도감에 있는 카드들을 위하여 사용
     public void SetUpCard(PlayerData playerData)
     {
         if (playerData == null)
@@ -97,6 +98,8 @@ public class Card : MonoBehaviour
             return;
         }
 
+        _isFront = true;
+        _isFlipping = false;
         SetCardBase(true);
 
         text_Name.text = playerData.Name;
@@ -111,6 +114,22 @@ public class Card : MonoBehaviour
         }
 
         LoadCardImagesAsync(playerData).Forget();
+    }
+
+    // 실제 내가 가진 선수들에 대하여 사용
+    public void SetUpCard(UserCardData userCardData)
+    {
+        if (userCardData == null || userCardData.StaticData == null)
+        {
+            Debug.LogError("유저 카드 데이터가 존재하지 않습니다.");
+            return;
+        }
+
+        TargetUserCardData = userCardData;
+
+        SetUpCard(userCardData.StaticData);
+
+        LoadSkillImagesAsync(userCardData).Forget();
     }
 
     private async UniTaskVoid LoadCardImagesAsync(PlayerData playerData)
@@ -160,6 +179,39 @@ public class Card : MonoBehaviour
             else
             {
                 Debug.Log($"포지션 이미지를 찾을 수 없습니다: {playerData.Pos}");
+            }
+        }
+    }
+
+    private async UniTaskVoid LoadSkillImagesAsync(UserCardData userCardData)
+    {
+        if (skill_FW != null && userCardData.SkillFwData != null)
+        {
+            Sprite fwSprite = await ResourceManager.Instance.LoadAsset<Sprite>(userCardData.SkillFwData.ImageAddress);
+            if (fwSprite != null)
+            {
+                skill_FW.sprite = fwSprite;
+                skill_FW.gameObject.SetActive(true);
+            }
+        }
+
+        if (skill_MF != null && userCardData.SkillMfData != null)
+        {
+            Sprite mfSprite = await ResourceManager.Instance.LoadAsset<Sprite>(userCardData.SkillMfData.ImageAddress);
+            if (mfSprite != null)
+            {
+                skill_MF.sprite = mfSprite;
+                skill_MF.gameObject.SetActive(true);
+            }
+        }
+
+        if (skill_DF != null && userCardData.SkillDfData != null)
+        {
+            Sprite dfSprite = await ResourceManager.Instance.LoadAsset<Sprite>(userCardData.SkillDfData.ImageAddress);
+            if (dfSprite != null)
+            {
+                skill_DF.sprite = dfSprite;
+                skill_DF.gameObject.SetActive(true);
             }
         }
     }
