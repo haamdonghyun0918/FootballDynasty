@@ -8,7 +8,7 @@ public class UserCardData
     public string PlayerId;
     public string SkillFWId;
     public string SkillMFId;
-    public string SKillDFId;
+    public string SkillDFId;
 
     public PlayerData StaticData
     {
@@ -38,7 +38,7 @@ public class UserCardData
     {
         get
         {
-            return GameDataManager.Instance.GetData<SkillData>(SKillDFId);
+            return GameDataManager.Instance.GetData<SkillData>(SkillDFId);
         }
     }
 }

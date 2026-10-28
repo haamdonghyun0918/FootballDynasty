@@ -15,7 +15,6 @@ public class DBManager : MonoBehaviour
         {
             Instance = this;
         }
-
         else
         {
             Destroy(gameObject);
@@ -25,20 +24,19 @@ public class DBManager : MonoBehaviour
     private void Start()
     {
         string connString = DBConfig.GetConnection();
-        
+
         using (MySqlConnection conn = new MySqlConnection(connString))
         {
             try
             {
                 conn.Open();
-                
+
                 Debug.Log("MYSQL 연결 성공");
 
                 string query = "SELECT * FROM userinfo";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
-
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -61,7 +59,7 @@ public class DBManager : MonoBehaviour
     public bool InsertUser(string userId, string userPw, string userName)
     {
         string connString = DBConfig.GetConnection();
-        
+
         using (MySqlConnection conn = new MySqlConnection(connString))
         {
             try
@@ -195,9 +193,9 @@ public class DBManager : MonoBehaviour
             {
                 conn.Open();
 
-                string query = "SELECT InstanceId, UserId, PlayerId FROM usercards WHERE UserId = @userId";
+                string query = "SELECT InstanceId, UserId, PlayerId, SkillFWId, SkillMFId, SkillDFId FROM usercards WHERE UserId = @userId";
 
-                using ( MySqlCommand cmd = new MySqlCommand(query, conn))
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@userId", userId);
 
@@ -209,7 +207,10 @@ public class DBManager : MonoBehaviour
                             {
                                 InstanceId = reader.GetInt32("InstanceId"),
                                 UserId = reader.GetString("UserId"),
-                                PlayerId = reader.GetString("PlayerId")
+                                PlayerId = reader.GetString("PlayerId"),
+                                SkillFWId = reader.GetString("SkillFWId"),
+                                SkillMFId = reader.GetString("SkillMFId"),
+                                SkillDFId = reader.GetString("SkillDFId")
                             };
 
                             cardList.Add(card);
@@ -228,6 +229,52 @@ public class DBManager : MonoBehaviour
 
     public bool InsertUserCard(string userId, string playerId)
     {
+        var allSkills = GameDataManager.Instance.GetAllData<SkillData>();
+
+        List<SkillData> fwSkills = new List<SkillData>();
+        List<SkillData> mfSkills = new List<SkillData>();
+        List<SkillData> dfSkills = new List<SkillData>();
+
+        if (allSkills != null)
+        {
+            foreach (var skill in allSkills)
+            {
+                if (skill.Pos == "FW")
+                {
+                    fwSkills.Add(skill);
+                }
+                else if (skill.Pos == "MF")
+                {
+                    mfSkills.Add(skill);
+                }
+                else if (skill.Pos == "DF")
+                {
+                    dfSkills.Add(skill);
+                }
+            }
+        }
+
+        string randomFwId = string.Empty;
+        if (fwSkills.Count > 0)
+        {
+            int index = UnityEngine.Random.Range(0, fwSkills.Count);
+            randomFwId = fwSkills[index].Id;
+        }
+
+        string randomMfId = string.Empty;
+        if (mfSkills.Count > 0)
+        {
+            int index = UnityEngine.Random.Range(0, mfSkills.Count);
+            randomMfId = mfSkills[index].Id;
+        }
+
+        string randomDfId = string.Empty;
+        if (dfSkills.Count > 0)
+        {
+            int index = UnityEngine.Random.Range(0, dfSkills.Count);
+            randomDfId = dfSkills[index].Id;
+        }
+
         string connString = DBConfig.GetConnection();
 
         using (MySqlConnection conn = new MySqlConnection(connString))
@@ -236,18 +283,21 @@ public class DBManager : MonoBehaviour
             {
                 conn.Open();
 
-                string query = "INSERT INTO usercards (UserId, PlayerId) VALUES (@userId, @playerId)";
+                string query = "INSERT INTO usercards (UserId, PlayerId, SkillFWId, SkillMFId, SkillDFId) VALUES (@userId, @playerId, @skillFW, @skillMF, @skillDF)";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@userId", userId);
                     cmd.Parameters.AddWithValue("@playerId", playerId);
+                    cmd.Parameters.AddWithValue("@skillFW", randomFwId);
+                    cmd.Parameters.AddWithValue("@skillMF", randomMfId);
+                    cmd.Parameters.AddWithValue("@skillDF", randomDfId);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
 
                     if (rowsAffected > 0)
                     {
-                        Debug.Log($"[DBManager] 카드 획득 성공! 유저: {userId}, 선수: {playerId}");
+                        Debug.Log($"[DBManager] 카드 및 랜덤 스킬 획득 성공! 유저: {userId}, 선수: {playerId}");
                         return true;
                     }
                 }
@@ -263,7 +313,7 @@ public class DBManager : MonoBehaviour
     public bool SaveUserFormation(string userId, string formation)
     {
         string connString = DBConfig.GetConnection();
-        
+
         using (MySqlConnection conn = new MySqlConnection(connString))
         {
             try
@@ -300,7 +350,7 @@ public class DBManager : MonoBehaviour
 
                 string query = "SELECT Formation FROM userinfo WHERE UserId = @userId";
 
-                using ( MySqlCommand cmd = new MySqlCommand(query, conn))
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@userId", userId);
                     object result = cmd.ExecuteScalar();
@@ -324,9 +374,9 @@ public class DBManager : MonoBehaviour
             try
             {
                 conn.Open();
-                
+
                 string query = @"INSERT INTO usersquad (UserId, SlotKey, InstanceId) VALUES (@userId, @slotKey, @instanceId) ON DUPLICATE KEY UPDATE InstanceId = @instanceId";
-                
+
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@userId", userId);
@@ -348,17 +398,17 @@ public class DBManager : MonoBehaviour
     public Dictionary<string, int> GetUserSquadSlots(string userId)
     {
         Dictionary<string, int> squadDict = new Dictionary<string, int>();
-        
+
         string connString = DBConfig.GetConnection();
-        
+
         using (MySqlConnection conn = new MySqlConnection(connString))
         {
             try
             {
                 conn.Open();
-                
+
                 string query = "SELECT SlotKey, InstanceId FROM usersquad WHERE UserId = @userId";
-                
+
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@userId", userId);
