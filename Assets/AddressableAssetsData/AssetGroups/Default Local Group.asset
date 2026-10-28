@@ -2290,6 +2290,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e9905d4d676e21f42afc0cc703677432
+    m_Address: LeagueSelectUi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e990707e540d076408ce7ec7838374fe
     m_Address: Player_390
     m_ReadOnly: 0

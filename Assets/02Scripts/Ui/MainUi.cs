@@ -46,6 +46,11 @@ public class MainUi : UiBase
         {
             button_PickUp.BindOnClickButtonEvent(OnClickPickUp);
         }
+
+        if (button_League)
+        {
+            button_League.BindOnClickButtonEvent(OnClickSingleMode);
+        }
     }
 
     private async void OnClickDictionary()
@@ -66,5 +71,10 @@ public class MainUi : UiBase
     private async void OnClickPickUp()
     {
         await UiManager.Instance.OpenUi<PickUpUi>();
+    }
+
+    private async void OnClickSingleMode()
+    {
+        await UiManager.Instance.OpenUi<LeagueSelectUi>();
     }
 }
