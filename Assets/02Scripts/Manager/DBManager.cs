@@ -430,4 +430,106 @@ public class DBManager : MonoBehaviour
         }
         return squadDict;
     }
+
+    public bool InsertSingleLeagueSeason(string userId, int difficultyIndex, string selectedTeamsCsv)
+    {
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+                string query = "INSERT INTO singleleague (UserId, Difficulty, SelectedTeams, CurrentRound, Wins, Draws, Losses) VALUES (@userId, @diff, @teams, 0, 0, 0, 0)";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("@diff", difficultyIndex);
+                    cmd.Parameters.AddWithValue("@teams", selectedTeamsCsv);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    return rowsAffected > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"싱글 리그 시즌 저장 실패: {ex.Message}");
+                return false;
+            }
+        }
+    }
+
+    public SingleLeagueData GetSingleLeagueSeason(string userId)
+    {
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+                string query = "SELECT UserId, Difficulty, SelectedTeams, CurrentRound, Wins, Draws, Losses FROM singleleague WHERE UserId = @userId";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            SingleLeagueData data = new SingleLeagueData();
+                            data.userId = reader.GetString("UserId");
+                            data.difficultyIndex = reader.GetInt32("Difficulty");
+                            data.selectedTeamsCsv = reader.GetString("SelectedTeams");
+                            data.currentRound = reader.GetInt32("CurrentRound");
+                            data.wins = reader.GetInt32("Wins");
+                            data.draws = reader.GetInt32("Draws");
+                            data.losses = reader.GetInt32("Losses");
+
+                            return data;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"싱글 리그 시즌 조회 실패: {ex.Message}");
+            }
+        }
+
+        return null;
+    }
+
+    public bool UpdateSingleLeagueProgress(string userId, int currentRound, int wins, int draws, int losses)
+    {
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                string query = "UPDATE singleleague SET CurrentRound = @round, Wins = @wins, Draws = @draws, Losses = @losses WHERE UserId = @userId";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("@round", currentRound);
+                    cmd.Parameters.AddWithValue("@wins", wins);
+                    cmd.Parameters.AddWithValue("@draws", draws);
+                    cmd.Parameters.AddWithValue("@losses", losses);
+
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"싱글 리그 진척도 업데이트 실패: {ex.Message}");
+                return false;
+            }
+        }
+    }
 }
