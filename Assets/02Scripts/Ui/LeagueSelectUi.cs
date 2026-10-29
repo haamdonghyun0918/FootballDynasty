@@ -112,93 +112,108 @@ public class LeagueSelectUi : UiBase
         }
     }
 
-    private void OnClickAmatuer1()
+    private async void OnClickAmatuer1()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(0);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
-    private void OnClickAmatuer2()
+    private async void OnClickAmatuer2()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(1);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
-    private void OnClickAmatuer3()
+    private async void OnClickAmatuer3()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(2);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
-    private void OnClickSemiPro1()
+    private async void OnClickSemiPro1()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(3);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
-    private void OnClickSemiPro2()
+    private async void OnClickSemiPro2()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(4);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
-    private void OnClickSemiPro3()
+    private async void OnClickSemiPro3()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(5);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
-    private void OnClickPro1()
+    private async void OnClickPro1()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(6);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
-    private void OnClickPro2()
+    private async void OnClickPro2()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(7);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
-    private void OnClickPro3()
+    private async void OnClickPro3()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(8);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
-    private void OnClickWorldClass1()
+    private async void OnClickWorldClass1()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(9);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
-    private void OnClickWorldClass2()
+    private async void OnClickWorldClass2()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(10);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
-    private void OnClickWorldClass3()
+    private async void OnClickWorldClass3()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(11);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
-    private void OnClickLegendary1()
+    private async void OnClickLegendary1()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(12);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
-    private void OnClickLegendary2()
+    private async void OnClickLegendary2()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(13);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
-    private void OnClickLegendary3()
+    private async void OnClickLegendary3()
     {
         SingleModeManager.Instance.StartNewLeagueSeason(14);
+        await UiManager.Instance.OpenUi<SingleLeagueUi>();
         UiManager.Instance.CloseUi<LeagueSelectUi>();
     }
 
