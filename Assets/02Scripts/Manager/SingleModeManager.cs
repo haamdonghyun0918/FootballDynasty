@@ -8,7 +8,7 @@ public class SingleModeManager : MonoBehaviour
 
     private SingleLeagueMode _leagueMode = new SingleLeagueMode();
 
-    public SingleLeagueData CurrentSeasonData { get; private set; }
+    public SingleLeagueData CurrentSeasonData { get; set; }
 
     private void Awake()
     {

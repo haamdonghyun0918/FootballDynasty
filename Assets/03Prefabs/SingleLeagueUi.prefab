@@ -3723,6 +3723,8 @@ MonoBehaviour:
   text_Round: {fileID: 1252860472295265288}
   text_Home: {fileID: 7236422735241522733}
   text_Away: {fileID: 8811392920801363160}
+  image_Home: {fileID: 3790097603883153817}
+  image_Away: {fileID: 516886357681942922}
   button_Sim: {fileID: 7192397292235170765}
   button_Start: {fileID: 3845962341890142725}
 --- !u!1 &7738594608503395799
