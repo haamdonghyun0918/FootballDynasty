@@ -58,6 +58,7 @@ public class SingleModeManager : MonoBehaviour
             CurrentSeasonData.wins = 0;
             CurrentSeasonData.draws = 0;
             CurrentSeasonData.losses = 0;
+            CurrentSeasonData.points = 0;
 
             Debug.Log("[SingleModeManager] 시즌 시작 및 DB 저장 완료!");
         }
