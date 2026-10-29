@@ -75,6 +75,21 @@ public class MainUi : UiBase
 
     private async void OnClickSingleMode()
     {
-        await UiManager.Instance.OpenUi<LeagueSelectUi>();
+        string userId = DBManager.Instance.CurrentUserId;
+        if (userId != null)
+        {
+            SingleLeagueData activeSeason = DBManager.Instance.GetSingleLeagueSeason(userId);
+
+            if (activeSeason != null)
+            {
+                SingleModeManager.Instance.CurrentSeasonData = activeSeason;
+                await UiManager.Instance.OpenUi<SingleLeagueUi>();
+            }
+
+            else
+            {
+                await UiManager.Instance.OpenUi<LeagueSelectUi>();
+            }
+        }
     }
 }
