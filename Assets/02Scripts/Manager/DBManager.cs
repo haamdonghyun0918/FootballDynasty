@@ -440,7 +440,8 @@ public class DBManager : MonoBehaviour
             try
             {
                 conn.Open();
-                string query = "INSERT INTO singleleague (UserId, Difficulty, SelectedTeams, CurrentRound, Wins, Draws, Losses) VALUES (@userId, @diff, @teams, 0, 0, 0, 0)";
+
+                string query = "INSERT INTO singleleague (UserId, Difficulty, SelectedTeams, CurrentRound, Wins, Draws, Losses ,Points) VALUES (@userId, @diff, @teams, 0, 0, 0, 0, 0)";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
@@ -469,7 +470,7 @@ public class DBManager : MonoBehaviour
             try
             {
                 conn.Open();
-                string query = "SELECT UserId, Difficulty, SelectedTeams, CurrentRound, Wins, Draws, Losses FROM singleleague WHERE UserId = @userId";
+                string query = "SELECT UserId, Difficulty, SelectedTeams, CurrentRound, Wins, Draws, Losses, Points FROM singleleague WHERE UserId = @userId";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
@@ -487,6 +488,7 @@ public class DBManager : MonoBehaviour
                             data.wins = reader.GetInt32("Wins");
                             data.draws = reader.GetInt32("Draws");
                             data.losses = reader.GetInt32("Losses");
+                            data.points = reader.GetInt32("Points");
 
                             return data;
                         }
@@ -502,7 +504,7 @@ public class DBManager : MonoBehaviour
         return null;
     }
 
-    public bool UpdateSingleLeagueProgress(string userId, int currentRound, int wins, int draws, int losses)
+    public bool UpdateSingleLeagueProgress(string userId, int currentRound, int wins, int draws, int losses, int points)
     {
         string connString = DBConfig.GetConnection();
 
@@ -512,7 +514,7 @@ public class DBManager : MonoBehaviour
             {
                 conn.Open();
 
-                string query = "UPDATE singleleague SET CurrentRound = @round, Wins = @wins, Draws = @draws, Losses = @losses WHERE UserId = @userId";
+                string query = "UPDATE singleleague SET CurrentRound = @round, Wins = @wins, Draws = @draws, Losses = @losses, Points = @points WHERE UserId = @userId";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
@@ -521,6 +523,7 @@ public class DBManager : MonoBehaviour
                     cmd.Parameters.AddWithValue("@wins", wins);
                     cmd.Parameters.AddWithValue("@draws", draws);
                     cmd.Parameters.AddWithValue("@losses", losses);
+                    cmd.Parameters.AddWithValue("@points", points);
 
                     return cmd.ExecuteNonQuery() > 0;
                 }
