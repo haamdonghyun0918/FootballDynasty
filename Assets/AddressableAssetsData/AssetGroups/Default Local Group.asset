@@ -2515,6 +2515,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e2e38e64c0f69ba468526383eba6fe0e
+    m_Address: LeagueHistorySlot
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e38ad20dbee796844b22485151b2cd0a
     m_Address: Player_80
     m_ReadOnly: 0
