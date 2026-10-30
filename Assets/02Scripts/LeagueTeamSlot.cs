@@ -77,15 +77,6 @@ public class LeagueTeamSlot : MonoBehaviour
         }
 
         Sprite sprite = await ResourceManager.Instance.LoadAsset<Sprite>(teamName);
-        if (sprite != null)
-        {
-            image_Logo.sprite = sprite;
-            image_Logo.gameObject.SetActive(true);
-        }
-
-        else
-        {
-            image_Logo.gameObject.SetActive(false);
-        }
+        image_Logo.sprite = sprite;
     }
 }
