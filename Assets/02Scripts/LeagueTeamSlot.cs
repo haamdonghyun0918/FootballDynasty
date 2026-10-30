@@ -3,21 +3,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TeamStanding
-{
-    public string teamName;
-    public bool isPlayer;
-    public int wins;
-    public int draws;
-    public int losses;
-    public int points;
-
-    public int GetMatchesPlayed()
-    {
-        return wins + draws + losses;
-    }
-}
-
 public class LeagueTeamSlot : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI text_Rank;
