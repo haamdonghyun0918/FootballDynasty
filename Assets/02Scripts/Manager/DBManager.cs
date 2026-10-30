@@ -441,13 +441,15 @@ public class DBManager : MonoBehaviour
             {
                 conn.Open();
 
-                string query = "INSERT INTO singleleague (UserId, Difficulty, SelectedTeams, CurrentRound, Wins, Draws, Losses ,Points) VALUES (@userId, @diff, @teams, 0, 0, 0, 0, 0)";
+                string query = "INSERT INTO singleleague (UserId, Difficulty, SelectedTeams, CurrentRound, Wins, Draws, Losses ,Points, MatchHistory, AiResults) VALUES (@userId, @diff, @teams, 0, 0, 0, 0, 0, @history, @aiResults)";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@userId", userId);
                     cmd.Parameters.AddWithValue("@diff", difficultyIndex);
                     cmd.Parameters.AddWithValue("@teams", selectedTeamsCsv);
+                    cmd.Parameters.AddWithValue("@history", string.Empty);
+                    cmd.Parameters.AddWithValue("@aiResults", string.Empty);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
                     return rowsAffected > 0;
@@ -470,7 +472,8 @@ public class DBManager : MonoBehaviour
             try
             {
                 conn.Open();
-                string query = "SELECT UserId, Difficulty, SelectedTeams, CurrentRound, Wins, Draws, Losses, Points FROM singleleague WHERE UserId = @userId";
+
+                string query = "SELECT UserId, Difficulty, SelectedTeams, CurrentRound, Wins, Draws, Losses, Points, MatchHistory, AiResults FROM singleleague WHERE UserId = @userId";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
@@ -489,6 +492,28 @@ public class DBManager : MonoBehaviour
                             data.draws = reader.GetInt32("Draws");
                             data.losses = reader.GetInt32("Losses");
                             data.points = reader.GetInt32("Points");
+
+                            int matchHistoryOrdinal = reader.GetOrdinal("MatchHistory");
+                            if (reader.IsDBNull(matchHistoryOrdinal))
+                            {
+                                data.matchHistoryCsv = string.Empty;
+                            }
+                            
+                            else
+                            {
+                                data.matchHistoryCsv = reader.GetString("MatchHistory");
+                            }
+
+                            int aiResultsOrdinal = reader.GetOrdinal("AiResults");
+                            if (reader.IsDBNull(aiResultsOrdinal))
+                            {
+                                data.aiResultsCsv = string.Empty;
+                            }
+                            
+                            else
+                            {
+                                data.aiResultsCsv = reader.GetString("AIResults");
+                            }
 
                             return data;
                         }
@@ -531,6 +556,34 @@ public class DBManager : MonoBehaviour
             catch (Exception ex)
             {
                 Debug.LogError($"싱글 리그 진척도 업데이트 실패: {ex.Message}");
+                return false;
+            }
+        }
+    }
+
+    public bool DeleteSingleLeagueSeason(string userId)
+    {
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                string query = "DELETE FROM singleleague WHERE UserId = @userId";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    return rowsAffected > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"싱글 리그 시즌 삭제 실패: {ex.Message}");
                 return false;
             }
         }

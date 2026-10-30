@@ -8,4 +8,6 @@
     public int draws;
     public int losses;
     public int points;
+    public string matchHistoryCsv;
+    public string aiResultsCsv;
 }
