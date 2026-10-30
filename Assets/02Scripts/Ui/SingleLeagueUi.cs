@@ -35,10 +35,15 @@ public class SingleLeagueUi : UiBase
     private string leagueTeamSlotPrefab = "LeagueTeamSlot";
     private List<LeagueTeamSlot> _rankSlotPool = new List<LeagueTeamSlot>();
 
+    [Header("Panel History")]
+    [SerializeField] private Transform transform_HistoryContent;
+    private string leagueHistorySlotPrefab = "LeagueHistorySlot";
+    private List<LeagueHistorySlot> _historySlotPool = new List<LeagueHistorySlot>();
+
     private void OnEnable()
     {
         ShowMatchPanel();
-        RefreshMatchUI();
+        RefreshMatchUi();
 
         if (button_PanelMatch != null)
         {
@@ -71,7 +76,7 @@ public class SingleLeagueUi : UiBase
         }
     }
 
-    private void RefreshMatchUI()
+    private void RefreshMatchUi()
     {
         string userId = DBManager.Instance.CurrentUserId;
         SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
@@ -107,9 +112,14 @@ public class SingleLeagueUi : UiBase
                 text_Away.text = "상대 팀";
             }
 
+            if (image_Home != null)
+            {
+                image_Home.sprite = null;
+            }
+
             if (image_Away != null)
             {
-                image_Away.gameObject.SetActive(false);
+                image_Away.sprite = null;
             }
 
             return;
@@ -139,6 +149,11 @@ public class SingleLeagueUi : UiBase
                     text_Difficulty.text = string.Empty;
                 }
             }
+
+            else
+            {
+                text_Difficulty.text = string.Empty;
+            }
         }
 
         int roundNumber = seasonData.currentRound + 1;
@@ -147,24 +162,18 @@ public class SingleLeagueUi : UiBase
             text_Round.text = "ROUND " + roundNumber;
         }
 
+        string playerTeamName = "내 팀";
         string userName = DBManager.Instance.CurrentUserName;
-        if (text_Home != null)
+        if (userName != null)
         {
-            if (userName != null)
+            if (userName != string.Empty)
             {
-                if (userName == string.Empty)
-                {
-                    text_Home.text = "내 팀";
-                }
-
-                else
-                {
-                    text_Home.text = userName;
-                }
+                playerTeamName = userName;
             }
         }
 
         string teamsCsv = seasonData.selectedTeamsCsv;
+        string opponentTeamName = "상대 팀";
         if (teamsCsv != null)
         {
             if (teamsCsv != string.Empty)
@@ -176,21 +185,56 @@ public class SingleLeagueUi : UiBase
                 {
                     if (roundIndex < teams.Length)
                     {
-                        string awayTeamName = teams[roundIndex];
-
-                        if (text_Away != null)
-                        {
-                            text_Away.text = awayTeamName;
-                        }
-
-                        LoadAwayLogoAsync(awayTeamName).Forget();
+                        opponentTeamName = teams[roundIndex];
                     }
                 }
             }
         }
+
+        string homeTeamName = string.Empty;
+        string awayTeamName = string.Empty;
+
+        if (seasonData.currentRound % 2 == 0)
+        {
+            homeTeamName = playerTeamName;
+            awayTeamName = opponentTeamName;
+        }
+
+        else
+        {
+            homeTeamName = opponentTeamName;
+            awayTeamName = playerTeamName;
+        }
+
+        if (text_Home != null)
+        {
+            text_Home.text = homeTeamName;
+        }
+
+        if (text_Away != null)
+        {
+            text_Away.text = awayTeamName;
+        }
+
+        LoadMatchLogosAsync(homeTeamName, awayTeamName).Forget();
     }
 
-    private async UniTaskVoid RefreshRankUIAsync()
+    private async UniTaskVoid LoadMatchLogosAsync(string homeName, string awayName)
+    {
+        if (image_Home != null)
+        {
+            Sprite homeSprite = await ResourceManager.Instance.LoadAsset<Sprite>(homeName);
+            image_Home.sprite = homeSprite;
+        }
+
+        if (image_Away != null)
+        {
+            Sprite awaySprite = await ResourceManager.Instance.LoadAsset<Sprite>(awayName);
+            image_Away.sprite = awaySprite;
+        }
+    }
+
+    private async UniTaskVoid RefreshRankUi()
     {
         string userId = DBManager.Instance.CurrentUserId;
         SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
@@ -348,25 +392,133 @@ public class SingleLeagueUi : UiBase
         }
     }
 
-    private async UniTaskVoid LoadAwayLogoAsync(string teamName)
+    private async UniTaskVoid RefreshHistoryUi()
     {
-        if (image_Away == null)
+        string userId = DBManager.Instance.CurrentUserId;
+        SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
+
+        if (seasonData == null)
+        {
+            seasonData = DBManager.Instance.GetSingleLeagueSeason(userId);
+            if (seasonData != null)
+            {
+                SingleModeManager.Instance.CurrentSeasonData = seasonData;
+            }
+        }
+
+        if (seasonData == null)
         {
             return;
         }
 
-        string address = teamName;
-        Sprite logoSprite = await ResourceManager.Instance.LoadAsset<Sprite>(address);
-
-        if (logoSprite != null)
+        string playerTeamName = "내 팀";
+        string userName = DBManager.Instance.CurrentUserName;
+        if (userName != null)
         {
-            image_Away.sprite = logoSprite;
-            image_Away.gameObject.SetActive(true);
+            if (userName != string.Empty)
+            {
+                playerTeamName = userName;
+            }
         }
 
-        else
+        List<string> historyList = new List<string>();
+        string historyCsv = seasonData.matchHistoryCsv;
+
+        if (historyCsv != null)
         {
-            image_Away.gameObject.SetActive(false);
+            if (historyCsv != string.Empty)
+            {
+                string[] splitHistory = historyCsv.Split(',');
+                for (int i = 0; i < splitHistory.Length; i++)
+                {
+                    if (string.IsNullOrEmpty(splitHistory[i]) == false)
+                    {
+                        historyList.Add(splitHistory[i]);
+                    }
+                }
+            }
+        }
+
+        string teamsCsv = seasonData.selectedTeamsCsv;
+        string[] teams = null;
+        if (teamsCsv != null)
+        {
+            if (teamsCsv != string.Empty)
+            {
+                teams = teamsCsv.Split(',');
+            }
+        }
+
+        if (transform_HistoryContent != null)
+        {
+            while (_historySlotPool.Count < historyList.Count)
+            {
+                GameObject slotObj = await ResourceManager.Instance.Instantiate(leagueHistorySlotPrefab, transform_HistoryContent);
+                if (slotObj != null)
+                {
+                    LeagueHistorySlot slotScript;
+                    if (slotObj.TryGetComponent<LeagueHistorySlot>(out slotScript))
+                    {
+                        _historySlotPool.Add(slotScript);
+                    }
+                }
+            }
+
+            for (int i = 0; i < _historySlotPool.Count; i++)
+            {
+                if (i < historyList.Count)
+                {
+                    _historySlotPool[i].gameObject.SetActive(true);
+
+                    string record = historyList[i];
+                    string[] scores = record.Split(':');
+                    int savedHomeScore = 0;
+                    int savedAwayScore = 0;
+
+                    if (scores.Length >= 2)
+                    {
+                        int.TryParse(scores[0], out savedHomeScore);
+                        int.TryParse(scores[1], out savedAwayScore);
+                    }
+
+                    string opponentTeamName = "상대 팀";
+                    if (teams != null)
+                    {
+                        if (i < teams.Length)
+                        {
+                            opponentTeamName = teams[i];
+                        }
+                    }
+
+                    string homeName = string.Empty;
+                    string awayName = string.Empty;
+                    int homeScore = 0;
+                    int awayScore = 0;
+
+                    if (i % 2 == 0)
+                    {
+                        homeName = playerTeamName;
+                        awayName = opponentTeamName;
+                        homeScore = savedHomeScore;
+                        awayScore = savedAwayScore;
+                    }
+
+                    else
+                    {
+                        homeName = opponentTeamName;
+                        awayName = playerTeamName;
+                        homeScore = savedAwayScore;
+                        awayScore = savedHomeScore;
+                    }
+
+                    _historySlotPool[i].SetSlotData(homeName, awayName, homeScore, awayScore, playerTeamName);
+                }
+
+                else
+                {
+                    _historySlotPool[i].gameObject.SetActive(false);
+                }
+            }
         }
     }
 
@@ -378,18 +530,19 @@ public class SingleLeagueUi : UiBase
     private void OnClickMatch()
     {
         ShowMatchPanel();
-        RefreshMatchUI();
+        RefreshMatchUi();
     }
 
     private void OnClickRank()
     {
         ShowRankPanel();
-        RefreshRankUIAsync().Forget();
+        RefreshRankUi().Forget();
     }
 
     private void OnClickHistory()
     {
         ShowHistoryPanel();
+        RefreshHistoryUi().Forget();
     }
 
     private void OnClickSkip()

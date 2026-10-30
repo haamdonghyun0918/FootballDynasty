@@ -2646,7 +2646,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4005298056755830560
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2898,7 +2898,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 5}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &5367097998974662581
 MonoBehaviour:
@@ -3728,6 +3728,7 @@ MonoBehaviour:
   button_Start: {fileID: 3845962341890142725}
   text_LeagueInfo: {fileID: 266080715506059535}
   transform_RankContent: {fileID: 1651755223961714808}
+  transform_HistoryContent: {fileID: 113937050871457937}
 --- !u!1 &7738594608503395799
 GameObject:
   m_ObjectHideFlags: 0
@@ -4232,7 +4233,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5172560771932695575
 RectTransform:
   m_ObjectHideFlags: 0
