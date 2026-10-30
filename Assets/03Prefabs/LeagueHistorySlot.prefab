@@ -997,6 +997,7 @@ GameObject:
   - component: {fileID: 1149840648518567081}
   - component: {fileID: 9063600588317762681}
   - component: {fileID: 7750407746333826908}
+  - component: {fileID: 1077242303706319658}
   m_Layer: 5
   m_Name: LeagueHistorySlot
   m_TagString: Untagged
@@ -1070,6 +1071,26 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1077242303706319658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7019698558941116791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0060a60e17ab2c3488477850bb9db9a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LeagueHistorySlot
+  text_Home: {fileID: 2997294900036683666}
+  text_Away: {fileID: 711238843093187566}
+  text_HomePoint: {fileID: 7117207264597234911}
+  text_AwayPoint: {fileID: 425108228345276402}
+  text_HomeResult: {fileID: 5006367003227687626}
+  text_AwayResult: {fileID: 8250767522350858899}
+  image_Home: {fileID: 4689164093357391395}
+  image_Away: {fileID: 3948305497992136069}
 --- !u!1 &7464169959112454558
 GameObject:
   m_ObjectHideFlags: 0
