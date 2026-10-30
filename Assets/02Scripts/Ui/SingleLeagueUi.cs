@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,6 +28,12 @@ public class SingleLeagueUi : UiBase
     [SerializeField] private Image image_Away;
     [SerializeField] private UiButton button_Sim;
     [SerializeField] private UiButton button_Start;
+
+    [Header("Panel Rank")]
+    [SerializeField] private TextMeshProUGUI text_LeagueInfo;
+    [SerializeField] private Transform transform_RankContent;
+    private string leagueTeamSlotPrefab = "LeagueTeamSlot";
+    private List<LeagueTeamSlot> _rankSlotPool = new List<LeagueTeamSlot>();
 
     private void OnEnable()
     {
@@ -132,11 +139,6 @@ public class SingleLeagueUi : UiBase
                     text_Difficulty.text = string.Empty;
                 }
             }
-
-            else
-            {
-                text_Difficulty.text = string.Empty;
-            }
         }
 
         int roundNumber = seasonData.currentRound + 1;
@@ -159,11 +161,6 @@ public class SingleLeagueUi : UiBase
                 {
                     text_Home.text = userName;
                 }
-            }
-
-            else
-            {
-                text_Home.text = "내 팀";
             }
         }
 
@@ -188,6 +185,164 @@ public class SingleLeagueUi : UiBase
 
                         LoadAwayLogoAsync(awayTeamName).Forget();
                     }
+                }
+            }
+        }
+    }
+
+    private async UniTaskVoid RefreshRankUIAsync()
+    {
+        string userId = DBManager.Instance.CurrentUserId;
+        SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
+
+        if (seasonData == null)
+        {
+            seasonData = DBManager.Instance.GetSingleLeagueSeason(userId);
+            if (seasonData != null)
+            {
+                SingleModeManager.Instance.CurrentSeasonData = seasonData;
+            }
+        }
+
+        if (seasonData == null)
+        {
+            return;
+        }
+
+        string[] difficultyNames = new string[]
+        {
+            "Amateur 1", "Amateur 2", "Amateur 3",
+            "SemiPro 1", "SemiPro 2", "SemiPro 3",
+            "Pro 1", "Pro 2", "Pro 3",
+            "WorldClass 1", "WorldClass 2", "WorldClass 3",
+            "Legendary 1", "Legendary 2", "Legendary 3"
+        };
+
+        string diffText = string.Empty;
+        int diffIndex = seasonData.difficultyIndex;
+        if (diffIndex >= 0)
+        {
+            if (diffIndex < difficultyNames.Length)
+            {
+                diffText = difficultyNames[diffIndex];
+            }
+        }
+
+        List<TeamStanding> standings = new List<TeamStanding>();
+
+        TeamStanding playerStanding = new TeamStanding();
+        string userName = DBManager.Instance.CurrentUserName;
+        if (userName != null)
+        {
+            if (userName == string.Empty)
+            {
+                playerStanding.teamName = "내 팀";
+            }
+
+            else
+            {
+                playerStanding.teamName = userName;
+            }
+        }
+
+        playerStanding.isPlayer = true;
+        playerStanding.wins = seasonData.wins;
+        playerStanding.draws = seasonData.draws;
+        playerStanding.losses = seasonData.losses;
+        playerStanding.points = seasonData.points;
+        standings.Add(playerStanding);
+
+        string teamsCsv = seasonData.selectedTeamsCsv;
+        if (teamsCsv != null)
+        {
+            if (teamsCsv != string.Empty)
+            {
+                string[] aiTeams = teamsCsv.Split(',');
+                for (int i = 0; i < aiTeams.Length; i++)
+                {
+                    TeamStanding aiStanding = new TeamStanding();
+                    aiStanding.teamName = aiTeams[i];
+                    aiStanding.isPlayer = false;
+                    aiStanding.wins = 0;
+                    aiStanding.draws = 0;
+                    aiStanding.losses = 0;
+                    aiStanding.points = 0;
+
+                    standings.Add(aiStanding);
+                }
+            }
+        }
+
+        for (int i = 0; i < standings.Count - 1; i++)
+        {
+            for (int j = 0; j < standings.Count - 1 - i; j++)
+            {
+                bool needSwap = false;
+                if (standings[j].points < standings[j + 1].points)
+                {
+                    needSwap = true;
+                }
+
+                else if (standings[j].points == standings[j + 1].points)
+                {
+                    if (standings[j].wins < standings[j + 1].wins)
+                    {
+                        needSwap = true;
+                    }
+                }
+
+                if (needSwap == true)
+                {
+                    TeamStanding temp = standings[j];
+                    standings[j] = standings[j + 1];
+                    standings[j + 1] = temp;
+                }
+            }
+        }
+
+        int playerRank = 1;
+        for (int i = 0; i < standings.Count; i++)
+        {
+            if (standings[i].isPlayer == true)
+            {
+                playerRank = i + 1;
+                break;
+            }
+        }
+
+        if (text_LeagueInfo != null)
+        {
+            text_LeagueInfo.text = "리그 난이도: " + diffText + " / 리그 순위: " + playerRank;
+        }
+
+        if (transform_RankContent != null)
+        {
+            while (_rankSlotPool.Count < standings.Count)
+            {
+                GameObject slotObj = await ResourceManager.Instance.Instantiate(leagueTeamSlotPrefab, transform_RankContent);
+                if (slotObj != null)
+                {
+                    LeagueTeamSlot slotScript;
+                    if (slotObj.TryGetComponent<LeagueTeamSlot>(out slotScript))
+                    {
+                        _rankSlotPool.Add(slotScript);
+                    }
+                }
+            }
+
+            for (int i = 0; i < _rankSlotPool.Count; i++)
+            {
+                if (i < standings.Count)
+                {
+                    _rankSlotPool[i].gameObject.SetActive(true);
+                    int rank = i + 1;
+                    TeamStanding standing = standings[i];
+                    _rankSlotPool[i].SetSlotData(rank, standing);
+                }
+
+                else
+                {
+                    _rankSlotPool[i].gameObject.SetActive(false);
                 }
             }
         }
@@ -223,11 +378,13 @@ public class SingleLeagueUi : UiBase
     private void OnClickMatch()
     {
         ShowMatchPanel();
+        RefreshMatchUI();
     }
 
     private void OnClickRank()
     {
         ShowRankPanel();
+        RefreshRankUIAsync().Forget();
     }
 
     private void OnClickHistory()
