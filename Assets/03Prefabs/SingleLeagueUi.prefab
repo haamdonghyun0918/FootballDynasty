@@ -2193,8 +2193,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uB9AC\uADF8 \uB09C\uC774\uB3C4: \uC6D4\uB4DC\uD074\uB798\uC2A4 / \uB9AC\uADF8
-    \uC21C\uC704: 13"
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9ac7782dc048b9a4fbf212975d724aa4, type: 2}
   m_sharedMaterial: {fileID: -2890610645733430424, guid: 9ac7782dc048b9a4fbf212975d724aa4, type: 2}
@@ -3169,7 +3168,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3163818587069263443
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3727,6 +3726,8 @@ MonoBehaviour:
   image_Away: {fileID: 516886357681942922}
   button_Sim: {fileID: 7192397292235170765}
   button_Start: {fileID: 3845962341890142725}
+  text_LeagueInfo: {fileID: 0}
+  transform_RankContent: {fileID: 0}
 --- !u!1 &7738594608503395799
 GameObject:
   m_ObjectHideFlags: 0
@@ -4231,7 +4232,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5172560771932695575
 RectTransform:
   m_ObjectHideFlags: 0
