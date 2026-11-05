@@ -471,6 +471,8 @@ public class SingleFatalUi : UiBase
             return;
         }
 
+        slot.Init(dbKey, OnClickMatchSquadSlot);
+
         if (savedSlots.ContainsKey(dbKey))
         {
             int instanceId = savedSlots[dbKey];
@@ -511,6 +513,27 @@ public class SingleFatalUi : UiBase
         else
         {
             slot.ClearSlot();
+        }
+    }
+
+    private void OnClickMatchSquadSlot(SquadSlot clickedSlot)
+    {
+        if (clickedSlot == null)
+        {
+            return;
+        }
+
+        if (panel_Sub != null)
+        {
+            if (panel_Sub.activeSelf == true)
+            {
+                return;
+            }
+        }
+
+        if (clickedSlot.TargetUserCardData != null)
+        {
+            OpenCardInfo(clickedSlot.TargetUserCardData);
         }
     }
 
