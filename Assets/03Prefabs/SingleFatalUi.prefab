@@ -3135,6 +3135,21 @@ MonoBehaviour:
   - {fileID: 7985738307767887871}
   - {fileID: 3153342797883035768}
   - {fileID: 4371348132660685186}
+  card_Home_Point: {fileID: 4065860660141842172}
+  text_Skill_Home: {fileID: 5886794479044825866}
+  text_Overall_Home: {fileID: 4407479907651155808}
+  text_Plus_Home: {fileID: 5964983718811854982}
+  text_Result_Home: {fileID: 6330321648269308684}
+  card_Away_Point: {fileID: 1899888262130722119}
+  text_Skill_Away: {fileID: 8522004307699109462}
+  text_Overall_Away: {fileID: 3001905964092998354}
+  text_Plus_Away: {fileID: 7174062144057437667}
+  text_Result_Away: {fileID: 5836085432381822508}
+  text_Time_Result: {fileID: 918414929105718470}
+  object_OppositeChoosen: {fileID: 7106552252553066729}
+  text_ChoosenSlotPos: {fileID: 8364988589238770585}
+  image_ChoosenOverallBg: {fileID: 2034582029965768348}
+  text_ChoosenOverallName: {fileID: 1205340703174789325}
 --- !u!1 &1978243426830111604
 GameObject:
   m_ObjectHideFlags: 0
@@ -14007,9 +14022,9 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 6380716904199730668}
   - {fileID: 5964828669278104038}
   - {fileID: 3813283721831556830}
-  - {fileID: 6380716904199730668}
   m_Father: {fileID: 1735199541950551325}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}

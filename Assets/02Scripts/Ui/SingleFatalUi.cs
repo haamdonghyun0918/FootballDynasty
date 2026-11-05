@@ -62,6 +62,25 @@ public class SingleFatalUi : UiBase
     [Header("Panel Match - Substitute Slots")]
     [SerializeField] private SquadSlot[] slot_Subs;
 
+    [Header("Panel Result - UI Elements")]
+    [SerializeField] private Transform card_Home_Point;
+    [SerializeField] private TextMeshProUGUI text_Skill_Home;
+    [SerializeField] private TextMeshProUGUI text_Overall_Home;
+    [SerializeField] private TextMeshProUGUI text_Plus_Home;
+    [SerializeField] private TextMeshProUGUI text_Result_Home;
+    [SerializeField] private Transform card_Away_Point;
+    [SerializeField] private TextMeshProUGUI text_Skill_Away;
+    [SerializeField] private TextMeshProUGUI text_Overall_Away;
+    [SerializeField] private TextMeshProUGUI text_Plus_Away;
+    [SerializeField] private TextMeshProUGUI text_Result_Away;
+    [SerializeField] private TextMeshProUGUI text_Time_Result;
+
+    [Header("Opposite Choosen UI (Defense/Reaction Turn)")]
+    [SerializeField] private GameObject object_OppositeChoosen;
+    [SerializeField] private TextMeshProUGUI text_ChoosenSlotPos;
+    [SerializeField] private Image image_ChoosenOverallBg;
+    [SerializeField] private TextMeshProUGUI text_ChoosenOverallName;
+
     private int currentTurn = 1;
     private int subPossibleCount = 5;
     private int subCompletedCount = 0;
@@ -75,6 +94,10 @@ public class SingleFatalUi : UiBase
     private SquadSlot selectedSubSourceSlot = null;
     private int currentSubCountThisSession = 0;
     private float subRemainingTime = 30f;
+
+    private UserCardData mySelectedCardData = null;
+    private int mySelectedStatType = 0;
+    private float resultTimer = 5f;
 
     private void OnEnable()
     {
@@ -113,6 +136,11 @@ public class SingleFatalUi : UiBase
         if (panel_CardInfo != null)
         {
             panel_CardInfo.SetActive(false);
+        }
+
+        if (object_OppositeChoosen != null)
+        {
+            object_OppositeChoosen.SetActive(false);
         }
     }
 
@@ -564,7 +592,8 @@ public class SingleFatalUi : UiBase
 
         if (clickedSlot.TargetUserCardData != null)
         {
-            OpenCardInfo(clickedSlot.TargetUserCardData);
+            mySelectedCardData = clickedSlot.TargetUserCardData;
+            OpenCardInfo(mySelectedCardData);
         }
     }
 
@@ -573,7 +602,6 @@ public class SingleFatalUi : UiBase
         if (selectedSubSourceSlot == null)
         {
             selectedSubSourceSlot = clickedSlot;
-            Debug.Log("[SingleFatalUi] 교체할 첫 번째 슬롯 선택됨: " + clickedSlot.SlotPosition);
         }
 
         else
@@ -581,7 +609,6 @@ public class SingleFatalUi : UiBase
             if (selectedSubSourceSlot == clickedSlot)
             {
                 selectedSubSourceSlot = null;
-                Debug.Log("[SingleFatalUi] 슬롯 선택 취소됨");
                 return;
             }
 
@@ -610,7 +637,6 @@ public class SingleFatalUi : UiBase
 
             currentSubCountThisSession = currentSubCountThisSession + 1;
             selectedSubSourceSlot = null;
-            Debug.Log("[SingleFatalUi] 임시 선수 교체 완료");
         }
     }
 
@@ -718,7 +744,6 @@ public class SingleFatalUi : UiBase
         {
             if (panel_Sub.activeSelf == true)
             {
-                Debug.Log("[SingleFatalUi] 교체 시간 초과로 자동 취소됩니다.");
                 OnClickSubCancel();
             }
         }
@@ -816,87 +841,40 @@ public class SingleFatalUi : UiBase
             }
         }
 
-        LoadCardSkillInfoAsync().Forget();
+        LoadCardSkillInfoAsync(selectedCardData).Forget();
     }
 
-    private async UniTaskVoid LoadCardSkillInfoAsync()
+    private async UniTaskVoid LoadCardSkillInfoAsync(UserCardData cardData)
     {
-        SkillData attSkill = FindSkillDataByPos("Att");
-        if (attSkill != null)
+        if (cardData.SkillFwData != null && text_SkillAttDesc != null)
         {
-            if (text_SkillAttDesc != null)
-            {
-                text_SkillAttDesc.text = attSkill.Description;
-            }
-
-            if (img_SkillAtt != null && string.IsNullOrEmpty(attSkill.ImageAddress) == false)
-            {
-                Sprite skillSprite = await ResourceManager.Instance.LoadAsset<Sprite>(attSkill.ImageAddress);
-                if (img_SkillAtt != null)
-                {
-                    img_SkillAtt.sprite = skillSprite;
-                }
-            }
+            text_SkillAttDesc.text = cardData.SkillFwData.Description;
         }
 
-        SkillData midSkill = FindSkillDataByPos("Mid");
-        if (midSkill != null)
+        if (cardData.SkillMfData != null && text_SkillMidDesc != null)
         {
-            if (text_SkillMidDesc != null)
-            {
-                text_SkillMidDesc.text = midSkill.Description;
-            }
-
-            if (img_SkillMid != null && string.IsNullOrEmpty(midSkill.ImageAddress) == false)
-            {
-                Sprite skillSprite = await ResourceManager.Instance.LoadAsset<Sprite>(midSkill.ImageAddress);
-                if (img_SkillMid != null)
-                {
-                    img_SkillMid.sprite = skillSprite;
-                }
-            }
+            text_SkillMidDesc.text = cardData.SkillMfData.Description;
         }
 
-        SkillData defSkill = FindSkillDataByPos("Def");
-        if (defSkill != null)
+        if (cardData.SkillDfData != null && text_SkillDefDesc != null)
         {
-            if (text_SkillDefDesc != null)
-            {
-                text_SkillDefDesc.text = defSkill.Description;
-            }
-
-            if (img_SkillDef != null && string.IsNullOrEmpty(defSkill.ImageAddress) == false)
-            {
-                Sprite skillSprite = await ResourceManager.Instance.LoadAsset<Sprite>(defSkill.ImageAddress);
-                if (img_SkillDef != null)
-                {
-                    img_SkillDef.sprite = skillSprite;
-                }
-            }
-        }
-    }
-
-    private SkillData FindSkillDataByPos(string targetPos)
-    {
-        List<SkillData> allSkills = GameDataManager.Instance.GetAllData<SkillData>();
-        if (allSkills == null)
-        {
-            return null;
+            text_SkillDefDesc.text = cardData.SkillDfData.Description;
         }
 
-        for (int i = 0; i < allSkills.Count; i++)
+        if (cardData.SkillFwData != null && img_SkillAtt != null && string.IsNullOrEmpty(cardData.SkillFwData.ImageAddress) == false)
         {
-            SkillData skill = allSkills[i];
-            if (skill != null)
-            {
-                if (skill.Pos == targetPos)
-                {
-                    return skill;
-                }
-            }
+            img_SkillAtt.sprite = await ResourceManager.Instance.LoadAsset<Sprite>(cardData.SkillFwData.ImageAddress);
         }
 
-        return null;
+        if (cardData.SkillMfData != null && img_SkillMid != null && string.IsNullOrEmpty(cardData.SkillMfData.ImageAddress) == false)
+        {
+            img_SkillMid.sprite = await ResourceManager.Instance.LoadAsset<Sprite>(cardData.SkillMfData.ImageAddress);
+        }
+
+        if (cardData.SkillDfData != null && img_SkillDef != null && string.IsNullOrEmpty(cardData.SkillDfData.ImageAddress) == false)
+        {
+            img_SkillDef.sprite = await ResourceManager.Instance.LoadAsset<Sprite>(cardData.SkillDfData.ImageAddress);
+        }
     }
 
     private void OnClickCardInfoClose()
@@ -959,17 +937,410 @@ public class SingleFatalUi : UiBase
 
     private void OnClickSelectAtt()
     {
-        Debug.Log("[SingleFatalUi] 공격 능력치 선택됨");
+        mySelectedStatType = 0;
+        ExecuteMatchBattleSimulation(mySelectedStatType);
     }
 
     private void OnClickSelectMid()
     {
-        Debug.Log("[SingleFatalUi] 미드필더 능력치 선택됨");
+        mySelectedStatType = 1;
+        ExecuteMatchBattleSimulation(mySelectedStatType);
     }
 
     private void OnClickSelectDef()
     {
-        Debug.Log("[SingleFatalUi] 수비 능력치 선택됨");
+        mySelectedStatType = 2;
+        ExecuteMatchBattleSimulation(mySelectedStatType);
+    }
+
+    private void ExecuteMatchBattleSimulation(int statType)
+    {
+        if (mySelectedCardData == null)
+        {
+            Debug.LogWarning("[SingleFatalUi] 선택된 내 카드가 없습니다.");
+            return;
+        }
+
+        OnClickCardInfoClose();
+
+        int opponentStatType = 2;
+        if (statType == 0)
+        {
+            opponentStatType = 2;
+        }
+
+        else if (statType == 1)
+        {
+            opponentStatType = 1;
+        }
+
+        else if (statType == 2)
+        {
+            opponentStatType = 0;
+        }
+
+        OpponentPlayerCard aiCard = GetCurrentRoundAiCard(opponentStatType);
+
+        TriggerOppositeChoosenUI(aiCard, opponentStatType);
+
+        OpenResultPanelAsync(mySelectedCardData, statType, aiCard, opponentStatType).Forget();
+    }
+
+    private OpponentPlayerCard GetCurrentRoundAiCard(int targetStatType)
+    {
+        if (currentAiStartingList == null)
+        {
+            return null;
+        }
+
+        if (currentAiStartingList.Count == 0)
+        {
+            return null;
+        }
+
+        return currentAiStartingList[0];
+    }
+
+    private void TriggerOppositeChoosenUI(OpponentPlayerCard aiCard, int opponentStatType)
+    {
+        if (object_OppositeChoosen == null)
+        {
+            return;
+        }
+
+        object_OppositeChoosen.SetActive(true);
+
+        if (aiCard != null && text_ChoosenSlotPos != null)
+        {
+            string pos = aiCard.position;
+            text_ChoosenSlotPos.text = pos;
+            if (pos == "DF")
+            {
+                text_ChoosenSlotPos.color = Color.blue;
+            }
+
+            else if (pos == "MF")
+            {
+                text_ChoosenSlotPos.color = Color.green;
+            }
+
+            else if (pos == "FW")
+            {
+                text_ChoosenSlotPos.color = Color.red;
+            }
+
+            else if (pos == "GK")
+            {
+                text_ChoosenSlotPos.color = Color.yellow;
+            }
+
+            else
+            {
+                text_ChoosenSlotPos.color = Color.white;
+            }
+        }
+
+        if (text_ChoosenOverallName != null && image_ChoosenOverallBg != null)
+        {
+            if (opponentStatType == 0)
+            {
+                text_ChoosenOverallName.text = "ATT";
+                image_ChoosenOverallBg.color = Color.red;
+            }
+
+            else if (opponentStatType == 1)
+            {
+                text_ChoosenOverallName.text = "MID";
+                image_ChoosenOverallBg.color = Color.green;
+            }
+
+            else if (opponentStatType == 2)
+            {
+                text_ChoosenOverallName.text = "DEF";
+                image_ChoosenOverallBg.color = Color.blue;
+            }
+        }
+    }
+
+    private async UniTaskVoid OpenResultPanelAsync(UserCardData myCard, int myType, OpponentPlayerCard aiCard, int aiType)
+    {
+        if (panel_Result != null)
+        {
+            panel_Result.SetActive(true);
+        }
+
+        if (text_Skill_Home != null)
+        {
+            text_Skill_Home.text = string.Empty;
+        }
+
+        if (text_Overall_Home != null)
+        {
+            text_Overall_Home.text = "0";
+        }
+
+        if (text_Plus_Home != null)
+        {
+            text_Plus_Home.text = string.Empty;
+        }
+
+        if (text_Result_Home != null)
+        {
+            text_Result_Home.text = string.Empty;
+        }
+
+        if (text_Skill_Away != null)
+        {
+            text_Skill_Away.text = string.Empty;
+        }
+
+        if (text_Overall_Away != null)
+        {
+            text_Overall_Away.text = "0";
+        }
+
+        if (text_Plus_Away != null)
+        {
+            text_Plus_Away.text = string.Empty;
+        }
+
+        if (text_Result_Away != null)
+        {
+            text_Result_Away.text = string.Empty;
+        }
+
+        PlayerData myPlayerData = GameDataManager.Instance.GetData<PlayerData>(myCard.PlayerId);
+        int myBaseVal = 0;
+        
+        if (myPlayerData != null)
+        {
+            if (myType == 0)
+            {
+                myBaseVal = myPlayerData.Att;
+            }
+
+            else if (myType == 1)
+            {
+                myBaseVal = myPlayerData.Mid;
+            }
+
+            else if (myType == 2)
+            {
+                myBaseVal = myPlayerData.Def;
+            }
+        }
+
+        if (text_Overall_Home != null)
+        {
+            text_Overall_Home.text = myBaseVal.ToString();
+        }
+
+        int aiBaseVal = 50;
+        if (text_Overall_Away != null)
+        {
+            text_Overall_Away.text = aiBaseVal.ToString();
+        }
+
+        SkillData myCameraSkill = GetSkillDataByStatType(myCard, myType);
+        int myIncrease = 0;
+        int aiDecrease = 0;
+
+        if (myCameraSkill != null)
+        {
+            if (text_Skill_Home != null)
+            {
+                text_Skill_Home.text = myCameraSkill.Description;
+            }
+
+            myIncrease = myCameraSkill.Increase;
+            aiDecrease = myCameraSkill.Decrease;
+        }
+
+        await UniTask.Delay(TimeSpan.FromSeconds(1f));
+
+        if (myIncrease > 0 && text_Plus_Home != null)
+        {
+            text_Plus_Home.text = "+" + myIncrease;
+        }
+
+        if (aiDecrease > 0 && text_Plus_Away != null)
+        {
+            text_Plus_Away.text = "-" + aiDecrease;
+        }
+
+        int myFinalVal = myBaseVal + myIncrease;
+        int aiFinalVal = aiBaseVal - aiDecrease;
+
+        if (text_Overall_Home != null)
+        {
+            text_Overall_Home.text = myFinalVal.ToString();
+        }
+
+        if (text_Overall_Away != null)
+        {
+            text_Overall_Away.text = aiFinalVal.ToString();
+        }
+
+        string judgeResult = EvaluateMatchWinner(myFinalVal, aiFinalVal, myPlayerData, aiBaseVal);
+
+        if (judgeResult == "WIN")
+        {
+            if (text_Result_Home != null) { text_Result_Home.text = "Win"; text_Result_Home.color = Color.red; }
+            if (text_Result_Away != null) { text_Result_Away.text = "Lose"; text_Result_Away.color = Color.blue; }
+            ApplyScoreDelta(myCameraSkill, true);
+        }
+
+        else if (judgeResult == "LOSE")
+        {
+            if (text_Result_Home != null) { text_Result_Home.text = "Lose"; text_Result_Home.color = Color.blue; }
+            if (text_Result_Away != null) { text_Result_Away.text = "Win"; text_Result_Away.color = Color.red; }
+            ApplyScoreDelta(myCameraSkill, false);
+        }
+
+        else
+        {
+            if (text_Result_Home != null) { text_Result_Home.text = "Draw"; text_Result_Home.color = Color.white; }
+            if (text_Result_Away != null) { text_Result_Away.text = "Draw"; text_Result_Away.color = Color.white; }
+            ApplyScoreDelta(null, false);
+        }
+
+        RunResultTimerAsync().Forget();
+    }
+
+    private SkillData GetSkillDataByStatType(UserCardData cardData, int statType)
+    {
+        if (statType == 0)
+        {
+            return cardData.SkillFwData;
+        }
+
+        else if (statType == 1)
+        {
+            return cardData.SkillMfData;
+        }
+
+        else if (statType == 2)
+        {
+            return cardData.SkillDfData;
+        }
+
+        return null;
+    }
+
+    private string EvaluateMatchWinner(int myFinal, int aiFinal, PlayerData myData, int aiBase)
+    {
+        if (myFinal > aiFinal)
+        {
+            return "WIN";
+        }
+
+        else if (myFinal < aiFinal)
+        {
+            return "LOSE";
+        }
+
+        else
+        {
+            int myOtherSum = myData.Att + myData.Mid + myData.Def;
+            int aiOtherSum = aiBase * 3;
+
+            if (myOtherSum > aiOtherSum)
+            {
+                return "WIN";
+            }
+
+            else if (myOtherSum < aiOtherSum)
+            {
+                return "LOSE";
+            }
+
+            else
+            {
+                int myMinStat = Mathf.Min(myData.Att, Mathf.Min(myData.Mid, myData.Def));
+                int aiMinStat = aiBase;
+
+                if (myMinStat > aiMinStat)
+                {
+                    return "WIN";
+                }
+
+                else if (myMinStat < aiMinStat)
+                {
+                    return "LOSE";
+                }
+
+                else
+                {
+                    return "DRAW";
+                }
+            }
+        }
+    }
+
+    private void ApplyScoreDelta(SkillData usedSkill, bool isMyWin)
+    {
+        int homeScoreDelta = 1;
+        bool isCaptainSkill = false;
+        int penaltyLoss = 1;
+
+        if (usedSkill != null && usedSkill.Name.Contains("주장의 품격"))
+        {
+            isCaptainSkill = true;
+        }
+
+        if (isMyWin)
+        {
+            if (isCaptainSkill) homeScoreDelta = 2;
+            AddHomeScore(homeScoreDelta);
+        }
+
+        else
+        {
+            if (isCaptainSkill)
+            {
+                AddHomeScore(-penaltyLoss);
+            }
+        }
+    }
+
+    private void AddHomeScore(int delta)
+    {
+        if (point_Home != null)
+        {
+            int currentScore = 0;
+            int.TryParse(point_Home.text, out currentScore);
+            currentScore = currentScore + delta;
+            if (currentScore < 0) currentScore = 0;
+            point_Home.text = currentScore.ToString();
+        }
+    }
+
+    private async UniTaskVoid RunResultTimerAsync()
+    {
+        resultTimer = 5f;
+
+        while (resultTimer > 0f)
+        {
+            if (text_Time_Result != null)
+            {
+                text_Time_Result.text = Mathf.CeilToInt(resultTimer).ToString();
+            }
+
+            await UniTask.Delay(TimeSpan.FromSeconds(1f));
+            resultTimer = resultTimer - 1f;
+        }
+
+        if (panel_Result != null)
+        {
+            panel_Result.SetActive(false);
+        }
+
+        if (object_OppositeChoosen != null)
+        {
+            object_OppositeChoosen.SetActive(false);
+        }
+
+        ProgressTurn();
     }
 
     private void ShowOpponentSquadView()
@@ -1029,207 +1400,6 @@ public class SingleFatalUi : UiBase
                 for (int i = 0; i < currentAiBenchList.Count; i++)
                 {
                     aiBenchSettledList.Add(false);
-                }
-            }
-
-            OpponentPlayerCard aiGk = null;
-            List<OpponentPlayerCard> aiDfs = new List<OpponentPlayerCard>();
-            List<OpponentPlayerCard> aiMfs = new List<OpponentPlayerCard>();
-            List<OpponentPlayerCard> aiFws = new List<OpponentPlayerCard>();
-
-            for (int i = 0; i < aiSquad.startingLineup.Count; i++)
-            {
-                OpponentPlayerCard player = aiSquad.startingLineup[i];
-                if (player != null)
-                {
-                    if (player.position == "GK")
-                    {
-                        aiGk = player;
-                    }
-
-                    else if (player.position == "DF")
-                    {
-                        aiDfs.Add(player);
-                    }
-
-                    else if (player.position == "MF")
-                    {
-                        aiMfs.Add(player);
-                    }
-
-                    else if (player.position == "FW")
-                    {
-                        aiFws.Add(player);
-                    }
-
-                    else
-                    {
-                        aiDfs.Add(player);
-                    }
-                }
-            }
-
-            if (slot_GK != null)
-            {
-                if (aiGk != null)
-                {
-                    bool isSettled = false;
-                    if (aiPlayerSettledDict.ContainsKey(aiGk.playerId))
-                    {
-                        isSettled = aiPlayerSettledDict[aiGk.playerId];
-                    }
-
-                    if (isSettled)
-                    {
-
-                    }
-
-                    else
-                    {
-                        slot_GK.ClearSlot();
-                    }
-                }
-
-                else
-                {
-                    slot_GK.ClearSlot();
-                }
-            }
-
-            if (slot_DFs != null)
-            {
-                for (int i = 0; i < slot_DFs.Length; i++)
-                {
-                    if (slot_DFs[i] != null && slot_DFs[i].gameObject.activeSelf)
-                    {
-                        if (i < aiDfs.Count)
-                        {
-                            OpponentPlayerCard dfPlayer = aiDfs[i];
-                            bool isSettled = false;
-                            if (aiPlayerSettledDict.ContainsKey(dfPlayer.playerId))
-                            {
-                                isSettled = aiPlayerSettledDict[dfPlayer.playerId];
-                            }
-
-                            if (isSettled)
-                            {
-
-                            }
-
-                            else
-                            {
-                                slot_DFs[i].ClearSlot();
-                            }
-                        }
-
-                        else
-                        {
-                            slot_DFs[i].ClearSlot();
-                        }
-                    }
-                }
-            }
-
-            if (slot_MFs != null)
-            {
-                for (int i = 0; i < slot_MFs.Length; i++)
-                {
-                    if (slot_MFs[i] != null && slot_MFs[i].gameObject.activeSelf)
-                    {
-                        if (i < aiMfs.Count)
-                        {
-                            OpponentPlayerCard mfPlayer = aiMfs[i];
-                            bool isSettled = false;
-                            if (aiPlayerSettledDict.ContainsKey(mfPlayer.playerId))
-                            {
-                                isSettled = aiPlayerSettledDict[mfPlayer.playerId];
-                            }
-
-                            if (isSettled)
-                            {
-
-                            }
-
-                            else
-                            {
-                                slot_MFs[i].ClearSlot();
-                            }
-                        }
-
-                        else
-                        {
-                            slot_MFs[i].ClearSlot();
-                        }
-                    }
-                }
-            }
-
-            if (slot_FWs != null)
-            {
-                for (int i = 0; i < slot_FWs.Length; i++)
-                {
-                    if (slot_FWs[i] != null && slot_FWs[i].gameObject.activeSelf)
-                    {
-                        if (i < aiFws.Count)
-                        {
-                            OpponentPlayerCard fwPlayer = aiFws[i];
-                            bool isSettled = false;
-                            if (aiPlayerSettledDict.ContainsKey(fwPlayer.playerId))
-                            {
-                                isSettled = aiPlayerSettledDict[fwPlayer.playerId];
-                            }
-
-                            if (isSettled)
-                            {
-
-                            }
-
-                            else
-                            {
-                                slot_FWs[i].ClearSlot();
-                            }
-                        }
-
-                        else
-                        {
-                            slot_FWs[i].ClearSlot();
-                        }
-                    }
-                }
-            }
-
-            if (slot_Subs != null)
-            {
-                SetSlotArrayActive(slot_Subs, true);
-                for (int i = 0; i < slot_Subs.Length; i++)
-                {
-                    if (slot_Subs[i] != null)
-                    {
-                        if (i < aiSquad.benchList.Count)
-                        {
-                            OpponentPlayerCard benchPlayer = aiSquad.benchList[i];
-                            bool isSettled = false;
-                            if (aiPlayerSettledDict.ContainsKey(benchPlayer.playerId))
-                            {
-                                isSettled = aiPlayerSettledDict[benchPlayer.playerId];
-                            }
-
-                            if (isSettled)
-                            {
-
-                            }
-
-                            else
-                            {
-                                slot_Subs[i].ClearSlot();
-                            }
-                        }
-
-                        else
-                        {
-                            slot_Subs[i].ClearSlot();
-                        }
-                    }
                 }
             }
         }
