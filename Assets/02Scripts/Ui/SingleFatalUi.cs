@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -19,6 +20,11 @@ public class SingleFatalUi : UiBase
     [SerializeField] private TextMeshProUGUI text_SubCompleted;
     [SerializeField] private UiButton button_Change;
     [SerializeField] private UiButton button_Substitute;
+
+    [Header("Panel Sub - Controls")]
+    [SerializeField] private TextMeshProUGUI text_Second;
+    [SerializeField] private UiButton button_SubConfirm;
+    [SerializeField] private UiButton button_SubCancel;
 
     [Header("Card Info Panel")]
     [SerializeField] private GameObject panel_CardInfo;
@@ -65,6 +71,10 @@ public class SingleFatalUi : UiBase
     private List<bool> aiStartingSettledList = new List<bool>();
     private List<bool> aiBenchSettledList = new List<bool>();
     private Dictionary<string, bool> aiPlayerSettledDict = new Dictionary<string, bool>();
+
+    private SquadSlot selectedSubSourceSlot = null;
+    private int currentSubCountThisSession = 0;
+    private float subRemainingTime = 30f;
 
     private void OnEnable()
     {
@@ -137,6 +147,16 @@ public class SingleFatalUi : UiBase
         {
             btn_SelectDef.BindOnClickButtonEvent(OnClickSelectDef);
         }
+
+        if (button_SubConfirm != null)
+        {
+            button_SubConfirm.BindOnClickButtonEvent(OnClickSubConfirm);
+        }
+
+        if (button_SubCancel != null)
+        {
+            button_SubCancel.BindOnClickButtonEvent(OnClickSubCancel);
+        }
     }
 
     private void UnbindMatchButtons()
@@ -169,6 +189,16 @@ public class SingleFatalUi : UiBase
         if (btn_SelectDef != null)
         {
             btn_SelectDef.UnBindOnClickButtonEvent(OnClickSelectDef);
+        }
+
+        if (button_SubConfirm != null)
+        {
+            button_SubConfirm.UnBindOnClickButtonEvent(OnClickSubConfirm);
+        }
+
+        if (button_SubCancel != null)
+        {
+            button_SubCancel.UnBindOnClickButtonEvent(OnClickSubCancel);
         }
     }
 
@@ -527,6 +557,7 @@ public class SingleFatalUi : UiBase
         {
             if (panel_Sub.activeSelf == true)
             {
+                HandleSubSlotSelection(clickedSlot);
                 return;
             }
         }
@@ -534,6 +565,52 @@ public class SingleFatalUi : UiBase
         if (clickedSlot.TargetUserCardData != null)
         {
             OpenCardInfo(clickedSlot.TargetUserCardData);
+        }
+    }
+
+    private void HandleSubSlotSelection(SquadSlot clickedSlot)
+    {
+        if (selectedSubSourceSlot == null)
+        {
+            selectedSubSourceSlot = clickedSlot;
+            Debug.Log("[SingleFatalUi] 교체할 첫 번째 슬롯 선택됨: " + clickedSlot.SlotPosition);
+        }
+
+        else
+        {
+            if (selectedSubSourceSlot == clickedSlot)
+            {
+                selectedSubSourceSlot = null;
+                Debug.Log("[SingleFatalUi] 슬롯 선택 취소됨");
+                return;
+            }
+
+            UserCardData sourceData = selectedSubSourceSlot.TargetUserCardData;
+            UserCardData targetData = clickedSlot.TargetUserCardData;
+
+            if (sourceData != null)
+            {
+                clickedSlot.SetCardData(sourceData).Forget();
+            }
+
+            else
+            {
+                clickedSlot.ClearSlot();
+            }
+
+            if (targetData != null)
+            {
+                selectedSubSourceSlot.SetCardData(targetData).Forget();
+            }
+
+            else
+            {
+                selectedSubSourceSlot.ClearSlot();
+            }
+
+            currentSubCountThisSession = currentSubCountThisSession + 1;
+            selectedSubSourceSlot = null;
+            Debug.Log("[SingleFatalUi] 임시 선수 교체 완료");
         }
     }
 
@@ -597,7 +674,98 @@ public class SingleFatalUi : UiBase
         if (panel_Sub != null)
         {
             bool isOpen = panel_Sub.activeSelf;
-            panel_Sub.SetActive(isOpen == false);
+            if (isOpen == false)
+            {
+                currentSubCountThisSession = 0;
+                selectedSubSourceSlot = null;
+                panel_Sub.SetActive(true);
+                RunSubTimerAsync().Forget();
+            }
+
+            else
+            {
+                panel_Sub.SetActive(false);
+            }
+        }
+    }
+
+    private async UniTaskVoid RunSubTimerAsync()
+    {
+        subRemainingTime = 30f;
+
+        while (subRemainingTime > 0f)
+        {
+            if (panel_Sub == null)
+            {
+                break;
+            }
+
+            if (panel_Sub.activeSelf == false)
+            {
+                break;
+            }
+
+            if (text_Second != null)
+            {
+                text_Second.text = Mathf.CeilToInt(subRemainingTime).ToString();
+            }
+
+            await UniTask.Delay(TimeSpan.FromSeconds(1f));
+            subRemainingTime = subRemainingTime - 1f;
+        }
+
+        if (panel_Sub != null)
+        {
+            if (panel_Sub.activeSelf == true)
+            {
+                Debug.Log("[SingleFatalUi] 교체 시간 초과로 자동 취소됩니다.");
+                OnClickSubCancel();
+            }
+        }
+    }
+
+    private void OnClickSubConfirm()
+    {
+        if (currentSubCountThisSession > 0)
+        {
+            subPossibleCount = subPossibleCount - currentSubCountThisSession;
+            subCompletedCount = subCompletedCount + currentSubCountThisSession;
+
+            if (text_SubPossible != null)
+            {
+                text_SubPossible.text = "교체 가능한 인원 수: " + subPossibleCount;
+            }
+
+            if (text_SubCompleted != null)
+            {
+                text_SubCompleted.text = "교체한 인원 수: " + subCompletedCount;
+            }
+
+            ProgressTurn();
+        }
+
+        CloseSubPanel();
+    }
+
+    private void OnClickSubCancel()
+    {
+        string userId = DBManager.Instance.CurrentUserId;
+        if (string.IsNullOrEmpty(userId) == false)
+        {
+            LoadAndApplyUserSquad(userId);
+        }
+
+        CloseSubPanel();
+    }
+
+    private void CloseSubPanel()
+    {
+        currentSubCountThisSession = 0;
+        selectedSubSourceSlot = null;
+
+        if (panel_Sub != null)
+        {
+            panel_Sub.SetActive(false);
         }
     }
 
