@@ -325,9 +325,11 @@ public class SingleFatalUi : UiBase
         }
 
         string opponentTeamName = string.Empty;
+        int difficultyIndex = 0;
 
         if (seasonData != null)
         {
+            difficultyIndex = seasonData.difficultyIndex;
             string teamsCsv = seasonData.selectedTeamsCsv;
             if (string.IsNullOrEmpty(teamsCsv) == false)
             {
@@ -341,6 +343,19 @@ public class SingleFatalUi : UiBase
                         opponentTeamName = teams[roundIndex];
                     }
                 }
+            }
+        }
+
+        // SingleLeagueMode를 통해 실제 AI 상대 팀 스쿼드 및 라인업 생성 및 적재[cite: 11]
+        if (string.IsNullOrEmpty(opponentTeamName) == false)
+        {
+            SingleLeagueMode leagueMode = new SingleLeagueMode();
+            SingleLeagueMode.OpponentSquadResult aiSquad = leagueMode.BuildOpponentSquad(opponentTeamName, difficultyIndex);
+
+            if (aiSquad != null)
+            {
+                currentAiStartingList = aiSquad.startingLineup;
+                currentAiBenchList = aiSquad.benchList;
             }
         }
 
@@ -671,7 +686,6 @@ public class SingleFatalUi : UiBase
     {
         currentTurn = currentTurn + 1;
 
-        // 예시로 최대 턴을 9턴으로 가정 (9턴이 끝나면 Panel_End 호출)
         if (currentTurn > 9)
         {
             ShowEndPanel();
@@ -1033,7 +1047,8 @@ public class SingleFatalUi : UiBase
             return null;
         }
 
-        return currentAiStartingList[0];
+        int cardIndex = (currentTurn - 1) % currentAiStartingList.Count;
+        return currentAiStartingList[cardIndex];
     }
 
     private void TriggerOppositeChoosenUI(OpponentPlayerCard aiCard, int opponentStatType)
@@ -1145,9 +1160,9 @@ public class SingleFatalUi : UiBase
         }
 
         PlayerData myPlayerData = GameDataManager.Instance.GetData<PlayerData>(myCard.PlayerId);
-        
+
         int myBaseVal = 0;
-        
+
         if (myPlayerData != null)
         {
             if (myType == 0)
@@ -1171,7 +1186,25 @@ public class SingleFatalUi : UiBase
             text_Overall_Home.text = myBaseVal.ToString();
         }
 
-        int aiBaseVal = 50;
+        int aiBaseVal = 0;
+        if (aiCard != null)
+        {
+            if (aiType == 0)
+            {
+                aiBaseVal = aiCard.attack;
+            }
+
+            else if (aiType == 1)
+            {
+                aiBaseVal = aiCard.mid;
+            }
+
+            else if (aiType == 2)
+            {
+                aiBaseVal = aiCard.defense;
+            }
+        }
+
         if (text_Overall_Away != null)
         {
             text_Overall_Away.text = aiBaseVal.ToString();
@@ -1192,6 +1225,18 @@ public class SingleFatalUi : UiBase
             aiDecrease = myCameraSkill.Decrease;
         }
 
+        int aiSkillIncrease = 0;
+
+        if (aiCard != null && aiCard.assignedSkill != null)
+        {
+            if (text_Skill_Away != null)
+            {
+                text_Skill_Away.text = aiCard.assignedSkill.Description;
+            }
+
+            aiSkillIncrease = aiCard.assignedSkill.Increase;
+        }
+
         await UniTask.Delay(TimeSpan.FromSeconds(1f));
 
         if (myIncrease > 0 && text_Plus_Home != null)
@@ -1205,7 +1250,12 @@ public class SingleFatalUi : UiBase
         }
 
         int myFinalVal = myBaseVal + myIncrease;
-        int aiFinalVal = aiBaseVal - aiDecrease;
+        int aiFinalVal = aiBaseVal + aiSkillIncrease - aiDecrease;
+
+        if (aiFinalVal < 0)
+        {
+            aiFinalVal = 0;
+        }
 
         if (text_Overall_Home != null)
         {
