@@ -68,11 +68,13 @@ public class SingleFatalUi : UiBase
     [SerializeField] private TextMeshProUGUI text_Overall_Home;
     [SerializeField] private TextMeshProUGUI text_Plus_Home;
     [SerializeField] private TextMeshProUGUI text_Result_Home;
+
     [SerializeField] private Transform card_Away_Point;
     [SerializeField] private TextMeshProUGUI text_Skill_Away;
     [SerializeField] private TextMeshProUGUI text_Overall_Away;
     [SerializeField] private TextMeshProUGUI text_Plus_Away;
     [SerializeField] private TextMeshProUGUI text_Result_Away;
+
     [SerializeField] private TextMeshProUGUI text_Time_Result;
 
     [Header("Opposite Choosen UI (Defense/Reaction Turn)")]
@@ -80,6 +82,20 @@ public class SingleFatalUi : UiBase
     [SerializeField] private TextMeshProUGUI text_ChoosenSlotPos;
     [SerializeField] private Image image_ChoosenOverallBg;
     [SerializeField] private TextMeshProUGUI text_ChoosenOverallName;
+
+    [Header("Panel End - Final Result UI")]
+    [SerializeField] private Image logo_Home_End;
+    [SerializeField] private TextMeshProUGUI name_Home_End;
+    [SerializeField] private TextMeshProUGUI score_Home_End;
+    [SerializeField] private TextMeshProUGUI result_Home_End;
+
+    [SerializeField] private Image logo_Away_End;
+    [SerializeField] private TextMeshProUGUI name_Away_End;
+    [SerializeField] private TextMeshProUGUI score_Away_End;
+    [SerializeField] private TextMeshProUGUI result_Away_End;
+
+    [SerializeField] private TextMeshProUGUI text_Time_End;
+    [SerializeField] private UiButton button_Check;
 
     private int currentTurn = 1;
     private int subPossibleCount = 5;
@@ -98,6 +114,7 @@ public class SingleFatalUi : UiBase
     private UserCardData mySelectedCardData = null;
     private int mySelectedStatType = 0;
     private float resultTimer = 5f;
+    private float endTimer = 30f;
 
     private void OnEnable()
     {
@@ -185,6 +202,11 @@ public class SingleFatalUi : UiBase
         {
             button_SubCancel.BindOnClickButtonEvent(OnClickSubCancel);
         }
+
+        if (button_Check != null)
+        {
+            button_Check.BindOnClickButtonEvent(OnClickButtonCheck);
+        }
     }
 
     private void UnbindMatchButtons()
@@ -227,6 +249,11 @@ public class SingleFatalUi : UiBase
         if (button_SubCancel != null)
         {
             button_SubCancel.UnBindOnClickButtonEvent(OnClickSubCancel);
+        }
+
+        if (button_Check != null)
+        {
+            button_Check.UnBindOnClickButtonEvent(OnClickButtonCheck);
         }
     }
 
@@ -643,6 +670,14 @@ public class SingleFatalUi : UiBase
     public void ProgressTurn()
     {
         currentTurn = currentTurn + 1;
+
+        // 예시로 최대 턴을 9턴으로 가정 (9턴이 끝나면 Panel_End 호출)
+        if (currentTurn > 9)
+        {
+            ShowEndPanel();
+            return;
+        }
+
         if (text_Turn != null)
         {
             text_Turn.text = "현재 턴: " + currentTurn;
@@ -1110,6 +1145,7 @@ public class SingleFatalUi : UiBase
         }
 
         PlayerData myPlayerData = GameDataManager.Instance.GetData<PlayerData>(myCard.PlayerId);
+        
         int myBaseVal = 0;
         
         if (myPlayerData != null)
@@ -1290,7 +1326,11 @@ public class SingleFatalUi : UiBase
 
         if (isMyWin)
         {
-            if (isCaptainSkill) homeScoreDelta = 2;
+            if (isCaptainSkill)
+            {
+                homeScoreDelta = 2;
+            }
+
             AddHomeScore(homeScoreDelta);
         }
 
@@ -1341,6 +1381,213 @@ public class SingleFatalUi : UiBase
         }
 
         ProgressTurn();
+    }
+
+    private void ShowEndPanel()
+    {
+        if (panel_Match != null)
+        {
+            panel_Match.SetActive(false);
+        }
+
+        if (panel_Result != null)
+        {
+            panel_Result.SetActive(false);
+        }
+
+        if (panel_End != null)
+        {
+            panel_End.SetActive(true);
+        }
+
+        if (name_Home_End != null && name_Home != null)
+        {
+            name_Home_End.text = name_Home.text;
+        }
+
+        if (name_Away_End != null && name_Away != null)
+        {
+            name_Away_End.text = name_Away.text;
+        }
+
+        int homeScore = 0;
+        int awayScore = 0;
+
+        if (point_Home != null)
+        {
+            int.TryParse(point_Home.text, out homeScore);
+        }
+
+        if (point_Away != null)
+        {
+            int.TryParse(point_Away.text, out awayScore);
+        }
+
+        if (score_Home_End != null)
+        {
+            score_Home_End.text = homeScore.ToString();
+        }
+
+        if (score_Away_End != null)
+        {
+            score_Away_End.text = awayScore.ToString();
+        }
+
+        if (logo_Home_End != null && logo_Home != null)
+        {
+            logo_Home_End.sprite = logo_Home.sprite;
+        }
+
+        if (logo_Away_End != null && logo_Away != null)
+        {
+            logo_Away_End.sprite = logo_Away.sprite;
+        }
+
+        if (homeScore > awayScore)
+        {
+            if (result_Home_End != null) { result_Home_End.text = "Win"; result_Home_End.color = Color.red; }
+            if (result_Away_End != null) { result_Away_End.text = "Lose"; result_Away_End.color = Color.blue; }
+        }
+
+        else if (homeScore < awayScore)
+        {
+            if (result_Home_End != null) { result_Home_End.text = "Lose"; result_Home_End.color = Color.blue; }
+            if (result_Away_End != null) { result_Away_End.text = "Win"; result_Away_End.color = Color.red; }
+        }
+
+        else
+        {
+            if (result_Home_End != null) { result_Home_End.text = "Draw"; result_Home_End.color = Color.white; }
+            if (result_Away_End != null) { result_Away_End.text = "Draw"; result_Away_End.color = Color.white; }
+        }
+
+        RunEndTimerAsync().Forget();
+    }
+
+    private async UniTaskVoid RunEndTimerAsync()
+    {
+        endTimer = 30f;
+
+        while (endTimer > 0f)
+        {
+            if (panel_End == null)
+            {
+                break;
+            }
+
+            if (panel_End.activeSelf == false)
+            {
+                break;
+            }
+
+            if (text_Time_End != null)
+            {
+                text_Time_End.text = Mathf.CeilToInt(endTimer).ToString();
+            }
+
+            await UniTask.Delay(TimeSpan.FromSeconds(1f));
+            endTimer = endTimer - 1f;
+        }
+
+        if (panel_End != null)
+        {
+            if (panel_End.activeSelf == true)
+            {
+                CloseEndPanel();
+            }
+        }
+    }
+
+    private void OnClickButtonCheck()
+    {
+        CloseEndPanel();
+    }
+
+    private void CloseEndPanel()
+    {
+        if (panel_End != null)
+        {
+            panel_End.SetActive(false);
+        }
+
+        string userId = DBManager.Instance.CurrentUserId;
+        SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
+
+        if (seasonData != null)
+        {
+            int homeScore = 0;
+            int awayScore = 0;
+
+            if (score_Home_End != null)
+            {
+                int.TryParse(score_Home_End.text, out homeScore);
+            }
+
+            if (score_Away_End != null)
+            {
+                int.TryParse(score_Away_End.text, out awayScore);
+            }
+
+            bool isHome = (seasonData.currentRound % 2 == 0);
+            int playerGoals = 0;
+            int opponentGoals = 0;
+
+            if (isHome)
+            {
+                playerGoals = homeScore;
+                opponentGoals = awayScore;
+            }
+
+            else
+            {
+                playerGoals = awayScore;
+                opponentGoals = homeScore;
+            }
+
+            if (playerGoals > opponentGoals)
+            {
+                seasonData.wins = seasonData.wins + 1;
+                seasonData.points = seasonData.points + 3;
+            }
+
+            else if (playerGoals == opponentGoals)
+            {
+                seasonData.draws = seasonData.draws + 1;
+                seasonData.points = seasonData.points + 1;
+            }
+
+            else
+            {
+                seasonData.losses = seasonData.losses + 1;
+            }
+
+            string newRecord = homeScore + ":" + awayScore;
+            if (string.IsNullOrEmpty(seasonData.matchHistoryCsv))
+            {
+                seasonData.matchHistoryCsv = newRecord;
+            }
+
+            else
+            {
+                seasonData.matchHistoryCsv = seasonData.matchHistoryCsv + "," + newRecord;
+            }
+
+            seasonData.currentRound = seasonData.currentRound + 1;
+
+            DBManager.Instance.UpdateSingleLeagueProgress(
+                userId,
+                seasonData.currentRound,
+                seasonData.wins,
+                seasonData.draws,
+                seasonData.losses,
+                seasonData.points,
+                seasonData.matchHistoryCsv,
+                seasonData.aiResultsCsv
+            );
+        }
+
+        UiManager.Instance.CloseUi<SingleFatalUi>();
+        Debug.Log("[SingleFatalUi] 경기 종료 및 데이터 정산 완료, UI 닫힘.");
     }
 
     private void ShowOpponentSquadView()

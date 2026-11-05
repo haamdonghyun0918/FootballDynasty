@@ -529,7 +529,7 @@ public class DBManager : MonoBehaviour
         return null;
     }
 
-    public bool UpdateSingleLeagueProgress(string userId, int currentRound, int wins, int draws, int losses, int points)
+    public bool UpdateSingleLeagueProgress(string userId, int currentRound, int wins, int draws, int losses, int points, string matchHistory, string aiResults)
     {
         string connString = DBConfig.GetConnection();
 
@@ -539,7 +539,7 @@ public class DBManager : MonoBehaviour
             {
                 conn.Open();
 
-                string query = "UPDATE singleleague SET CurrentRound = @round, Wins = @wins, Draws = @draws, Losses = @losses, Points = @points WHERE UserId = @userId";
+                string query = "UPDATE singleleague SET CurrentRound = @round, Wins = @wins, Draws = @draws, Losses = @losses, Points = @points, MatchHistory = @history, AiResults = @aiResults WHERE UserId = @userId";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
@@ -549,8 +549,11 @@ public class DBManager : MonoBehaviour
                     cmd.Parameters.AddWithValue("@draws", draws);
                     cmd.Parameters.AddWithValue("@losses", losses);
                     cmd.Parameters.AddWithValue("@points", points);
+                    cmd.Parameters.AddWithValue("@history", matchHistory);
+                    cmd.Parameters.AddWithValue("@aiResults", aiResults);
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    return rowsAffected > 0;
                 }
             }
             catch (Exception ex)

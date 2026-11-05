@@ -550,9 +550,9 @@ public class SingleLeagueUi : UiBase
 
     }
 
-    private void OnClickStart()
+    private async void OnClickStart()
     {
-
+        await UiManager.Instance.OpenUi<SingleFatalUi>();
     }
 
     private void ShowMatchPanel()
