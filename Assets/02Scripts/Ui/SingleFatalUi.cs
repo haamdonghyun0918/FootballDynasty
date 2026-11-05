@@ -20,6 +20,23 @@ public class SingleFatalUi : UiBase
     [SerializeField] private UiButton button_Change;
     [SerializeField] private UiButton button_Substitute;
 
+    [Header("Card Info Panel")]
+    [SerializeField] private GameObject panel_CardInfo;
+    [SerializeField] private UiButton button_CardInfoClose;
+    [SerializeField] private Transform transform_LocateCard;
+    [SerializeField] private TextMeshProUGUI text_OverallAtt;
+    [SerializeField] private TextMeshProUGUI text_OverallMid;
+    [SerializeField] private TextMeshProUGUI text_OverallDef;
+    [SerializeField] private Image img_SkillAtt;
+    [SerializeField] private TextMeshProUGUI text_SkillAttDesc;
+    [SerializeField] private Image img_SkillMid;
+    [SerializeField] private TextMeshProUGUI text_SkillMidDesc;
+    [SerializeField] private Image img_SkillDef;
+    [SerializeField] private TextMeshProUGUI text_SkillDefDesc;
+    [SerializeField] private UiButton btn_SelectAtt;
+    [SerializeField] private UiButton btn_SelectMid;
+    [SerializeField] private UiButton btn_SelectDef;
+
     [Header("Panel Match - ScorePanel")]
     [SerializeField] private GameObject home_Attack;
     [SerializeField] private GameObject away_Attack;
@@ -82,6 +99,11 @@ public class SingleFatalUi : UiBase
         {
             panel_End.SetActive(false);
         }
+
+        if (panel_CardInfo != null)
+        {
+            panel_CardInfo.SetActive(false);
+        }
     }
 
     private void BindMatchButtons()
@@ -95,6 +117,26 @@ public class SingleFatalUi : UiBase
         {
             button_Substitute.BindOnClickButtonEvent(OnClickSubstitute);
         }
+
+        if (button_CardInfoClose != null)
+        {
+            button_CardInfoClose.BindOnClickButtonEvent(OnClickCardInfoClose);
+        }
+
+        if (btn_SelectAtt != null)
+        {
+            btn_SelectAtt.BindOnClickButtonEvent(OnClickSelectAtt);
+        }
+
+        if (btn_SelectMid != null)
+        {
+            btn_SelectMid.BindOnClickButtonEvent(OnClickSelectMid);
+        }
+
+        if (btn_SelectDef != null)
+        {
+            btn_SelectDef.BindOnClickButtonEvent(OnClickSelectDef);
+        }
     }
 
     private void UnbindMatchButtons()
@@ -107,6 +149,26 @@ public class SingleFatalUi : UiBase
         if (button_Substitute != null)
         {
             button_Substitute.UnBindOnClickButtonEvent(OnClickSubstitute);
+        }
+
+        if (button_CardInfoClose != null)
+        {
+            button_CardInfoClose.UnBindOnClickButtonEvent(OnClickCardInfoClose);
+        }
+
+        if (btn_SelectAtt != null)
+        {
+            btn_SelectAtt.UnBindOnClickButtonEvent(OnClickSelectAtt);
+        }
+
+        if (btn_SelectMid != null)
+        {
+            btn_SelectMid.UnBindOnClickButtonEvent(OnClickSelectMid);
+        }
+
+        if (btn_SelectDef != null)
+        {
+            btn_SelectDef.UnBindOnClickButtonEvent(OnClickSelectDef);
         }
     }
 
@@ -530,6 +592,193 @@ public class SingleFatalUi : UiBase
             string userId = DBManager.Instance.CurrentUserId;
             LoadAndApplyUserSquad(userId);
         }
+    }
+
+    public void OpenCardInfo(UserCardData selectedCardData)
+    {
+        if (panel_CardInfo != null)
+        {
+            panel_CardInfo.SetActive(true);
+        }
+
+        if (selectedCardData == null)
+        {
+            return;
+        }
+
+        PlayerData playerData = GameDataManager.Instance.GetData<PlayerData>(selectedCardData.PlayerId);
+        if (playerData != null)
+        {
+            if (text_OverallAtt != null)
+            {
+                text_OverallAtt.text = playerData.Att.ToString();
+            }
+
+            if (text_OverallMid != null)
+            {
+                text_OverallMid.text = playerData.Mid.ToString();
+            }
+
+            if (text_OverallDef != null)
+            {
+                text_OverallDef.text = playerData.Def.ToString();
+            }
+        }
+
+        LoadCardSkillInfoAsync().Forget();
+    }
+
+    private async UniTaskVoid LoadCardSkillInfoAsync()
+    {
+        SkillData attSkill = FindSkillDataByPos("Att");
+        if (attSkill != null)
+        {
+            if (text_SkillAttDesc != null)
+            {
+                text_SkillAttDesc.text = attSkill.Description;
+            }
+
+            if (img_SkillAtt != null && string.IsNullOrEmpty(attSkill.ImageAddress) == false)
+            {
+                Sprite skillSprite = await ResourceManager.Instance.LoadAsset<Sprite>(attSkill.ImageAddress);
+                if (img_SkillAtt != null)
+                {
+                    img_SkillAtt.sprite = skillSprite;
+                }
+            }
+        }
+
+        SkillData midSkill = FindSkillDataByPos("Mid");
+        if (midSkill != null)
+        {
+            if (text_SkillMidDesc != null)
+            {
+                text_SkillMidDesc.text = midSkill.Description;
+            }
+
+            if (img_SkillMid != null && string.IsNullOrEmpty(midSkill.ImageAddress) == false)
+            {
+                Sprite skillSprite = await ResourceManager.Instance.LoadAsset<Sprite>(midSkill.ImageAddress);
+                if (img_SkillMid != null)
+                {
+                    img_SkillMid.sprite = skillSprite;
+                }
+            }
+        }
+
+        SkillData defSkill = FindSkillDataByPos("Def");
+        if (defSkill != null)
+        {
+            if (text_SkillDefDesc != null)
+            {
+                text_SkillDefDesc.text = defSkill.Description;
+            }
+
+            if (img_SkillDef != null && string.IsNullOrEmpty(defSkill.ImageAddress) == false)
+            {
+                Sprite skillSprite = await ResourceManager.Instance.LoadAsset<Sprite>(defSkill.ImageAddress);
+                if (img_SkillDef != null)
+                {
+                    img_SkillDef.sprite = skillSprite;
+                }
+            }
+        }
+    }
+
+    private SkillData FindSkillDataByPos(string targetPos)
+    {
+        List<SkillData> allSkills = GameDataManager.Instance.GetAllData<SkillData>();
+        if (allSkills == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < allSkills.Count; i++)
+        {
+            SkillData skill = allSkills[i];
+            if (skill != null)
+            {
+                if (skill.Pos == targetPos)
+                {
+                    return skill;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private void OnClickCardInfoClose()
+    {
+        ClearCardInfoData();
+
+        if (panel_CardInfo != null)
+        {
+            panel_CardInfo.SetActive(false);
+        }
+    }
+
+    private void ClearCardInfoData()
+    {
+        if (text_OverallAtt != null)
+        {
+            text_OverallAtt.text = string.Empty;
+        }
+
+        if (text_OverallMid != null)
+        {
+            text_OverallMid.text = string.Empty;
+        }
+
+        if (text_OverallDef != null)
+        {
+            text_OverallDef.text = string.Empty;
+        }
+
+        if (text_SkillAttDesc != null)
+        {
+            text_SkillAttDesc.text = string.Empty;
+        }
+
+        if (text_SkillMidDesc != null)
+        {
+            text_SkillMidDesc.text = string.Empty;
+        }
+
+        if (text_SkillDefDesc != null)
+        {
+            text_SkillDefDesc.text = string.Empty;
+        }
+
+        if (img_SkillAtt != null)
+        {
+            img_SkillAtt.sprite = null;
+        }
+
+        if (img_SkillMid != null)
+        {
+            img_SkillMid.sprite = null;
+        }
+
+        if (img_SkillDef != null)
+        {
+            img_SkillDef.sprite = null;
+        }
+    }
+
+    private void OnClickSelectAtt()
+    {
+        Debug.Log("[SingleFatalUi] 공격 능력치 선택됨");
+    }
+
+    private void OnClickSelectMid()
+    {
+        Debug.Log("[SingleFatalUi] 미드필더 능력치 선택됨");
+    }
+
+    private void OnClickSelectDef()
+    {
+        Debug.Log("[SingleFatalUi] 수비 능력치 선택됨");
     }
 
     private void ShowOpponentSquadView()

@@ -3078,6 +3078,21 @@ MonoBehaviour:
   text_SubCompleted: {fileID: 2917342095181523411}
   button_Change: {fileID: 6177929927336806018}
   button_Substitute: {fileID: 2723893359688848363}
+  panel_CardInfo: {fileID: 7303073129096687074}
+  button_CardInfoClose: {fileID: 3189711067621364193}
+  transform_LocateCard: {fileID: 6422510672687982538}
+  text_OverallAtt: {fileID: 252752891583334542}
+  text_OverallMid: {fileID: 7479657522535271093}
+  text_OverallDef: {fileID: 8639446091613004007}
+  img_SkillAtt: {fileID: 2816912034148540653}
+  text_SkillAttDesc: {fileID: 993291544702819119}
+  img_SkillMid: {fileID: 122623603866057526}
+  text_SkillMidDesc: {fileID: 6583306873038151465}
+  img_SkillDef: {fileID: 5657995956575240481}
+  text_SkillDefDesc: {fileID: 8619687447613772911}
+  btn_SelectAtt: {fileID: 5527952703845934550}
+  btn_SelectMid: {fileID: 7441397258059161231}
+  btn_SelectDef: {fileID: 4576452587162375309}
   home_Attack: {fileID: 7387886993436067673}
   away_Attack: {fileID: 7301453800714439694}
   logo_Home: {fileID: 3043823109105541751}
