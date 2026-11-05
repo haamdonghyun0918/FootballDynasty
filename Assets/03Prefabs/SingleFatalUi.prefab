@@ -2641,6 +2641,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 762bce3b91968784b91431bd420217a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SingleFatalUi
+  panel_Match: {fileID: 22566468312136634}
+  panel_Sub: {fileID: 1531989870732972421}
+  panel_Result: {fileID: 5329894392430096563}
+  panel_End: {fileID: 8984700965202196058}
+  text_Formation: {fileID: 1647017032591521933}
+  text_Turn: {fileID: 856299608194145749}
+  text_SubPossible: {fileID: 8125175123107511357}
+  text_SubCompleted: {fileID: 2917342095181523411}
+  text_Sub: {fileID: 6338406685097264042}
+  button_Change: {fileID: 6177929927336806018}
+  home_Attack: {fileID: 7387886993436067673}
+  away_Attack: {fileID: 7301453800714439694}
+  logo_Home: {fileID: 3043823109105541751}
+  name_Home: {fileID: 2863881105985887477}
+  point_Home: {fileID: 5517351195873643647}
+  logo_Away: {fileID: 8602225583162077690}
+  name_Away: {fileID: 7170904097051317130}
+  point_Away: {fileID: 649445012351869786}
 --- !u!1 &1978243426830111604
 GameObject:
   m_ObjectHideFlags: 0
@@ -7562,7 +7580,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2739872991986125329
 RectTransform:
   m_ObjectHideFlags: 0
