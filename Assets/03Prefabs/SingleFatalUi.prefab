@@ -2597,6 +2597,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1965312900484978278}
+  - component: {fileID: 4419835407016973254}
   m_Layer: 5
   m_Name: SingleFatalUi
   m_TagString: Untagged
@@ -2628,6 +2629,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4419835407016973254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898292822680422796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 762bce3b91968784b91431bd420217a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SingleFatalUi
 --- !u!1 &1978243426830111604
 GameObject:
   m_ObjectHideFlags: 0
