@@ -43,6 +43,11 @@ public class SingleFatalUi : UiBase
     private int subPossibleCount = 5;
     private int subCompletedCount = 0;
     private bool isViewingOpponent = false;
+    private List<OpponentPlayerCard> currentAiStartingList = new List<OpponentPlayerCard>();
+    private List<OpponentPlayerCard> currentAiBenchList = new List<OpponentPlayerCard>();
+    private List<bool> aiStartingSettledList = new List<bool>();
+    private List<bool> aiBenchSettledList = new List<bool>();
+    private Dictionary<string, bool> aiPlayerSettledDict = new Dictionary<string, bool>();
 
     private void OnEnable()
     {
@@ -166,35 +171,27 @@ public class SingleFatalUi : UiBase
             }
         }
 
-        string playerTeamName = "내 팀";
-        string userName = DBManager.Instance.CurrentUserName;
-
-        if (userName != null)
+        string playerTeamName = DBManager.Instance.CurrentUserName;
+        if (string.IsNullOrEmpty(playerTeamName))
         {
-            if (userName != string.Empty)
-            {
-                playerTeamName = userName;
-            }
+            playerTeamName = "내 팀";
         }
 
-        string opponentTeamName = "상대 팀";
+        string opponentTeamName = string.Empty;
 
         if (seasonData != null)
         {
             string teamsCsv = seasonData.selectedTeamsCsv;
-            if (teamsCsv != null)
+            if (string.IsNullOrEmpty(teamsCsv) == false)
             {
-                if (teamsCsv != string.Empty)
-                {
-                    string[] teams = teamsCsv.Split(',');
-                    int roundIndex = seasonData.currentRound;
+                string[] teams = teamsCsv.Split(',');
+                int roundIndex = seasonData.currentRound;
 
-                    if (roundIndex >= 0)
+                if (roundIndex >= 0)
+                {
+                    if (roundIndex < teams.Length)
                     {
-                        if (roundIndex < teams.Length)
-                        {
-                            opponentTeamName = teams[roundIndex];
-                        }
+                        opponentTeamName = teams[roundIndex];
                     }
                 }
             }
@@ -253,7 +250,7 @@ public class SingleFatalUi : UiBase
 
     private void LoadAndApplyUserSquad(string userId)
     {
-        if (string.IsNullOrEmpty(userId) == true)
+        if (string.IsNullOrEmpty(userId))
         {
             return;
         }
@@ -412,7 +409,7 @@ public class SingleFatalUi : UiBase
             return;
         }
 
-        if (savedSlots.ContainsKey(dbKey) == true)
+        if (savedSlots.ContainsKey(dbKey))
         {
             int instanceId = savedSlots[dbKey];
 
@@ -489,7 +486,6 @@ public class SingleFatalUi : UiBase
 
     private void OnClickSubstitute()
     {
-
         if (currentTurn == 3)
         {
             ToggleSubPanel();
@@ -524,7 +520,7 @@ public class SingleFatalUi : UiBase
     {
         isViewingOpponent = isViewingOpponent == false;
 
-        if (isViewingOpponent == true)
+        if (isViewingOpponent)
         {
             ShowOpponentSquadView();
         }
@@ -539,20 +535,21 @@ public class SingleFatalUi : UiBase
     private void ShowOpponentSquadView()
     {
         SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
+
         if (seasonData == null)
         {
             return;
         }
 
         string teamsCsv = seasonData.selectedTeamsCsv;
-        if (string.IsNullOrEmpty(teamsCsv) == true)
+        if (string.IsNullOrEmpty(teamsCsv))
         {
             return;
         }
 
         string[] teams = teamsCsv.Split(',');
         int roundIndex = seasonData.currentRound;
-        string opponentTeamName = "상대 팀";
+        string opponentTeamName = string.Empty;
 
         if (roundIndex >= 0)
         {
@@ -574,9 +571,226 @@ public class SingleFatalUi : UiBase
 
             ApplyMatchFormationSlots(aiSquad.assignedFormation.formationName);
 
+            currentAiStartingList = aiSquad.startingLineup;
+            currentAiBenchList = aiSquad.benchList;
+
+            if (aiStartingSettledList.Count != currentAiStartingList.Count)
+            {
+                aiStartingSettledList.Clear();
+                for (int i = 0; i < currentAiStartingList.Count; i++)
+                {
+                    aiStartingSettledList.Add(false);
+                }
+            }
+
+            if (aiBenchSettledList.Count != currentAiBenchList.Count)
+            {
+                aiBenchSettledList.Clear();
+                for (int i = 0; i < currentAiBenchList.Count; i++)
+                {
+                    aiBenchSettledList.Add(false);
+                }
+            }
+
+            OpponentPlayerCard aiGk = null;
+            List<OpponentPlayerCard> aiDfs = new List<OpponentPlayerCard>();
+            List<OpponentPlayerCard> aiMfs = new List<OpponentPlayerCard>();
+            List<OpponentPlayerCard> aiFws = new List<OpponentPlayerCard>();
+
+            for (int i = 0; i < aiSquad.startingLineup.Count; i++)
+            {
+                OpponentPlayerCard player = aiSquad.startingLineup[i];
+                if (player != null)
+                {
+                    if (player.position == "GK")
+                    {
+                        aiGk = player;
+                    }
+
+                    else if (player.position == "DF")
+                    {
+                        aiDfs.Add(player);
+                    }
+
+                    else if (player.position == "MF")
+                    {
+                        aiMfs.Add(player);
+                    }
+
+                    else if (player.position == "FW")
+                    {
+                        aiFws.Add(player);
+                    }
+
+                    else
+                    {
+                        aiDfs.Add(player);
+                    }
+                }
+            }
+
             if (slot_GK != null)
             {
-                slot_GK.ClearSlot();
+                if (aiGk != null)
+                {
+                    bool isSettled = false;
+                    if (aiPlayerSettledDict.ContainsKey(aiGk.playerId))
+                    {
+                        isSettled = aiPlayerSettledDict[aiGk.playerId];
+                    }
+
+                    if (isSettled)
+                    {
+
+                    }
+
+                    else
+                    {
+                        slot_GK.ClearSlot();
+                    }
+                }
+
+                else
+                {
+                    slot_GK.ClearSlot();
+                }
+            }
+
+            if (slot_DFs != null)
+            {
+                for (int i = 0; i < slot_DFs.Length; i++)
+                {
+                    if (slot_DFs[i] != null && slot_DFs[i].gameObject.activeSelf)
+                    {
+                        if (i < aiDfs.Count)
+                        {
+                            OpponentPlayerCard dfPlayer = aiDfs[i];
+                            bool isSettled = false;
+                            if (aiPlayerSettledDict.ContainsKey(dfPlayer.playerId))
+                            {
+                                isSettled = aiPlayerSettledDict[dfPlayer.playerId];
+                            }
+
+                            if (isSettled)
+                            {
+
+                            }
+
+                            else
+                            {
+                                slot_DFs[i].ClearSlot();
+                            }
+                        }
+
+                        else
+                        {
+                            slot_DFs[i].ClearSlot();
+                        }
+                    }
+                }
+            }
+
+            if (slot_MFs != null)
+            {
+                for (int i = 0; i < slot_MFs.Length; i++)
+                {
+                    if (slot_MFs[i] != null && slot_MFs[i].gameObject.activeSelf)
+                    {
+                        if (i < aiMfs.Count)
+                        {
+                            OpponentPlayerCard mfPlayer = aiMfs[i];
+                            bool isSettled = false;
+                            if (aiPlayerSettledDict.ContainsKey(mfPlayer.playerId))
+                            {
+                                isSettled = aiPlayerSettledDict[mfPlayer.playerId];
+                            }
+
+                            if (isSettled)
+                            {
+
+                            }
+
+                            else
+                            {
+                                slot_MFs[i].ClearSlot();
+                            }
+                        }
+
+                        else
+                        {
+                            slot_MFs[i].ClearSlot();
+                        }
+                    }
+                }
+            }
+
+            if (slot_FWs != null)
+            {
+                for (int i = 0; i < slot_FWs.Length; i++)
+                {
+                    if (slot_FWs[i] != null && slot_FWs[i].gameObject.activeSelf)
+                    {
+                        if (i < aiFws.Count)
+                        {
+                            OpponentPlayerCard fwPlayer = aiFws[i];
+                            bool isSettled = false;
+                            if (aiPlayerSettledDict.ContainsKey(fwPlayer.playerId))
+                            {
+                                isSettled = aiPlayerSettledDict[fwPlayer.playerId];
+                            }
+
+                            if (isSettled)
+                            {
+
+                            }
+
+                            else
+                            {
+                                slot_FWs[i].ClearSlot();
+                            }
+                        }
+
+                        else
+                        {
+                            slot_FWs[i].ClearSlot();
+                        }
+                    }
+                }
+            }
+
+            if (slot_Subs != null)
+            {
+                SetSlotArrayActive(slot_Subs, true);
+                for (int i = 0; i < slot_Subs.Length; i++)
+                {
+                    if (slot_Subs[i] != null)
+                    {
+                        if (i < aiSquad.benchList.Count)
+                        {
+                            OpponentPlayerCard benchPlayer = aiSquad.benchList[i];
+                            bool isSettled = false;
+                            if (aiPlayerSettledDict.ContainsKey(benchPlayer.playerId))
+                            {
+                                isSettled = aiPlayerSettledDict[benchPlayer.playerId];
+                            }
+
+                            if (isSettled)
+                            {
+
+                            }
+
+                            else
+                            {
+                                slot_Subs[i].ClearSlot();
+                            }
+                        }
+
+                        else
+                        {
+                            slot_Subs[i].ClearSlot();
+                        }
+                    }
+                }
             }
         }
     }
