@@ -1578,84 +1578,25 @@ public class SingleFatalUi : UiBase
             panel_End.SetActive(false);
         }
 
-        string userId = DBManager.Instance.CurrentUserId;
-        SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
+        int homeScore = 0;
+        int awayScore = 0;
 
-        if (seasonData != null)
+        if (score_Home_End != null)
         {
-            int homeScore = 0;
-            int awayScore = 0;
-
-            if (score_Home_End != null)
-            {
-                int.TryParse(score_Home_End.text, out homeScore);
-            }
-
-            if (score_Away_End != null)
-            {
-                int.TryParse(score_Away_End.text, out awayScore);
-            }
-
-            bool isHome = (seasonData.currentRound % 2 == 0);
-            int playerGoals = 0;
-            int opponentGoals = 0;
-
-            if (isHome)
-            {
-                playerGoals = homeScore;
-                opponentGoals = awayScore;
-            }
-
-            else
-            {
-                playerGoals = awayScore;
-                opponentGoals = homeScore;
-            }
-
-            if (playerGoals > opponentGoals)
-            {
-                seasonData.wins = seasonData.wins + 1;
-                seasonData.points = seasonData.points + 3;
-            }
-
-            else if (playerGoals == opponentGoals)
-            {
-                seasonData.draws = seasonData.draws + 1;
-                seasonData.points = seasonData.points + 1;
-            }
-
-            else
-            {
-                seasonData.losses = seasonData.losses + 1;
-            }
-
-            string newRecord = homeScore + ":" + awayScore;
-            if (string.IsNullOrEmpty(seasonData.matchHistoryCsv))
-            {
-                seasonData.matchHistoryCsv = newRecord;
-            }
-
-            else
-            {
-                seasonData.matchHistoryCsv = seasonData.matchHistoryCsv + "," + newRecord;
-            }
-
-            seasonData.currentRound = seasonData.currentRound + 1;
-
-            DBManager.Instance.UpdateSingleLeagueProgress(
-                userId,
-                seasonData.currentRound,
-                seasonData.wins,
-                seasonData.draws,
-                seasonData.losses,
-                seasonData.points,
-                seasonData.matchHistoryCsv,
-                seasonData.aiResultsCsv
-            );
+            int.TryParse(score_Home_End.text, out homeScore);
         }
 
+        if (score_Away_End != null)
+        {
+            int.TryParse(score_Away_End.text, out awayScore);
+        }
+
+        SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
+        bool isHome = seasonData != null && (seasonData.currentRound % 2 == 0);
+
+        SingleLeagueUi.OnManualMatchFinished?.Invoke(homeScore, awayScore, isHome);
         UiManager.Instance.CloseUi<SingleFatalUi>();
-        Debug.Log("[SingleFatalUi] 경기 종료 및 데이터 정산 완료, UI 닫힘.");
+        Debug.Log("[SingleFatalUi] 경기 종료, Panel_Round 호출 후 UI 닫힘.");
     }
 
     private void ShowOpponentSquadView()

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4775407202560762335}
   - component: {fileID: 6898056143567898372}
   - component: {fileID: 3568648113819224699}
+  - component: {fileID: 3969931198053714639}
   m_Layer: 5
   m_Name: Result_6
   m_TagString: Untagged
@@ -82,6 +83,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3969931198053714639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40030487994500678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95691a17cdad79645ae84a7d2138a88d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LeagueRoundObject
+  image_HomeLogo: {fileID: 8358587921376282593}
+  text_HomeName: {fileID: 1825317634407836852}
+  text_HomePoint: {fileID: 2094652112275425407}
+  image_AwayLogo: {fileID: 6802278294427146157}
+  text_AwayName: {fileID: 8029075573547652505}
+  text_AwayPoint: {fileID: 8521503460023649793}
 --- !u!1 &95369821796525642
 GameObject:
   m_ObjectHideFlags: 0
@@ -792,6 +811,7 @@ GameObject:
   - component: {fileID: 5692440900283084263}
   - component: {fileID: 802195577015441240}
   - component: {fileID: 4237381125126293765}
+  - component: {fileID: 7525700623430371770}
   m_Layer: 5
   m_Name: Result_5
   m_TagString: Untagged
@@ -863,6 +883,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7525700623430371770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 601422318258786597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95691a17cdad79645ae84a7d2138a88d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LeagueRoundObject
+  image_HomeLogo: {fileID: 2677560957126389268}
+  text_HomeName: {fileID: 9122226345628495822}
+  text_HomePoint: {fileID: 3336100043890095623}
+  image_AwayLogo: {fileID: 635240202332108228}
+  text_AwayName: {fileID: 2511674563580015809}
+  text_AwayPoint: {fileID: 6173255959161382421}
 --- !u!1 &675401129225814835
 GameObject:
   m_ObjectHideFlags: 0
@@ -1859,6 +1897,7 @@ GameObject:
   - component: {fileID: 909344433516564636}
   - component: {fileID: 4668010769230677606}
   - component: {fileID: 164930912950840367}
+  - component: {fileID: 7854695658034735572}
   m_Layer: 5
   m_Name: Result_2
   m_TagString: Untagged
@@ -1930,6 +1969,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7854695658034735572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1360670336890023911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95691a17cdad79645ae84a7d2138a88d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LeagueRoundObject
+  image_HomeLogo: {fileID: 4597345740968336343}
+  text_HomeName: {fileID: 1141422146310050429}
+  text_HomePoint: {fileID: 114692738815830922}
+  image_AwayLogo: {fileID: 5088537387783397877}
+  text_AwayName: {fileID: 1337573939559410291}
+  text_AwayPoint: {fileID: 1729471144393429839}
 --- !u!1 &1575485424809348207
 GameObject:
   m_ObjectHideFlags: 0
@@ -7456,6 +7513,7 @@ GameObject:
   - component: {fileID: 5115720342057172635}
   - component: {fileID: 528674449605650896}
   - component: {fileID: 5861566724795101495}
+  - component: {fileID: 8602111858980298087}
   m_Layer: 5
   m_Name: Result_7
   m_TagString: Untagged
@@ -7527,6 +7585,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8602111858980298087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5437633572505180487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95691a17cdad79645ae84a7d2138a88d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LeagueRoundObject
+  image_HomeLogo: {fileID: 4137694335557389556}
+  text_HomeName: {fileID: 4019787519550745718}
+  text_HomePoint: {fileID: 346402669550914012}
+  image_AwayLogo: {fileID: 8105041778272262074}
+  text_AwayName: {fileID: 8943338045022426127}
+  text_AwayPoint: {fileID: 5867873514174886616}
 --- !u!1 &5448223917369069209
 GameObject:
   m_ObjectHideFlags: 0
@@ -11083,6 +11159,7 @@ GameObject:
   - component: {fileID: 3186367728103215944}
   - component: {fileID: 5966255819288177579}
   - component: {fileID: 8472832798749378403}
+  - component: {fileID: 8658965870726638925}
   m_Layer: 5
   m_Name: Result_4
   m_TagString: Untagged
@@ -11154,6 +11231,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8658965870726638925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7320402279619300665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95691a17cdad79645ae84a7d2138a88d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LeagueRoundObject
+  image_HomeLogo: {fileID: 1471446442678558306}
+  text_HomeName: {fileID: 7671217602246957878}
+  text_HomePoint: {fileID: 4027618429933579113}
+  image_AwayLogo: {fileID: 8506562667055781057}
+  text_AwayName: {fileID: 2349365606448866994}
+  text_AwayPoint: {fileID: 4980194855460209983}
 --- !u!1 &7354844985979517924
 GameObject:
   m_ObjectHideFlags: 0
@@ -11272,6 +11367,7 @@ GameObject:
   - component: {fileID: 3819678204124710226}
   - component: {fileID: 6027611993130889488}
   - component: {fileID: 3034638079357844997}
+  - component: {fileID: 7530527097311061377}
   m_Layer: 5
   m_Name: Result_3
   m_TagString: Untagged
@@ -11343,6 +11439,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7530527097311061377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7362406720974242522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95691a17cdad79645ae84a7d2138a88d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LeagueRoundObject
+  image_HomeLogo: {fileID: 616178778530303734}
+  text_HomeName: {fileID: 1172179716474311006}
+  text_HomePoint: {fileID: 7147072195835081819}
+  image_AwayLogo: {fileID: 8309123444847126556}
+  text_AwayName: {fileID: 2591120486567207186}
+  text_AwayPoint: {fileID: 4118183918845365279}
 --- !u!1 &7380646581537389291
 GameObject:
   m_ObjectHideFlags: 0
@@ -11756,6 +11870,8 @@ MonoBehaviour:
   panel_Match: {fileID: 8553047042672971087}
   panel_Rank: {fileID: 7081128700932071342}
   panel_History: {fileID: 6083662644842315997}
+  panel_Result: {fileID: 5859910354255913183}
+  panel_Round: {fileID: 3838232936518318804}
   button_Close: {fileID: 1032841906538407923}
   text_Difficulty: {fileID: 5372652307371530234}
   text_Round: {fileID: 1252860472295265288}
@@ -11765,6 +11881,29 @@ MonoBehaviour:
   image_Away: {fileID: 516886357681942922}
   button_Sim: {fileID: 7192397292235170765}
   button_Start: {fileID: 3845962341890142725}
+  text_SimLeagueInfo: {fileID: 2899280726406000748}
+  text_SimRound: {fileID: 5724687144419033480}
+  image_SimHomeLogo: {fileID: 7754261867464184650}
+  text_SimHomeTeam: {fileID: 1706526813145338494}
+  text_SimHomePoint: {fileID: 3621200557652913489}
+  text_SimHomeResult: {fileID: 4952357235388316039}
+  image_SimAwayLogo: {fileID: 7312727264887661244}
+  text_SimAwayTeam: {fileID: 8570878171203027482}
+  text_SimAwayPoint: {fileID: 5060588164373626824}
+  text_SimAwayResult: {fileID: 4547320575108639963}
+  button_SimResultCheck: {fileID: 3341693371731105431}
+  text_SimRoundLeagueInfo: {fileID: 1764009314050736681}
+  text_SimRoundTitle: {fileID: 1645751792766208960}
+  roundRows:
+  - {fileID: 1389100409762540690}
+  - {fileID: 7854695658034735572}
+  - {fileID: 7530527097311061377}
+  - {fileID: 8658965870726638925}
+  - {fileID: 7525700623430371770}
+  - {fileID: 3969931198053714639}
+  - {fileID: 8602111858980298087}
+  - {fileID: 2262500479240837347}
+  button_SimRoundCheck: {fileID: 3524128619217005830}
   text_LeagueInfo: {fileID: 266080715506059535}
   transform_RankContent: {fileID: 1651755223961714808}
   transform_HistoryContent: {fileID: 113937050871457937}
@@ -12416,6 +12555,7 @@ GameObject:
   - component: {fileID: 4130002889788724671}
   - component: {fileID: 4635794977241730594}
   - component: {fileID: 6546298802722495130}
+  - component: {fileID: 2262500479240837347}
   m_Layer: 5
   m_Name: Result_8
   m_TagString: Untagged
@@ -12487,6 +12627,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2262500479240837347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7919117780990231435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95691a17cdad79645ae84a7d2138a88d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LeagueRoundObject
+  image_HomeLogo: {fileID: 4629260202127998843}
+  text_HomeName: {fileID: 4133424131214727427}
+  text_HomePoint: {fileID: 5918032268748811515}
+  image_AwayLogo: {fileID: 5798050455031057332}
+  text_AwayName: {fileID: 2690964782173677098}
+  text_AwayPoint: {fileID: 1361179521478865077}
 --- !u!1 &8085934786004026613
 GameObject:
   m_ObjectHideFlags: 0
@@ -14106,6 +14264,7 @@ GameObject:
   - component: {fileID: 7360867306485894715}
   - component: {fileID: 749379749653658781}
   - component: {fileID: 3309572605591909423}
+  - component: {fileID: 1389100409762540690}
   m_Layer: 5
   m_Name: Result_1
   m_TagString: Untagged
@@ -14177,6 +14336,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1389100409762540690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8751696063255030964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95691a17cdad79645ae84a7d2138a88d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LeagueRoundObject
+  image_HomeLogo: {fileID: 8980570606774734938}
+  text_HomeName: {fileID: 4062541720220319211}
+  text_HomePoint: {fileID: 5569474089893173952}
+  image_AwayLogo: {fileID: 2482343315713838949}
+  text_AwayName: {fileID: 642371327278731656}
+  text_AwayPoint: {fileID: 271590428570992813}
 --- !u!1 &8800286319882304646
 GameObject:
   m_ObjectHideFlags: 0
