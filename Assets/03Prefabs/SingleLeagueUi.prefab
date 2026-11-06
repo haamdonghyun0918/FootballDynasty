@@ -8100,7 +8100,7 @@ GameObject:
   - component: {fileID: 683738742292832619}
   - component: {fileID: 8621207602666077007}
   m_Layer: 5
-  m_Name: Sim_Result
+  m_Name: Panel_Result
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
