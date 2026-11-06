@@ -116,6 +116,8 @@ public class SingleFatalUi : UiBase
     private float resultTimer = 5f;
     private float endTimer = 30f;
 
+    private AiPlaying aiPlaying = new AiPlaying();
+
     private void OnEnable()
     {
         ShowMatchPanel();
@@ -1012,23 +1014,39 @@ public class SingleFatalUi : UiBase
 
         OnClickCardInfoClose();
 
+        SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
+        int stageIndex = (seasonData != null) ? seasonData.difficultyIndex : 0;
+        var aiResult = aiPlaying.DecideAiCard(currentAiStartingList, currentTurn, stageIndex, statType, false);
+
+        OpponentPlayerCard aiCard = null;
         int opponentStatType = 2;
-        if (statType == 0)
+
+        if (aiResult != null)
         {
-            opponentStatType = 2;
+            aiCard = aiResult.selectedCard;
+            opponentStatType = aiResult.selectedStatType;
+            currentAiStartingList.Remove(aiCard);
         }
 
-        else if (statType == 1)
+        else
         {
-            opponentStatType = 1;
-        }
+            aiCard = GetCurrentRoundAiCard(2);
 
-        else if (statType == 2)
-        {
-            opponentStatType = 0;
-        }
+            if (statType == 0)
+            {
+                opponentStatType = 2;
+            }
 
-        OpponentPlayerCard aiCard = GetCurrentRoundAiCard(opponentStatType);
+            else if (statType == 1)
+            {
+                opponentStatType = 1;
+            }
+
+            else
+            {
+                opponentStatType = 0;
+            }
+        }
 
         TriggerOppositeChoosenUI(aiCard, opponentStatType);
 
