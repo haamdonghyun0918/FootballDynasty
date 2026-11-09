@@ -38,6 +38,7 @@ public class SingleModeManager : MonoBehaviour
         currentLeagueSquads = teamGenerator.GenerateLeagueTeams(allPlayers);
         LeaguePlayerSetting playerSetting = new LeaguePlayerSetting();
         playerSetting.ApplyDifficulty(currentLeagueSquads, allSkills, difficultyLevel, playerAssignedSkills);
+        DBManager.Instance.SaveSingleModeData(DBManager.Instance.CurrentUserId, difficultyLevel, currentLeagueSquads);
         Debug.Log($"[SingleModeManager] 싱글모드 세팅 완료! (난이도: {difficultyLevel}단계, 팀 수: {currentLeagueSquads.Count})");
     }
 

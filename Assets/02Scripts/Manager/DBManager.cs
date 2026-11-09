@@ -430,4 +430,115 @@ public class DBManager : MonoBehaviour
         }
         return squadDict;
     }
+
+    public bool SaveSingleModeData(string userId, int difficultyLevel, List<TeamSquad> leagueSquads)
+    {
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                using (MySqlTransaction transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        string[] clearQueries = {
+                            "DELETE FROM singleleague_aisquad WHERE UserId = @userId",
+                            "DELETE FROM singleleague_aiteams WHERE UserId = @userId",
+                            "DELETE FROM singleleague_matches WHERE UserId = @userId",
+                            "DELETE FROM singleleague_season WHERE UserId = @userId"
+                        };
+
+                        foreach (string q in clearQueries)
+                        {
+                            using (MySqlCommand cmd = new MySqlCommand(q, conn, transaction))
+                            {
+                                cmd.Parameters.AddWithValue("@userId", userId);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        string insertSeason = "INSERT INTO singleleague_season (UserId, LeagueDifficulty, CurrentRound, Wins, Draws, Losses, Points) VALUES (@userId, @difficulty, 1, 0, 0, 0, 0)";
+                        
+                        using (MySqlCommand cmd = new MySqlCommand(insertSeason, conn, transaction))
+                        {
+                            cmd.Parameters.AddWithValue("@userId", userId);
+                            cmd.Parameters.AddWithValue("@difficulty", difficultyLevel);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        for (int i = 0; i < leagueSquads.Count; i++)
+                        {
+                            TeamSquad squad = leagueSquads[i];
+
+                            string insertTeam = "INSERT INTO singleleague_aiteams (UserId, TeamName, Wins, Draws, Losses, Points) VALUES (@userId, @teamName, 0, 0, 0, 0)";
+                            
+                            using (MySqlCommand cmd = new MySqlCommand(insertTeam, conn, transaction))
+                            {
+                                cmd.Parameters.AddWithValue("@userId", userId);
+                                cmd.Parameters.AddWithValue("@teamName", squad.TeamName);
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            for (int s = 0; s < squad.StartingLineup.Count; s++)
+                            {
+                                PlayerData player = squad.StartingLineup[s];
+                                string slotKey = $"Start_{s}";
+                                
+                                int.TryParse(player.Id, out int playerId);
+
+                                string insertSquad = "INSERT INTO singleleague_aisquad (UserId, TeamName, SlotKey, PlayerId) VALUES (@userId, @teamName, @slotKey, @playerId)";
+                                
+                                using (MySqlCommand cmd = new MySqlCommand(insertSquad, conn, transaction))
+                                {
+                                    cmd.Parameters.AddWithValue("@userId", userId);
+                                    cmd.Parameters.AddWithValue("@teamName", squad.TeamName);
+                                    cmd.Parameters.AddWithValue("@slotKey", slotKey);
+                                    cmd.Parameters.AddWithValue("@playerId", playerId);
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            for (int sub = 0; sub < squad.SubPlayers.Count; sub++)
+                            {
+                                PlayerData player = squad.SubPlayers[sub];
+                                string slotKey = $"Sub_{sub}";
+                                
+                                int.TryParse(player.Id, out int playerId);
+
+                                string insertSquad = "INSERT INTO singleleague_aisquad (UserId, TeamName, SlotKey, PlayerId) VALUES (@userId, @teamName, @slotKey, @playerId)";
+                               
+                                using (MySqlCommand cmd = new MySqlCommand(insertSquad, conn, transaction))
+                                {
+                                    cmd.Parameters.AddWithValue("@userId", userId);
+                                    cmd.Parameters.AddWithValue("@teamName", squad.TeamName);
+                                    cmd.Parameters.AddWithValue("@slotKey", slotKey);
+                                    cmd.Parameters.AddWithValue("@playerId", playerId);
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+                        }
+
+                        transaction.Commit();
+                        Debug.Log($"[DBManager] 유저({userId})의 싱글리그 시즌 데이터 DB 저장 성공!");
+                        return true;
+                    }
+                    catch (Exception innerEx)
+                    {
+                        transaction.Rollback();
+                        Debug.LogError($"싱글리그 데이터 트랜잭션 롤백 발생: {innerEx.Message}");
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"싱글리그 데이터 DB 연결 실패: {ex.Message}");
+                return false;
+            }
+        }
+    }
 }
