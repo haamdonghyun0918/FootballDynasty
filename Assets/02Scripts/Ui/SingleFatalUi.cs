@@ -117,6 +117,9 @@ public class SingleFatalUi : UiBase
     private float endTimer = 30f;
 
     private AiPlaying aiPlaying = new AiPlaying();
+    private OpponentPlayerCard preDecidedAiCard = null;
+    private int preDecidedAiStatType = 0;
+    private bool isHomeAttackTurn = true;
     private HashSet<int> usedCardInstanceIds = new HashSet<int>();
     private Dictionary<SquadSlot, GameObject> usingBlockDict = new Dictionary<SquadSlot, GameObject>();
 
@@ -291,16 +294,6 @@ public class SingleFatalUi : UiBase
             button_Substitute.SetInteractable(false);
         }
 
-        if (home_Attack != null)
-        {
-            home_Attack.SetActive(true);
-        }
-
-        if (away_Attack != null)
-        {
-            away_Attack.SetActive(false);
-        }
-
         if (point_Home != null)
         {
             point_Home.text = "0";
@@ -365,17 +358,18 @@ public class SingleFatalUi : UiBase
             }
         }
 
-        string homeTeamName = string.Empty;
-        string awayTeamName = string.Empty;
-
         int currentRound = 0;
-
         if (seasonData != null)
         {
             currentRound = seasonData.currentRound;
         }
 
-        if (currentRound % 2 == 0)
+        bool isPlayerHome = (currentRound % 2 == 0);
+
+        string homeTeamName = string.Empty;
+        string awayTeamName = string.Empty;
+
+        if (isPlayerHome)
         {
             homeTeamName = playerTeamName;
             awayTeamName = opponentTeamName;
@@ -397,9 +391,35 @@ public class SingleFatalUi : UiBase
             name_Away.text = awayTeamName;
         }
 
+        isHomeAttackTurn = true;
+
+        if (home_Attack != null)
+        {
+            home_Attack.SetActive(isHomeAttackTurn);
+        }
+
+        if (away_Attack != null)
+        {
+            away_Attack.SetActive(isHomeAttackTurn == false);
+        }
+
         LoadMatchLogosAsync(homeTeamName, awayTeamName).Forget();
         LoadAndApplyUserSquad(userId);
         UpdateAllSlotUsingBlocks();
+
+        bool isPlayerAttackTurn = (isPlayerHome == isHomeAttackTurn);
+        if (isPlayerAttackTurn == false)
+        {
+            ProcessAiAttackTurn();
+        }
+
+        else
+        {
+            if (object_OppositeChoosen != null)
+            {
+                object_OppositeChoosen.SetActive(false);
+            }
+        }
     }
 
     private async UniTaskVoid LoadMatchLogosAsync(string homeName, string awayName)
@@ -632,7 +652,7 @@ public class SingleFatalUi : UiBase
 
         if (panel_Sub != null)
         {
-            if (panel_Sub.activeSelf == true)
+            if (panel_Sub.activeSelf)
             {
                 HandleSubSlotSelection(clickedSlot);
                 return;
@@ -710,19 +730,37 @@ public class SingleFatalUi : UiBase
             text_Turn.text = "현재 턴: " + currentTurn;
         }
 
-        bool isHomeAttack = (currentTurn % 2 != 0);
         SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
-        bool isPlayerHome = seasonData != null && (seasonData.currentRound % 2 == 0);
-        bool isPlayerAttackTurn = (isPlayerHome == isHomeAttack);
+        int currentRound = 0;
+        if (seasonData != null)
+        {
+            currentRound = seasonData.currentRound;
+        }
+
+        bool isPlayerHome = (currentRound % 2 == 0);
+        bool isPlayerAttackTurn = (isPlayerHome == isHomeAttackTurn);
+
+        if (isPlayerAttackTurn == false)
+        {
+            ProcessAiAttackTurn();
+        }
+
+        else
+        {
+            if (object_OppositeChoosen != null)
+            {
+                object_OppositeChoosen.SetActive(false);
+            }
+        }
 
         if (home_Attack != null)
         {
-            home_Attack.SetActive(isPlayerHome ? isPlayerAttackTurn : !isPlayerAttackTurn);
+            home_Attack.SetActive(isHomeAttackTurn);
         }
 
         if (away_Attack != null)
         {
-            away_Attack.SetActive(isPlayerHome ? !isPlayerAttackTurn : isPlayerAttackTurn);
+            away_Attack.SetActive(isHomeAttackTurn == false);
         }
 
         if (button_Substitute != null)
@@ -739,19 +777,29 @@ public class SingleFatalUi : UiBase
         }
     }
 
+    private void ProcessAiAttackTurn()
+    {
+        SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
+        int stageIndex = 0;
+        if (seasonData != null)
+        {
+            stageIndex = seasonData.difficultyIndex;
+        }
+
+        var aiResult = aiPlaying.DecideAiCard(currentAiStartingList, currentTurn, stageIndex, 0, true);
+
+        if (aiResult != null)
+        {
+            preDecidedAiCard = aiResult.selectedCard;
+            preDecidedAiStatType = aiResult.selectedStatType;
+
+            TriggerOppositeChoosenUI(preDecidedAiCard, preDecidedAiStatType);
+        }
+    }
+
     private void OnClickSubstitute()
     {
-        if (currentTurn == 3)
-        {
-            ToggleSubPanel();
-        }
-
-        else if (currentTurn == 6)
-        {
-            ToggleSubPanel();
-        }
-
-        else if (currentTurn == 9)
+        if (currentTurn == 3 || currentTurn == 6 || currentTurn == 9)
         {
             ToggleSubPanel();
         }
@@ -809,7 +857,7 @@ public class SingleFatalUi : UiBase
 
         if (panel_Sub != null)
         {
-            if (panel_Sub.activeSelf == true)
+            if (panel_Sub.activeSelf)
             {
                 OnClickSubCancel();
             }
@@ -863,7 +911,7 @@ public class SingleFatalUi : UiBase
 
     private void OnClickChange()
     {
-        isViewingOpponent = isViewingOpponent == false;
+        isViewingOpponent = (isViewingOpponent == false);
 
         if (isViewingOpponent)
         {
@@ -1030,67 +1078,107 @@ public class SingleFatalUi : UiBase
 
         OnClickCardInfoClose();
 
-        if (mySelectedCardData != null && !usedCardInstanceIds.Contains(mySelectedCardData.InstanceId))
+        if (mySelectedCardData != null && usedCardInstanceIds.Contains(mySelectedCardData.InstanceId) == false)
         {
             usedCardInstanceIds.Add(mySelectedCardData.InstanceId);
             UpdateAllSlotUsingBlocks();
         }
 
         SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
-        int stageIndex = (seasonData != null) ? seasonData.difficultyIndex : 0;
-        bool isMyAttackTurn = (home_Attack != null && home_Attack.activeSelf);
+        int stageIndex = 0;
+        if (seasonData != null)
+        {
+            stageIndex = seasonData.difficultyIndex;
+        }
+
+        int currentRound = 0;
+        if (seasonData != null)
+        {
+            currentRound = seasonData.currentRound;
+        }
+
+        bool isPlayerHome = (currentRound % 2 == 0);
+        bool isPlayerAttackTurn = (isPlayerHome == isHomeAttackTurn);
+
+        UserCardData playerCard = mySelectedCardData;
+        int playerStatType = statType;
 
         OpponentPlayerCard aiCard = null;
-        int opponentStatType = 2;
+        int aiStatType = 2;
 
-        if (isMyAttackTurn)
+        if (isPlayerAttackTurn)
         {
             if (object_OppositeChoosen != null)
             {
                 object_OppositeChoosen.SetActive(false);
             }
 
-            var aiResult = aiPlaying.DecideAiCard(currentAiStartingList, currentTurn, stageIndex, statType, false);
-
+            var aiResult = aiPlaying.DecideAiCard(currentAiStartingList, currentTurn, stageIndex, playerStatType, false);
             if (aiResult != null)
             {
                 aiCard = aiResult.selectedCard;
-                opponentStatType = aiResult.selectedStatType;
+                aiStatType = aiResult.selectedStatType;
                 currentAiStartingList.Remove(aiCard);
             }
         }
 
         else
         {
-            var aiResult = aiPlaying.DecideAiCard(currentAiStartingList, currentTurn, stageIndex, statType, true);
-
-            if (aiResult != null)
+            if (preDecidedAiCard != null)
             {
-                aiCard = aiResult.selectedCard;
-                opponentStatType = aiResult.selectedStatType;
+                aiCard = preDecidedAiCard;
+                aiStatType = preDecidedAiStatType;
                 currentAiStartingList.Remove(aiCard);
+                preDecidedAiCard = null;
             }
 
-            TriggerOppositeChoosenUI(aiCard, opponentStatType);
+            else
+            {
+                var aiResult = aiPlaying.DecideAiCard(currentAiStartingList, currentTurn, stageIndex, playerStatType, true);
+                if (aiResult != null)
+                {
+                    aiCard = aiResult.selectedCard;
+                    aiStatType = aiResult.selectedStatType;
+                    currentAiStartingList.Remove(aiCard);
+                }
+            }
+
+            TriggerOppositeChoosenUI(aiCard, aiStatType);
         }
 
-        OpenResultPanelAsync(mySelectedCardData, statType, aiCard, opponentStatType).Forget();
-    }
-
-    private OpponentPlayerCard GetCurrentRoundAiCard(int targetStatType)
-    {
-        if (currentAiStartingList == null)
+        UserCardData homeUserCard = null;
+        int homeUserStatType = 0;
+        if (isPlayerHome)
         {
-            return null;
+            homeUserCard = playerCard;
+            homeUserStatType = playerStatType;
         }
 
-        if (currentAiStartingList.Count == 0)
+        OpponentPlayerCard homeAiCard = null;
+        int homeAiStatType = 0;
+        if (isPlayerHome == false)
         {
-            return null;
+            homeAiCard = aiCard;
+            homeAiStatType = aiStatType;
         }
 
-        int cardIndex = (currentTurn - 1) % currentAiStartingList.Count;
-        return currentAiStartingList[cardIndex];
+        UserCardData awayUserCard = null;
+        int awayUserStatType = 0;
+        if (isPlayerHome == false)
+        {
+            awayUserCard = playerCard;
+            awayUserStatType = playerStatType;
+        }
+
+        OpponentPlayerCard awayAiCard = null;
+        int awayAiStatType = 0;
+        if (isPlayerHome)
+        {
+            awayAiCard = aiCard;
+            awayAiStatType = aiStatType;
+        }
+
+        OpenResultPanelAsync(homeUserCard, homeUserStatType, homeAiCard, homeAiStatType, awayUserCard, awayUserStatType, awayAiCard, awayAiStatType, isPlayerHome).Forget();
     }
 
     private void TriggerOppositeChoosenUI(OpponentPlayerCard aiCard, int opponentStatType)
@@ -1154,7 +1242,12 @@ public class SingleFatalUi : UiBase
         }
     }
 
-    private async UniTaskVoid OpenResultPanelAsync(UserCardData myCard, int myType, OpponentPlayerCard aiCard, int aiType)
+    private async UniTaskVoid OpenResultPanelAsync(
+        UserCardData homeUserCard, int homeUserStatType,
+        OpponentPlayerCard homeAiCard, int homeAiStatType,
+        UserCardData awayUserCard, int awayUserStatType,
+        OpponentPlayerCard awayAiCard, int awayAiStatType,
+        bool isPlayerHome)
     {
         if (panel_Result != null)
         {
@@ -1201,135 +1294,300 @@ public class SingleFatalUi : UiBase
             text_Result_Away.text = string.Empty;
         }
 
-        PlayerData myPlayerData = GameDataManager.Instance.GetData<PlayerData>(myCard.PlayerId);
+        int homeBaseVal = 0;
+        SkillData homeSkill = null;
+        PlayerData homePlayerData = null;
+        int homeAiBase = 0;
 
-        int myBaseVal = 0;
-
-        if (myPlayerData != null)
+        if (isPlayerHome)
         {
-            if (myType == 0)
+            if (homeUserCard != null)
             {
-                myBaseVal = myPlayerData.Att;
+                homePlayerData = GameDataManager.Instance.GetData<PlayerData>(homeUserCard.PlayerId);
+                if (homePlayerData != null)
+                {
+                    if (homeUserStatType == 0)
+                    {
+                        homeBaseVal = homePlayerData.Att;
+                    }
+
+                    else if (homeUserStatType == 1)
+                    {
+                        homeBaseVal = homePlayerData.Mid;
+                    }
+
+                    else if (homeUserStatType == 2)
+                    {
+                        homeBaseVal = homePlayerData.Def;
+                    }
+                }
+                homeSkill = GetSkillDataByStatType(homeUserCard, homeUserStatType);
             }
-
-            else if (myType == 1)
-            {
-                myBaseVal = myPlayerData.Mid;
-            }
-
-            else if (myType == 2)
-            {
-                myBaseVal = myPlayerData.Def;
-            }
-        }
-
-        if (text_Overall_Home != null)
-        {
-            text_Overall_Home.text = myBaseVal.ToString();
-        }
-
-        int aiBaseVal = 0;
-        if (aiCard != null)
-        {
-            if (aiType == 0)
-            {
-                aiBaseVal = aiCard.attack;
-            }
-
-            else if (aiType == 1)
-            {
-                aiBaseVal = aiCard.mid;
-            }
-
-            else if (aiType == 2)
-            {
-                aiBaseVal = aiCard.defense;
-            }
-        }
-
-        if (text_Overall_Away != null)
-        {
-            text_Overall_Away.text = aiBaseVal.ToString();
-        }
-
-        SkillData myCameraSkill = GetSkillDataByStatType(myCard, myType);
-        int myIncrease = 0;
-        int aiDecrease = 0;
-
-        if (myCameraSkill != null)
-        {
-            if (text_Skill_Home != null)
-            {
-                text_Skill_Home.text = myCameraSkill.Description;
-            }
-
-            myIncrease = myCameraSkill.Increase;
-            aiDecrease = myCameraSkill.Decrease;
-        }
-
-        int aiSkillIncrease = 0;
-
-        if (aiCard != null && aiCard.assignedSkill != null)
-        {
-            if (text_Skill_Away != null)
-            {
-                text_Skill_Away.text = aiCard.assignedSkill.Description;
-            }
-
-            aiSkillIncrease = aiCard.assignedSkill.Increase;
-        }
-
-        await UniTask.Delay(TimeSpan.FromSeconds(1f));
-
-        if (myIncrease > 0 && text_Plus_Home != null)
-        {
-            text_Plus_Home.text = "+" + myIncrease;
-        }
-
-        if (aiDecrease > 0 && text_Plus_Away != null)
-        {
-            text_Plus_Away.text = "-" + aiDecrease;
-        }
-
-        int myFinalVal = myBaseVal + myIncrease;
-        int aiFinalVal = aiBaseVal + aiSkillIncrease - aiDecrease;
-
-        if (aiFinalVal < 0)
-        {
-            aiFinalVal = 0;
-        }
-
-        if (text_Overall_Home != null)
-        {
-            text_Overall_Home.text = myFinalVal.ToString();
-        }
-
-        if (text_Overall_Away != null)
-        {
-            text_Overall_Away.text = aiFinalVal.ToString();
-        }
-
-        string judgeResult = EvaluateMatchWinner(myFinalVal, aiFinalVal, myPlayerData, aiBaseVal);
-
-        if (judgeResult == "WIN")
-        {
-            if (text_Result_Home != null) { text_Result_Home.text = "Win"; text_Result_Home.color = Color.red; }
-            if (text_Result_Away != null) { text_Result_Away.text = "Lose"; text_Result_Away.color = Color.blue; }
-            ApplyScoreDelta(myCameraSkill, true);
-        }
-
-        else if (judgeResult == "LOSE")
-        {
-            if (text_Result_Home != null) { text_Result_Home.text = "Lose"; text_Result_Home.color = Color.blue; }
-            if (text_Result_Away != null) { text_Result_Away.text = "Win"; text_Result_Away.color = Color.red; }
-            ApplyScoreDelta(myCameraSkill, false);
         }
 
         else
         {
-            if (text_Result_Home != null) { text_Result_Home.text = "Draw"; text_Result_Home.color = Color.white; }
-            if (text_Result_Away != null) { text_Result_Away.text = "Draw"; text_Result_Away.color = Color.white; }
-            ApplyScoreDelta(null, false);
+            if (homeAiCard != null)
+            {
+                if (homeAiStatType == 0)
+                {
+                    homeAiBase = homeAiCard.attack;
+                }
+
+                else if (homeAiStatType == 1)
+                {
+                    homeAiBase = homeAiCard.mid;
+                }
+
+                else if (homeAiStatType == 2)
+                {
+                    homeAiBase = homeAiCard.defense;
+                }
+
+                homeBaseVal = homeAiBase;
+            }
+        }
+
+        if (text_Overall_Home != null)
+        {
+            text_Overall_Home.text = homeBaseVal.ToString();
+        }
+
+        int awayBaseVal = 0;
+        SkillData awaySkill = null;
+        PlayerData awayPlayerData = null;
+        int awayAiBase = 0;
+
+        if (isPlayerHome == false)
+        {
+            if (awayUserCard != null)
+            {
+                awayPlayerData = GameDataManager.Instance.GetData<PlayerData>(awayUserCard.PlayerId);
+                if (awayPlayerData != null)
+                {
+                    if (awayUserStatType == 0)
+                    {
+                        awayBaseVal = awayPlayerData.Att;
+                    }
+
+                    else if (awayUserStatType == 1)
+                    {
+                        awayBaseVal = awayPlayerData.Mid;
+                    }
+
+                    else if (awayUserStatType == 2)
+                    {
+                        awayBaseVal = awayPlayerData.Def;
+                    }
+                }
+                awaySkill = GetSkillDataByStatType(awayUserCard, awayUserStatType);
+            }
+        }
+
+        else
+        {
+            if (awayAiCard != null)
+            {
+                if (awayAiStatType == 0)
+                {
+                    awayAiBase = awayAiCard.attack;
+                }
+
+                else if (awayAiStatType == 1)
+                {
+                    awayAiBase = awayAiCard.mid;
+                }
+
+                else if (awayAiStatType == 2)
+                {
+                    awayAiBase = awayAiCard.defense;
+                }
+
+                awayBaseVal = awayAiBase;
+            }
+        }
+
+        if (text_Overall_Away != null)
+        {
+            text_Overall_Away.text = awayBaseVal.ToString();
+        }
+
+        int homeIncrease = 0;
+        int homeDecrease = 0;
+
+        if (homeSkill != null)
+        {
+            if (text_Skill_Home != null)
+            {
+                text_Skill_Home.text = homeSkill.Description;
+            }
+
+            homeIncrease = homeSkill.Increase;
+            homeDecrease = homeSkill.Decrease;
+        }
+
+        else
+        {
+            if (isPlayerHome == false)
+            {
+                if (homeAiCard != null)
+                {
+                    if (homeAiCard.assignedSkill != null)
+                    {
+                        if (text_Skill_Home != null)
+                        {
+                            text_Skill_Home.text = homeAiCard.assignedSkill.Description;
+                        }
+
+                        homeIncrease = homeAiCard.assignedSkill.Increase;
+                    }
+                }
+            }
+        }
+
+        int awayIncrease = 0;
+        int awayDecrease = 0;
+
+        if (awaySkill != null)
+        {
+            if (text_Skill_Away != null)
+            {
+                text_Skill_Away.text = awaySkill.Description;
+            }
+
+            awayIncrease = awaySkill.Increase;
+            awayDecrease = awaySkill.Decrease;
+        }
+
+        else
+        {
+            if (isPlayerHome)
+            {
+                if (awayAiCard != null)
+                {
+                    if (awayAiCard.assignedSkill != null)
+                    {
+                        if (text_Skill_Away != null)
+                        {
+                            text_Skill_Away.text = awayAiCard.assignedSkill.Description;
+                        }
+
+                        awayIncrease = awayAiCard.assignedSkill.Increase;
+                    }
+                }
+            }
+        }
+
+        await UniTask.Delay(TimeSpan.FromSeconds(1f));
+
+        int netHome = homeIncrease - homeDecrease;
+        if (netHome != 0)
+        {
+            if (text_Plus_Home != null)
+            {
+                if (netHome >= 0)
+                {
+                    text_Plus_Home.text = "+" + netHome;
+                }
+
+                else
+                {
+                    text_Plus_Home.text = netHome.ToString();
+                }
+            }
+        }
+
+        int netAway = awayIncrease - awayDecrease;
+        if (netAway != 0)
+        {
+            if (text_Plus_Away != null)
+            {
+                if (netAway >= 0)
+                {
+                    text_Plus_Away.text = "+" + netAway;
+                }
+
+                else
+                {
+                    text_Plus_Away.text = netAway.ToString();
+                }
+            }
+        }
+
+        int homeFinalVal = homeBaseVal + homeIncrease - homeDecrease;
+        int awayFinalVal = awayBaseVal + awayIncrease - awayDecrease;
+
+        if (homeFinalVal < 0)
+        {
+            homeFinalVal = 0;
+        }
+
+        if (awayFinalVal < 0)
+        {
+            awayFinalVal = 0;
+        }
+
+        if (text_Overall_Home != null)
+        {
+            text_Overall_Home.text = homeFinalVal.ToString();
+        }
+
+        if (text_Overall_Away != null)
+        {
+            text_Overall_Away.text = awayFinalVal.ToString();
+        }
+
+        string judgeResult = EvaluateHomeAwayWinner(homeFinalVal, awayFinalVal, homePlayerData, homeAiBase, awayPlayerData, awayAiBase);
+
+        if (judgeResult == "HOME_WIN")
+        {
+            if (text_Result_Home != null)
+            {
+                text_Result_Home.text = "Win";
+                text_Result_Home.color = Color.red;
+            }
+
+            if (text_Result_Away != null)
+            {
+                text_Result_Away.text = "Lose";
+                text_Result_Away.color = Color.blue;
+            }
+
+            ApplyHomeScoreDelta(homeSkill, true);
+            isHomeAttackTurn = true;
+        }
+
+        else if (judgeResult == "AWAY_WIN")
+        {
+            if (text_Result_Home != null)
+            {
+                text_Result_Home.text = "Lose";
+                text_Result_Home.color = Color.blue;
+            }
+
+            if (text_Result_Away != null)
+            {
+                text_Result_Away.text = "Win";
+                text_Result_Away.color = Color.red;
+            }
+
+            ApplyAwayScoreDelta(awaySkill, true);
+            isHomeAttackTurn = false;
+        }
+
+        else
+        {
+            if (text_Result_Home != null)
+            {
+                text_Result_Home.text = "Draw";
+                text_Result_Home.color = Color.white;
+            }
+
+            if (text_Result_Away != null)
+            {
+                text_Result_Away.text = "Draw";
+                text_Result_Away.color = Color.white;
+            }
         }
 
         RunResultTimerAsync().Forget();
@@ -1355,46 +1613,84 @@ public class SingleFatalUi : UiBase
         return null;
     }
 
-    private string EvaluateMatchWinner(int myFinal, int aiFinal, PlayerData myData, int aiBase)
+    private string EvaluateHomeAwayWinner(int homeFinal, int awayFinal, PlayerData homePlayer, int homeAiBase, PlayerData awayPlayer, int awayAiBase)
     {
-        if (myFinal > aiFinal)
+        if (homeFinal > awayFinal)
         {
-            return "WIN";
+            return "HOME_WIN";
         }
 
-        else if (myFinal < aiFinal)
+        else if (homeFinal < awayFinal)
         {
-            return "LOSE";
+            return "AWAY_WIN";
         }
 
         else
         {
-            int myOtherSum = myData.Att + myData.Mid + myData.Def;
-            int aiOtherSum = aiBase * 3;
-
-            if (myOtherSum > aiOtherSum)
+            int homeOtherSum = 0;
+            if (homePlayer != null)
             {
-                return "WIN";
-            }
-
-            else if (myOtherSum < aiOtherSum)
-            {
-                return "LOSE";
+                homeOtherSum = homePlayer.Att + homePlayer.Mid + homePlayer.Def;
             }
 
             else
             {
-                int myMinStat = Mathf.Min(myData.Att, Mathf.Min(myData.Mid, myData.Def));
-                int aiMinStat = aiBase;
+                homeOtherSum = homeAiBase * 3;
+            }
 
-                if (myMinStat > aiMinStat)
+            int awayOtherSum = 0;
+            if (awayPlayer != null)
+            {
+                awayOtherSum = awayPlayer.Att + awayPlayer.Mid + awayPlayer.Def;
+            }
+
+            else
+            {
+                awayOtherSum = awayAiBase * 3;
+            }
+
+            if (homeOtherSum > awayOtherSum)
+            {
+                return "HOME_WIN";
+            }
+
+            else if (homeOtherSum < awayOtherSum)
+            {
+                return "AWAY_WIN";
+            }
+
+            else
+            {
+                int homeMin = 0;
+                if (homePlayer != null)
                 {
-                    return "WIN";
+                    homeMin = Mathf.Min(homePlayer.Att, Mathf.Min(homePlayer.Mid, homePlayer.Def));
                 }
 
-                else if (myMinStat < aiMinStat)
+                else
                 {
-                    return "LOSE";
+                    homeMin = homeAiBase;
+                }
+
+                int awayMin = 0;
+                if (awayPlayer != null)
+                {
+                    awayMin = Mathf.Min(awayPlayer.Att, Mathf.Min(awayPlayer.Mid, awayPlayer.Def));
+                }
+
+                else
+                {
+                    awayMin = awayAiBase;
+                }
+
+                if (homeMin > awayMin)
+                {
+                    return "HOME_WIN";
+                }
+
+                else if (homeMin < awayMin)
+                {
+                    return "AWAY_WIN";
                 }
 
                 else
@@ -1405,18 +1701,23 @@ public class SingleFatalUi : UiBase
         }
     }
 
-    private void ApplyScoreDelta(SkillData usedSkill, bool isMyWin)
+    private void ApplyHomeScoreDelta(SkillData usedSkill, bool isHomeWin)
     {
         int homeScoreDelta = 1;
         bool isCaptainSkill = false;
-        int penaltyLoss = 1;
 
-        if (usedSkill != null && usedSkill.Name.Contains("주장의 품격"))
+        if (usedSkill != null)
         {
-            isCaptainSkill = true;
+            if (string.IsNullOrEmpty(usedSkill.Name) == false)
+            {
+                if (usedSkill.Name.Contains("주장의 품격"))
+                {
+                    isCaptainSkill = true;
+                }
+            }
         }
 
-        if (isMyWin)
+        if (isHomeWin)
         {
             if (isCaptainSkill)
             {
@@ -1425,13 +1726,32 @@ public class SingleFatalUi : UiBase
 
             AddHomeScore(homeScoreDelta);
         }
+    }
 
-        else
+    private void ApplyAwayScoreDelta(SkillData usedSkill, bool isAwayWin)
+    {
+        int awayScoreDelta = 1;
+        bool isCaptainSkill = false;
+
+        if (usedSkill != null)
+        {
+            if (string.IsNullOrEmpty(usedSkill.Name) == false)
+            {
+                if (usedSkill.Name.Contains("주장의 품격"))
+                {
+                    isCaptainSkill = true;
+                }
+            }
+        }
+
+        if (isAwayWin)
         {
             if (isCaptainSkill)
             {
-                AddHomeScore(-penaltyLoss);
+                awayScoreDelta = 2;
             }
+
+            AddAwayScore(awayScoreDelta);
         }
     }
 
@@ -1442,8 +1762,28 @@ public class SingleFatalUi : UiBase
             int currentScore = 0;
             int.TryParse(point_Home.text, out currentScore);
             currentScore = currentScore + delta;
-            if (currentScore < 0) currentScore = 0;
+            if (currentScore < 0)
+            {
+                currentScore = 0;
+            }
+
             point_Home.text = currentScore.ToString();
+        }
+    }
+
+    private void AddAwayScore(int delta)
+    {
+        if (point_Away != null)
+        {
+            int currentScore = 0;
+            int.TryParse(point_Away.text, out currentScore);
+            currentScore = currentScore + delta;
+            if (currentScore < 0)
+            {
+                currentScore = 0;
+            }
+
+            point_Away.text = currentScore.ToString();
         }
     }
 
@@ -1631,20 +1971,47 @@ public class SingleFatalUi : UiBase
 
         if (homeScore > awayScore)
         {
-            if (result_Home_End != null) { result_Home_End.text = "Win"; result_Home_End.color = Color.red; }
-            if (result_Away_End != null) { result_Away_End.text = "Lose"; result_Away_End.color = Color.blue; }
+            if (result_Home_End != null)
+            {
+                result_Home_End.text = "Win";
+                result_Home_End.color = Color.red;
+            }
+
+            if (result_Away_End != null)
+            {
+                result_Away_End.text = "Lose";
+                result_Away_End.color = Color.blue;
+            }
         }
 
         else if (homeScore < awayScore)
         {
-            if (result_Home_End != null) { result_Home_End.text = "Lose"; result_Home_End.color = Color.blue; }
-            if (result_Away_End != null) { result_Away_End.text = "Win"; result_Away_End.color = Color.red; }
+            if (result_Home_End != null)
+            {
+                result_Home_End.text = "Lose";
+                result_Home_End.color = Color.blue;
+            }
+
+            if (result_Away_End != null)
+            {
+                result_Away_End.text = "Win";
+                result_Away_End.color = Color.red;
+            }
         }
 
         else
         {
-            if (result_Home_End != null) { result_Home_End.text = "Draw"; result_Home_End.color = Color.white; }
-            if (result_Away_End != null) { result_Away_End.text = "Draw"; result_Away_End.color = Color.white; }
+            if (result_Home_End != null)
+            {
+                result_Home_End.text = "Draw";
+                result_Home_End.color = Color.white;
+            }
+
+            if (result_Away_End != null)
+            {
+                result_Away_End.text = "Draw";
+                result_Away_End.color = Color.white;
+            }
         }
 
         RunEndTimerAsync().Forget();
@@ -1677,7 +2044,7 @@ public class SingleFatalUi : UiBase
 
         if (panel_End != null)
         {
-            if (panel_End.activeSelf == true)
+            if (panel_End.activeSelf)
             {
                 CloseEndPanel();
             }
@@ -1710,7 +2077,12 @@ public class SingleFatalUi : UiBase
         }
 
         SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
-        bool isHome = seasonData != null && (seasonData.currentRound % 2 == 0);
+        bool isHome = false;
+
+        if (seasonData != null)
+        {
+            isHome = (seasonData.currentRound % 2 == 0);
+        }
 
         SingleLeagueUi.OnManualMatchFinished?.Invoke(homeScore, awayScore, isHome);
         UiManager.Instance.CloseUi<SingleFatalUi>();
@@ -1727,6 +2099,7 @@ public class SingleFatalUi : UiBase
         }
 
         string teamsCsv = seasonData.selectedTeamsCsv;
+
         if (string.IsNullOrEmpty(teamsCsv))
         {
             return;
