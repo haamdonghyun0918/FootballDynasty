@@ -5,7 +5,7 @@ public class LeaguePlayerSetting
 {
     private Random rand = new Random();
 
-    public void ApplyDifficulty(List<TeamSquad> teamSquads, List<SkillData> allSkills, int difficultyLevel)
+    public void ApplyDifficulty(List<TeamSquad> teamSquads, List<SkillData> allSkills, int difficultyLevel, Dictionary<PlayerData, List<SkillData>> outSkillMapping)
     {
         int statBonus = (difficultyLevel - 7) * 5;
 
@@ -37,12 +37,12 @@ public class LeaguePlayerSetting
         {
             TeamSquad squad = teamSquads[i];
 
-            ProcessPlayers(squad.StartingLineup, statBonus, attackPool, midPool, defensePool);
-            ProcessPlayers(squad.SubPlayers, statBonus, attackPool, midPool, defensePool);
+            ProcessPlayers(squad.StartingLineup, statBonus, attackPool, midPool, defensePool, outSkillMapping);
+            ProcessPlayers(squad.SubPlayers, statBonus, attackPool, midPool, defensePool, outSkillMapping);
         }
     }
 
-    private void ProcessPlayers(List<PlayerData> players, int statBonus, List<SkillData> attackPool, List<SkillData> midPool, List<SkillData> defensePool)
+    private void ProcessPlayers(List<PlayerData> players, int statBonus, List<SkillData> attackPool, List<SkillData> midPool, List<SkillData> defensePool, Dictionary<PlayerData, List<SkillData>> outSkillMapping)
     {
         for (int i = 0; i < players.Count; i++)
         {
@@ -52,22 +52,26 @@ public class LeaguePlayerSetting
             player.Mid = Math.Max(1, player.Mid + statBonus);
             player.Def = Math.Max(1, player.Def + statBonus);
 
+            List<SkillData> assignedSkills = new List<SkillData>();
+
             if (attackPool.Count > 0)
             {
-                int attIndex = rand.Next(0, attackPool.Count);
-                SkillData assignedAttackSkill = attackPool[attIndex];
+                assignedSkills.Add(attackPool[rand.Next(0, attackPool.Count)]);
             }
 
             if (midPool.Count > 0)
             {
-                int midIndex = rand.Next(0, midPool.Count);
-                SkillData assignedMidSkill = midPool[midIndex];
+                assignedSkills.Add(midPool[rand.Next(0, midPool.Count)]);
             }
 
             if (defensePool.Count > 0)
             {
-                int defIndex = rand.Next(0, defensePool.Count);
-                SkillData assignedDefenseSkill = defensePool[defIndex];
+                assignedSkills.Add(defensePool[rand.Next(0, defensePool.Count)]);
+            }
+
+            if (outSkillMapping.ContainsKey(player) == false)
+            {
+                outSkillMapping.Add(player, assignedSkills);
             }
         }
     }
