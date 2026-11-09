@@ -3266,7 +3266,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4915718158892641906}
-  - component: {fileID: 1287346854574501046}
   m_Layer: 5
   m_Name: LeagueSelectUi
   m_TagString: Untagged
@@ -3296,34 +3295,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1287346854574501046
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7008439490027172091}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aae1f49a7b37908448d31c1803fd8d15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LeagueSelectUi
-  button_Close: {fileID: 2096150961601905051}
-  button_Amatuer_1: {fileID: 422311101052719027}
-  button_Amatuer_2: {fileID: 1542482186167616638}
-  button_Amatuer_3: {fileID: 4728252008556590928}
-  button_SemiPro_1: {fileID: 2361257962632079596}
-  button_SemiPro_2: {fileID: 5064077488480799100}
-  button_SemiPro_3: {fileID: 3321673678472526724}
-  button_Pro_1: {fileID: 8071203538732965999}
-  button_Pro_2: {fileID: 990921787302718964}
-  button_Pro_3: {fileID: 8931622807904677086}
-  button_WorldClass_1: {fileID: 7581250908751322445}
-  button_WorldClass_2: {fileID: 7144610818806557521}
-  button_WorldClass_3: {fileID: 624179253902842496}
-  button_Legendary_1: {fileID: 8009932985257248978}
-  button_Legendary_2: {fileID: 124536420369987946}
-  button_Legendary_3: {fileID: 7256951113291491456}
 --- !u!1 &7232911746834700848
 GameObject:
   m_ObjectHideFlags: 0
