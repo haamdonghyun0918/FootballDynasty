@@ -126,6 +126,8 @@ public class SingleFatalUi : UiBase
     private SingleLeagueMode.OpponentSquadResult cachedOpponentSquad = null;
     private int cachedSquadRound = -1;
 
+    private List<OpponentPlayerCard> usedAiCards = new List<OpponentPlayerCard>();
+
     private void OnEnable()
     {
         ShowMatchPanel();
@@ -270,6 +272,7 @@ public class SingleFatalUi : UiBase
     private void InitMatchData()
     {
         currentTurn = 1;
+        usedAiCards.Clear();
 
         if (text_Turn != null)
         {
@@ -1133,6 +1136,12 @@ public class SingleFatalUi : UiBase
             {
                 aiCard = aiResult.selectedCard;
                 aiStatType = aiResult.selectedStatType;
+
+                if (usedAiCards.Contains(aiCard) == false)
+                {
+                    usedAiCards.Add(aiCard);
+                }
+
                 currentAiStartingList.Remove(aiCard);
             }
         }
@@ -1143,6 +1152,12 @@ public class SingleFatalUi : UiBase
             {
                 aiCard = preDecidedAiCard;
                 aiStatType = preDecidedAiStatType;
+
+                if (usedAiCards.Contains(aiCard) == false)
+                {
+                    usedAiCards.Add(aiCard);
+                }
+
                 currentAiStartingList.Remove(aiCard);
                 preDecidedAiCard = null;
             }
@@ -1154,6 +1169,12 @@ public class SingleFatalUi : UiBase
                 {
                     aiCard = aiResult.selectedCard;
                     aiStatType = aiResult.selectedStatType;
+
+                    if (usedAiCards.Contains(aiCard) == false)
+                    {
+                        usedAiCards.Add(aiCard);
+                    }
+
                     currentAiStartingList.Remove(aiCard);
                 }
             }
@@ -1851,6 +1872,12 @@ public class SingleFatalUi : UiBase
 
         if (usingBlockDict.TryGetValue(slot, out GameObject usingBlockObj))
         {
+            if (isViewingOpponent)
+            {
+                usingBlockObj.SetActive(false);
+                return;
+            }
+
             bool isUsed = false;
 
             if (slot.TargetUserCardData != null)
@@ -2181,5 +2208,226 @@ public class SingleFatalUi : UiBase
                 }
             }
         }
+        ApplyUsedAiCardsToSlots(aiSquad.assignedFormation.formationName);
+    }
+
+    private void ApplyUsedAiCardsToSlots(string formationName)
+    {
+        ApplyMatchFormationSlots(formationName);
+
+        if (slot_GK != null)
+        {
+            slot_GK.ClearSlot();
+        }
+
+        SetSlotArrayClear(slot_DFs);
+        SetSlotArrayClear(slot_MFs);
+        SetSlotArrayClear(slot_FWs);
+
+        if (cachedOpponentSquad == null)
+        {
+            return;
+        }
+
+        if (cachedOpponentSquad.startingLineup == null)
+        {
+            return;
+        }
+
+        List<OpponentPlayerCard> startingList = cachedOpponentSquad.startingLineup;
+        int listIndex = 0;
+
+        if (listIndex < startingList.Count)
+        {
+            OpponentPlayerCard card = startingList[listIndex];
+
+            if (card != null && usedAiCards.Contains(card))
+            {
+                if (slot_GK != null)
+                {
+                    slot_GK.SetOpponentCardData(card).Forget();
+                }
+            }
+            listIndex = listIndex + 1;
+        }
+
+        int[] dfIndices = GetActiveIndicesForPosition(formationName, "DF");
+        int[] mfIndices = GetActiveIndicesForPosition(formationName, "MF");
+        int[] fwIndices = GetActiveIndicesForPosition(formationName, "FW");
+
+        if (dfIndices != null)
+        {
+            for (int i = 0; i < dfIndices.Length; i++)
+            {
+                int targetIndex = dfIndices[i];
+                if (listIndex < startingList.Count)
+                {
+                    OpponentPlayerCard card = startingList[listIndex];
+
+                    if (card != null && usedAiCards.Contains(card))
+                    {
+                        if (targetIndex >= 0 && targetIndex < slot_DFs.Length && slot_DFs[targetIndex] != null)
+                        {
+                            slot_DFs[targetIndex].SetOpponentCardData(card).Forget();
+                        }
+                    }
+                    listIndex = listIndex + 1;
+                }
+            }
+        }
+
+        if (mfIndices != null)
+        {
+            for (int i = 0; i < mfIndices.Length; i++)
+            {
+                int targetIndex = mfIndices[i];
+
+                if (listIndex < startingList.Count)
+                {
+                    OpponentPlayerCard card = startingList[listIndex];
+
+                    if (card != null && usedAiCards.Contains(card))
+                    {
+                        if (targetIndex >= 0 && targetIndex < slot_MFs.Length && slot_MFs[targetIndex] != null)
+                        {
+                            slot_MFs[targetIndex].SetOpponentCardData(card).Forget();
+                        }
+                    }
+                    listIndex = listIndex + 1;
+                }
+            }
+        }
+
+        if (fwIndices != null)
+        {
+            for (int i = 0; i < fwIndices.Length; i++)
+            {
+                int targetIndex = fwIndices[i];
+
+                if (listIndex < startingList.Count)
+                {
+                    OpponentPlayerCard card = startingList[listIndex];
+
+                    if (card != null && usedAiCards.Contains(card))
+                    {
+                        if (targetIndex >= 0 && targetIndex < slot_FWs.Length && slot_FWs[targetIndex] != null)
+                        {
+                            slot_FWs[targetIndex].SetOpponentCardData(card).Forget();
+                        }
+                    }
+                    listIndex = listIndex + 1;
+                }
+            }
+        }
+    }
+
+    private void SetSlotArrayClear(SquadSlot[] slots)
+    {
+        if (slots == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i] != null)
+            {
+                slots[i].ClearSlot();
+            }
+        }
+    }
+
+    private int[] GetActiveIndicesForPosition(string formationName, string posType)
+    {
+        if (formationName == "4-3-3")
+        {
+            if (posType == "DF")
+            {
+                return new int[] { 0, 1, 3, 4 };
+            }
+
+            if (posType == "MF")
+            {
+                return new int[] { 0, 2, 4 };
+            }
+
+            if (posType == "FW")
+            {
+                return new int[] { 0, 2, 4 };
+            }
+        }
+
+        else if (formationName == "4-4-2")
+        {
+            if (posType == "DF")
+            {
+                return new int[] { 0, 1, 3, 4 };
+            }
+
+            if (posType == "MF")
+            {
+                return new int[] { 0, 1, 3, 4 };
+            }
+
+            if (posType == "FW")
+            {
+                return new int[] { 1, 3 };
+            }
+        }
+
+        else if (formationName == "4-5-1")
+        {
+            if (posType == "DF")
+            {
+                return new int[] { 0, 1, 3, 4 };
+            }
+
+            if (posType == "MF")
+            {
+                return new int[] { 0, 1, 2, 3, 4 };
+            }
+
+            if (posType == "FW")
+            {
+                return new int[] { 2 };
+            }
+        }
+
+        else if (formationName == "3-5-2")
+        {
+            if (posType == "DF")
+            {
+                return new int[] { 1, 2, 3 };
+            }
+
+            if (posType == "MF")
+            {
+                return new int[] { 0, 1, 2, 3, 4 };
+            }
+
+            if (posType == "FW")
+            {
+                return new int[] { 1, 3 };
+            }
+        }
+
+        else if (formationName == "3-4-3")
+        {
+            if (posType == "DF")
+            {
+                return new int[] { 1, 2, 3 };
+            }
+
+            if (posType == "MF")
+            {
+                return new int[] { 0, 1, 3, 4 };
+            }
+
+            if (posType == "FW")
+            {
+                return new int[] { 0, 2, 4 };
+            }
+        }
+        return null;
     }
 }
