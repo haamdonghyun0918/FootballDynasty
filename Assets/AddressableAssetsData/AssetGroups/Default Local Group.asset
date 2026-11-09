@@ -275,11 +275,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 169ae82b0f9ba934084fa2d593bb3834
-    m_Address: SingleFatalUi
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 173bbabf38a83ab499a4b9ea65661cb8
     m_Address: Player_240
     m_ReadOnly: 0
@@ -847,11 +842,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 45ae6d5c11f8c0f4ca2a0992e5c2b164
     m_Address: Player_368
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 45e719a735f6d444d98b95fc9534334e
-    m_Address: LeagueTeamSlot
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -2110,11 +2100,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: adf961d18896a344e8c8301a5f0c3c92
-    m_Address: SingleLeagueUi
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: adfd63e80c366134b8babf5f25ac1870
     m_Address: Player_280
     m_ReadOnly: 0
@@ -2760,11 +2745,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e2e38e64c0f69ba468526383eba6fe0e
-    m_Address: LeagueHistorySlot
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e38ad20dbee796844b22485151b2cd0a
     m_Address: Player_80
     m_ReadOnly: 0
@@ -2802,11 +2782,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e8d9ca53f67fa15418dd6afa9764b8bd
     m_Address: Player_132
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e9905d4d676e21f42afc0cc703677432
-    m_Address: LeagueSelectUi
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
