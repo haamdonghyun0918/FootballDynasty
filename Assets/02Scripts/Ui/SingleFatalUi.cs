@@ -688,7 +688,7 @@ public class SingleFatalUi : UiBase
     {
         currentTurn = currentTurn + 1;
 
-        if (currentTurn > 9)
+        if (currentTurn > 11)
         {
             ShowEndPanel();
             return;
@@ -699,19 +699,24 @@ public class SingleFatalUi : UiBase
             text_Turn.text = "현재 턴: " + currentTurn;
         }
 
+        bool isHomeAttack = (currentTurn % 2 != 0);
+        SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
+        bool isPlayerHome = seasonData != null && (seasonData.currentRound % 2 == 0);
+        bool isPlayerAttackTurn = (isPlayerHome == isHomeAttack);
+
+        if (home_Attack != null)
+        {
+            home_Attack.SetActive(isPlayerHome ? isPlayerAttackTurn : !isPlayerAttackTurn);
+        }
+
+        if (away_Attack != null)
+        {
+            away_Attack.SetActive(isPlayerHome ? !isPlayerAttackTurn : isPlayerAttackTurn);
+        }
+
         if (button_Substitute != null)
         {
-            if (currentTurn == 3)
-            {
-                button_Substitute.SetInteractable(true);
-            }
-
-            else if (currentTurn == 6)
-            {
-                button_Substitute.SetInteractable(true);
-            }
-
-            else if (currentTurn == 9)
+            if (currentTurn == 2 || currentTurn == 5 || currentTurn == 8)
             {
                 button_Substitute.SetInteractable(true);
             }
@@ -1016,39 +1021,41 @@ public class SingleFatalUi : UiBase
 
         SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
         int stageIndex = (seasonData != null) ? seasonData.difficultyIndex : 0;
-        var aiResult = aiPlaying.DecideAiCard(currentAiStartingList, currentTurn, stageIndex, statType, false);
+        bool isMyAttackTurn = (home_Attack != null && home_Attack.activeSelf);
 
         OpponentPlayerCard aiCard = null;
         int opponentStatType = 2;
 
-        if (aiResult != null)
+        if (isMyAttackTurn)
         {
-            aiCard = aiResult.selectedCard;
-            opponentStatType = aiResult.selectedStatType;
-            currentAiStartingList.Remove(aiCard);
+            if (object_OppositeChoosen != null)
+            {
+                object_OppositeChoosen.SetActive(false);
+            }
+
+            var aiResult = aiPlaying.DecideAiCard(currentAiStartingList, currentTurn, stageIndex, statType, false);
+
+            if (aiResult != null)
+            {
+                aiCard = aiResult.selectedCard;
+                opponentStatType = aiResult.selectedStatType;
+                currentAiStartingList.Remove(aiCard);
+            }
         }
 
         else
         {
-            aiCard = GetCurrentRoundAiCard(2);
+            var aiResult = aiPlaying.DecideAiCard(currentAiStartingList, currentTurn, stageIndex, statType, true);
 
-            if (statType == 0)
+            if (aiResult != null)
             {
-                opponentStatType = 2;
+                aiCard = aiResult.selectedCard;
+                opponentStatType = aiResult.selectedStatType;
+                currentAiStartingList.Remove(aiCard);
             }
 
-            else if (statType == 1)
-            {
-                opponentStatType = 1;
-            }
-
-            else
-            {
-                opponentStatType = 0;
-            }
+            TriggerOppositeChoosenUI(aiCard, opponentStatType);
         }
-
-        TriggerOppositeChoosenUI(aiCard, opponentStatType);
 
         OpenResultPanelAsync(mySelectedCardData, statType, aiCard, opponentStatType).Forget();
     }
