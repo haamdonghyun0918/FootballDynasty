@@ -123,6 +123,9 @@ public class SingleFatalUi : UiBase
     private HashSet<int> usedCardInstanceIds = new HashSet<int>();
     private Dictionary<SquadSlot, GameObject> usingBlockDict = new Dictionary<SquadSlot, GameObject>();
 
+    private SingleLeagueMode.OpponentSquadResult cachedOpponentSquad = null;
+    private int cachedSquadRound = -1;
+
     private void OnEnable()
     {
         ShowMatchPanel();
@@ -326,15 +329,19 @@ public class SingleFatalUi : UiBase
 
         string opponentTeamName = string.Empty;
         int difficultyIndex = 0;
+        int currentRound = 0;
+        int roundIndex = 0;
 
         if (seasonData != null)
         {
             difficultyIndex = seasonData.difficultyIndex;
+            currentRound = seasonData.currentRound;
+            roundIndex = seasonData.currentRound;
             string teamsCsv = seasonData.selectedTeamsCsv;
+
             if (string.IsNullOrEmpty(teamsCsv) == false)
             {
                 string[] teams = teamsCsv.Split(',');
-                int roundIndex = seasonData.currentRound;
 
                 if (roundIndex >= 0)
                 {
@@ -348,20 +355,28 @@ public class SingleFatalUi : UiBase
 
         if (string.IsNullOrEmpty(opponentTeamName) == false)
         {
-            SingleLeagueMode leagueMode = new SingleLeagueMode();
-            SingleLeagueMode.OpponentSquadResult aiSquad = leagueMode.BuildOpponentSquad(opponentTeamName, difficultyIndex);
-
-            if (aiSquad != null)
+            if (cachedOpponentSquad == null)
             {
-                currentAiStartingList = aiSquad.startingLineup;
-                currentAiBenchList = aiSquad.benchList;
+                SingleLeagueMode leagueMode = new SingleLeagueMode();
+                cachedOpponentSquad = leagueMode.BuildOpponentSquad(opponentTeamName, difficultyIndex);
+                cachedSquadRound = currentRound;
             }
-        }
 
-        int currentRound = 0;
-        if (seasonData != null)
-        {
-            currentRound = seasonData.currentRound;
+            else
+            {
+                if (cachedSquadRound != currentRound)
+                {
+                    SingleLeagueMode leagueMode = new SingleLeagueMode();
+                    cachedOpponentSquad = leagueMode.BuildOpponentSquad(opponentTeamName, difficultyIndex);
+                    cachedSquadRound = currentRound;
+                }
+            }
+
+            if (cachedOpponentSquad != null)
+            {
+                currentAiStartingList = new List<OpponentPlayerCard>(cachedOpponentSquad.startingLineup);
+                currentAiBenchList = new List<OpponentPlayerCard>(cachedOpponentSquad.benchList);
+            }
         }
 
         bool isPlayerHome = (currentRound % 2 == 0);
@@ -2118,7 +2133,23 @@ public class SingleFatalUi : UiBase
         }
 
         SingleLeagueMode leagueMode = new SingleLeagueMode();
-        SingleLeagueMode.OpponentSquadResult aiSquad = leagueMode.BuildOpponentSquad(opponentTeamName, seasonData.difficultyIndex);
+
+        if (cachedOpponentSquad == null)
+        {
+            cachedOpponentSquad = leagueMode.BuildOpponentSquad(opponentTeamName, seasonData.difficultyIndex);
+            cachedSquadRound = roundIndex;
+        }
+
+        else
+        {
+            if (cachedSquadRound != roundIndex)
+            {
+                cachedOpponentSquad = leagueMode.BuildOpponentSquad(opponentTeamName, seasonData.difficultyIndex);
+                cachedSquadRound = roundIndex;
+            }
+        }
+
+        SingleLeagueMode.OpponentSquadResult aiSquad = cachedOpponentSquad;
 
         if (aiSquad != null)
         {
@@ -2129,8 +2160,8 @@ public class SingleFatalUi : UiBase
 
             ApplyMatchFormationSlots(aiSquad.assignedFormation.formationName);
 
-            currentAiStartingList = aiSquad.startingLineup;
-            currentAiBenchList = aiSquad.benchList;
+            currentAiStartingList = new List<OpponentPlayerCard>(aiSquad.startingLineup);
+            currentAiBenchList = new List<OpponentPlayerCard>(aiSquad.benchList);
 
             if (aiStartingSettledList.Count != currentAiStartingList.Count)
             {
