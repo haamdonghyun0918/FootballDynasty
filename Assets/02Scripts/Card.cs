@@ -32,6 +32,7 @@ public class Card : MonoBehaviour
     [SerializeField] private Image skill_DF;
 
     public UserCardData TargetUserCardData { get; private set; }
+    public OpponentPlayerCard TargetOpponentCardData { get; private set; }
 
     private bool _isFront = true;
     private bool _isFlipping = false;
@@ -39,6 +40,11 @@ public class Card : MonoBehaviour
     public void SetTargetUserCardData(UserCardData userCardData)
     {
         TargetUserCardData = userCardData;
+    }
+
+    public void SetTargetOpponentCardData(OpponentPlayerCard opponentCardData)
+    {
+        TargetOpponentCardData = opponentCardData;
     }
 
     private void OnEnable()
@@ -89,7 +95,6 @@ public class Card : MonoBehaviour
         }
     }
 
-    // 카드 도감에 있는 카드들을 위하여 사용
     public void SetUpCard(PlayerData playerData)
     {
         if (playerData == null)
@@ -116,7 +121,6 @@ public class Card : MonoBehaviour
         LoadCardImagesAsync(playerData).Forget();
     }
 
-    // 실제 내가 가진 선수들에 대하여 사용
     public void SetUpCard(UserCardData userCardData)
     {
         if (userCardData == null || userCardData.StaticData == null)
@@ -130,6 +134,60 @@ public class Card : MonoBehaviour
         SetUpCard(userCardData.StaticData);
 
         LoadSkillImagesAsync(userCardData).Forget();
+    }
+
+    public void SetUpOpponentCard(OpponentPlayerCard opponentCard)
+    {
+        if (opponentCard == null)
+        {
+            Debug.LogError("상대 선수 데이터가 존재하지 않습니다.");
+            return;
+        }
+
+        _isFront = true;
+        _isFlipping = false;
+        SetCardBase(true);
+
+        if (text_Name != null)
+        {
+            text_Name.text = opponentCard.playerName;
+        }
+
+        if (text_Season != null)
+        {
+            PlayerData playerData = GameDataManager.Instance.GetData<PlayerData>(opponentCard.playerId);
+            if (playerData != null)
+            {
+                text_Season.text = playerData.Season;
+            }
+
+            else
+            {
+                text_Season.text = string.Empty;
+            }
+        }
+
+        if (text_Attoverall != null)
+        {
+            text_Attoverall.text = opponentCard.attack.ToString();
+        }
+
+        if (text_Midoverall != null)
+        {
+            text_Midoverall.text = opponentCard.mid.ToString();
+        }
+
+        if (text_Defoverall != null)
+        {
+            text_Defoverall.text = opponentCard.defense.ToString();
+        }
+
+        if (image_Player != null)
+        {
+            image_Player.sprite = null;
+        }
+
+        LoadOpponentCardImagesAsync(opponentCard).Forget();
     }
 
     private async UniTaskVoid LoadCardImagesAsync(PlayerData playerData)
@@ -179,6 +237,53 @@ public class Card : MonoBehaviour
             else
             {
                 Debug.Log($"포지션 이미지를 찾을 수 없습니다: {playerData.Pos}");
+            }
+        }
+    }
+
+    private async UniTaskVoid LoadOpponentCardImagesAsync(OpponentPlayerCard opponentCard)
+    {
+        PlayerData playerData = GameDataManager.Instance.GetData<PlayerData>(opponentCard.playerId);
+
+        if (playerData != null)
+        {
+            if (image_Team != null)
+            {
+                if (string.IsNullOrEmpty(playerData.Team) == false)
+                {
+                    Sprite teamSprite = await ResourceManager.Instance.LoadAsset<Sprite>(playerData.Team);
+                    if (teamSprite != null)
+                    {
+                        image_Team.sprite = teamSprite;
+                        image_Team.gameObject.SetActive(true);
+                    }
+                }
+            }
+
+            if (image_Pos != null)
+            {
+                if (string.IsNullOrEmpty(opponentCard.position) == false)
+                {
+                    Sprite posSprite = await ResourceManager.Instance.LoadAsset<Sprite>(opponentCard.position);
+                    if (posSprite != null)
+                    {
+                        image_Pos.sprite = posSprite;
+                        image_Pos.gameObject.SetActive(true);
+                    }
+                }
+            }
+
+            if (image_Player != null)
+            {
+                if (string.IsNullOrEmpty(playerData.ImageAddress) == false)
+                {
+                    Sprite playerSprite = await ResourceManager.Instance.LoadAsset<Sprite>(playerData.ImageAddress);
+                    if (playerSprite != null)
+                    {
+                        image_Player.sprite = playerSprite;
+                        image_Player.gameObject.SetActive(true);
+                    }
+                }
             }
         }
     }
