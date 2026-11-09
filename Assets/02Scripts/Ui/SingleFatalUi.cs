@@ -934,12 +934,14 @@ public class SingleFatalUi : UiBase
         if (isViewingOpponent)
         {
             ShowOpponentSquadView();
+            HideAllUsingBlocks();
         }
 
         else
         {
             string userId = DBManager.Instance.CurrentUserId;
             LoadAndApplyUserSquad(userId);
+            UpdateAllSlotUsingBlocks();
         }
     }
 
@@ -1923,6 +1925,23 @@ public class SingleFatalUi : UiBase
         }
     }
 
+    private void HideAllUsingBlocks()
+    {
+        if (usingBlockDict == null)
+        {
+            return;
+        }
+
+        foreach (var kvp in usingBlockDict)
+        {
+            if (kvp.Value != null)
+            {
+                kvp.Value.SetActive(false);
+            }
+        }
+    }
+
+
     private async UniTaskVoid RunResultTimerAsync()
     {
         resultTimer = 5f;
@@ -2224,98 +2243,93 @@ public class SingleFatalUi : UiBase
         SetSlotArrayClear(slot_MFs);
         SetSlotArrayClear(slot_FWs);
 
-        if (cachedOpponentSquad == null)
+        if (usedAiCards == null)
         {
             return;
-        }
-
-        if (cachedOpponentSquad.startingLineup == null)
-        {
-            return;
-        }
-
-        List<OpponentPlayerCard> startingList = cachedOpponentSquad.startingLineup;
-        int listIndex = 0;
-
-        if (listIndex < startingList.Count)
-        {
-            OpponentPlayerCard card = startingList[listIndex];
-
-            if (card != null && usedAiCards.Contains(card))
-            {
-                if (slot_GK != null)
-                {
-                    slot_GK.SetOpponentCardData(card).Forget();
-                }
-            }
-            listIndex = listIndex + 1;
         }
 
         int[] dfIndices = GetActiveIndicesForPosition(formationName, "DF");
         int[] mfIndices = GetActiveIndicesForPosition(formationName, "MF");
         int[] fwIndices = GetActiveIndicesForPosition(formationName, "FW");
 
-        if (dfIndices != null)
-        {
-            for (int i = 0; i < dfIndices.Length; i++)
-            {
-                int targetIndex = dfIndices[i];
-                if (listIndex < startingList.Count)
-                {
-                    OpponentPlayerCard card = startingList[listIndex];
+        int dfIndexCursor = 0;
+        int mfIndexCursor = 0;
+        int fwIndexCursor = 0;
 
-                    if (card != null && usedAiCards.Contains(card))
-                    {
-                        if (targetIndex >= 0 && targetIndex < slot_DFs.Length && slot_DFs[targetIndex] != null)
-                        {
-                            slot_DFs[targetIndex].SetOpponentCardData(card).Forget();
-                        }
-                    }
-                    listIndex = listIndex + 1;
+        for (int i = 0; i < usedAiCards.Count; i++)
+        {
+            OpponentPlayerCard usedCard = usedAiCards[i];
+
+            if (usedCard == null)
+            {
+                continue;
+            }
+
+            if (usedCard.position == "GK")
+            {
+                if (slot_GK != null)
+                {
+                    slot_GK.SetOpponentCardData(usedCard).Forget();
                 }
             }
-        }
 
-        if (mfIndices != null)
-        {
-            for (int i = 0; i < mfIndices.Length; i++)
+            else if (usedCard.position == "DF")
             {
-                int targetIndex = mfIndices[i];
-
-                if (listIndex < startingList.Count)
+                if (dfIndices != null)
                 {
-                    OpponentPlayerCard card = startingList[listIndex];
-
-                    if (card != null && usedAiCards.Contains(card))
+                    if (dfIndexCursor < dfIndices.Length)
                     {
-                        if (targetIndex >= 0 && targetIndex < slot_MFs.Length && slot_MFs[targetIndex] != null)
+                        int targetIndex = dfIndices[dfIndexCursor];
+
+                        if (targetIndex >= 0 && targetIndex < slot_DFs.Length)
                         {
-                            slot_MFs[targetIndex].SetOpponentCardData(card).Forget();
+                            if (slot_DFs[targetIndex] != null)
+                            {
+                                slot_DFs[targetIndex].SetOpponentCardData(usedCard).Forget();
+                            }
                         }
+                        dfIndexCursor = dfIndexCursor + 1;
                     }
-                    listIndex = listIndex + 1;
                 }
             }
-        }
 
-        if (fwIndices != null)
-        {
-            for (int i = 0; i < fwIndices.Length; i++)
+            else if (usedCard.position == "MF")
             {
-                int targetIndex = fwIndices[i];
-
-                if (listIndex < startingList.Count)
+                if (mfIndices != null)
                 {
-                    OpponentPlayerCard card = startingList[listIndex];
-
-                    if (card != null && usedAiCards.Contains(card))
+                    if (mfIndexCursor < mfIndices.Length)
                     {
-                        if (targetIndex >= 0 && targetIndex < slot_FWs.Length && slot_FWs[targetIndex] != null)
+                        int targetIndex = mfIndices[mfIndexCursor];
+
+                        if (targetIndex >= 0 && targetIndex < slot_MFs.Length)
                         {
-                            slot_FWs[targetIndex].SetOpponentCardData(card).Forget();
+                            if (slot_MFs[targetIndex] != null)
+                            {
+                                slot_MFs[targetIndex].SetOpponentCardData(usedCard).Forget();
+                            }
                         }
+                        mfIndexCursor = mfIndexCursor + 1;
                     }
-                    listIndex = listIndex + 1;
+                }
+            }
+
+            else if (usedCard.position == "FW")
+            {
+                if (fwIndices != null)
+                {
+                    if (fwIndexCursor < fwIndices.Length)
+                    {
+                        int targetIndex = fwIndices[fwIndexCursor];
+
+                        if (targetIndex >= 0 && targetIndex < slot_FWs.Length)
+                        {
+                            if (slot_FWs[targetIndex] != null)
+                            {
+                                slot_FWs[targetIndex].SetOpponentCardData(usedCard).Forget();
+                            }
+                        }
+                        fwIndexCursor = fwIndexCursor + 1;
+                    }
                 }
             }
         }

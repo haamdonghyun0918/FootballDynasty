@@ -685,9 +685,11 @@ public class SingleLeagueUi : UiBase
         }
 
         SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
+
         if (seasonData != null)
         {
             string userId = DBManager.Instance.CurrentUserId;
+
             int playerGoals = cachedIsHome ? cachedHomeScore : cachedAwayScore;
             int opponentGoals = cachedIsHome ? cachedAwayScore : cachedHomeScore;
 
@@ -719,6 +721,75 @@ public class SingleLeagueUi : UiBase
                 seasonData.matchHistoryCsv += "," + newRecord;
             }
 
+            string playerTeamName = DBManager.Instance.CurrentUserName;
+            if (string.IsNullOrEmpty(playerTeamName))
+            {
+                playerTeamName = "내 팀";
+            }
+
+            Dictionary<string, AiTeamRecord> aiDict = ParseAiResultsCsv(seasonData.aiResultsCsv, seasonData.selectedTeamsCsv);
+
+            if (cachedRoundMatches != null)
+            {
+                for (int i = 0; i < cachedRoundMatches.Count; i++)
+                {
+                    RoundMatchData match = cachedRoundMatches[i];
+                    if (match != null)
+                    {
+                        string hTeam = match.homeTeam;
+                        string aTeam = match.awayTeam;
+                        int hScore = match.homeScore;
+                        int aScore = match.awayScore;
+
+                        bool isHomePlayer = (hTeam == playerTeamName);
+                        bool isAwayPlayer = (aTeam == playerTeamName);
+
+                        if (isHomePlayer == false && aiDict.ContainsKey(hTeam))
+                        {
+                            AiTeamRecord hRec = aiDict[hTeam];
+                            if (hScore > aScore)
+                            {
+                                hRec.wins = hRec.wins + 1;
+                                hRec.points = hRec.points + 3;
+                            }
+
+                            else if (hScore == aScore)
+                            {
+                                hRec.draws = hRec.draws + 1;
+                                hRec.points = hRec.points + 1;
+                            }
+
+                            else
+                            {
+                                hRec.losses = hRec.losses + 1;
+                            }
+                        }
+
+                        if (isAwayPlayer == false && aiDict.ContainsKey(aTeam))
+                        {
+                            AiTeamRecord aRec = aiDict[aTeam];
+                            if (aScore > hScore)
+                            {
+                                aRec.wins = aRec.wins + 1;
+                                aRec.points = aRec.points + 3;
+                            }
+
+                            else if (aScore == hScore)
+                            {
+                                aRec.draws = aRec.draws + 1;
+                                aRec.points = aRec.points + 1;
+                            }
+
+                            else
+                            {
+                                aRec.losses = aRec.losses + 1;
+                            }
+                        }
+                    }
+                }
+            }
+
+            seasonData.aiResultsCsv = SerializeAiResults(aiDict);
             seasonData.currentRound++;
 
             DBManager.Instance.UpdateSingleLeagueProgress(
@@ -759,11 +830,11 @@ public class SingleLeagueUi : UiBase
 
         string[] difficultyNames = new string[]
         {
-            "Amateur 1", "Amateur 2", "Amateur 3",
-            "SemiPro 1", "SemiPro 2", "SemiPro 3",
-            "Pro 1", "Pro 2", "Pro 3",
-            "WorldClass 1", "WorldClass 2", "WorldClass 3",
-            "Legendary 1", "Legendary 2", "Legendary 3"
+        "Amateur 1", "Amateur 2", "Amateur 3",
+        "SemiPro 1", "SemiPro 2", "SemiPro 3",
+        "Pro 1", "Pro 2", "Pro 3",
+        "WorldClass 1", "WorldClass 2", "WorldClass 3",
+        "Legendary 1", "Legendary 2", "Legendary 3"
         };
 
         string diffText = string.Empty;
@@ -777,76 +848,38 @@ public class SingleLeagueUi : UiBase
             }
         }
 
-        List<TeamStanding> standings = new List<TeamStanding>();
-
-        TeamStanding playerStanding = new TeamStanding();
         string userName = DBManager.Instance.CurrentUserName;
-
-        if (userName != null)
+        if (string.IsNullOrEmpty(userName))
         {
-            if (userName == string.Empty)
-            {
-                playerStanding.teamName = "내 팀";
-            }
-
-            else
-            {
-                playerStanding.teamName = userName;
-            }
+            userName = "내 팀";
         }
 
-        playerStanding.isPlayer = true;
-        playerStanding.wins = seasonData.wins;
-        playerStanding.draws = seasonData.draws;
-        playerStanding.losses = seasonData.losses;
-        playerStanding.points = seasonData.points;
-        standings.Add(playerStanding);
+        List<TeamStanding> standings = SingleLeagueAi.CreateStandings(
+            userName,
+            seasonData.wins,
+            seasonData.draws,
+            seasonData.losses,
+            seasonData.points,
+            seasonData.selectedTeamsCsv
+        );
 
-        string teamsCsv = seasonData.selectedTeamsCsv;
-        if (teamsCsv != null)
+        Dictionary<string, AiTeamRecord> aiDict = ParseAiResultsCsv(seasonData.aiResultsCsv, seasonData.selectedTeamsCsv);
+        for (int i = 0; i < standings.Count; i++)
         {
-            if (teamsCsv != string.Empty)
+            if (standings[i].isPlayer == false)
             {
-                string[] aiTeams = teamsCsv.Split(',');
-                for (int i = 0; i < aiTeams.Length; i++)
+                string tName = standings[i].teamName;
+                if (aiDict.ContainsKey(tName))
                 {
-                    TeamStanding aiStanding = new TeamStanding();
-                    aiStanding.teamName = aiTeams[i];
-                    aiStanding.isPlayer = false;
-                    aiStanding.wins = seasonData.currentRound > 0 ? (i % (seasonData.currentRound + 1)) : 0;
-                    aiStanding.points = aiStanding.wins * 3;
-
-                    standings.Add(aiStanding);
+                    standings[i].wins = aiDict[tName].wins;
+                    standings[i].draws = aiDict[tName].draws;
+                    standings[i].losses = aiDict[tName].losses;
+                    standings[i].points = aiDict[tName].points;
                 }
             }
         }
 
-        for (int i = 0; i < standings.Count - 1; i++)
-        {
-            for (int j = 0; j < standings.Count - 1 - i; j++)
-            {
-                bool needSwap = false;
-                if (standings[j].points < standings[j + 1].points)
-                {
-                    needSwap = true;
-                }
-
-                else if (standings[j].points == standings[j + 1].points)
-                {
-                    if (standings[j].wins < standings[j + 1].wins)
-                    {
-                        needSwap = true;
-                    }
-                }
-
-                if (needSwap == true)
-                {
-                    TeamStanding temp = standings[j];
-                    standings[j] = standings[j + 1];
-                    standings[j + 1] = temp;
-                }
-            }
-        }
+        SingleLeagueAi.SortStandings(standings);
 
         int playerRank = 1;
         for (int i = 0; i < standings.Count; i++)
@@ -1137,5 +1170,82 @@ public class SingleLeagueUi : UiBase
         {
             panel_Round.SetActive(false);
         }
+    }
+
+    public class AiTeamRecord
+    {
+        public string teamName;
+        public int wins;
+        public int draws;
+        public int losses;
+        public int points;
+    }
+
+    private Dictionary<string, AiTeamRecord> ParseAiResultsCsv(string aiResultsCsv, string selectedTeamsCsv)
+    {
+        Dictionary<string, AiTeamRecord> dict = new Dictionary<string, AiTeamRecord>();
+
+        if (string.IsNullOrEmpty(selectedTeamsCsv) == false)
+        {
+            string[] aiTeams = selectedTeamsCsv.Split(',');
+            for (int i = 0; i < aiTeams.Length; i++)
+            {
+                AiTeamRecord record = new AiTeamRecord();
+                record.teamName = aiTeams[i];
+                record.wins = 0;
+                record.draws = 0;
+                record.losses = 0;
+                record.points = 0;
+                dict[aiTeams[i]] = record;
+            }
+        }
+
+        if (string.IsNullOrEmpty(aiResultsCsv) == false)
+        {
+            string[] entries = aiResultsCsv.Split(',');
+            for (int i = 0; i < entries.Length; i++)
+            {
+                string entry = entries[i];
+                if (string.IsNullOrEmpty(entry) == false)
+                {
+                    string[] parts = entry.Split(':');
+                    if (parts.Length >= 5)
+                    {
+                        string tName = parts[0];
+                        int w = 0;
+                        int.TryParse(parts[1], out w);
+                        int d = 0;
+                        int.TryParse(parts[2], out d);
+                        int l = 0;
+                        int.TryParse(parts[3], out l);
+                        int p = 0;
+                        int.TryParse(parts[4], out p);
+
+                        if (dict.ContainsKey(tName))
+                        {
+                            dict[tName].wins = w;
+                            dict[tName].draws = d;
+                            dict[tName].losses = l;
+                            dict[tName].points = p;
+                        }
+                    }
+                }
+            }
+        }
+
+        return dict;
+    }
+
+    private string SerializeAiResults(Dictionary<string, AiTeamRecord> dict)
+    {
+        List<string> list = new List<string>();
+        foreach (var kvp in dict)
+        {
+            AiTeamRecord rec = kvp.Value;
+            string data = rec.teamName + ":" + rec.wins + ":" + rec.draws + ":" + rec.losses + ":" + rec.points;
+            list.Add(data);
+        }
+
+        return string.Join(",", list);
     }
 }
