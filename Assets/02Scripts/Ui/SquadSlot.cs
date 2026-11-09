@@ -14,7 +14,6 @@ public class SquadSlot : MonoBehaviour
 
     public UserCardData TargetUserCardData { get; private set; }
     public Card SpawnedCard { get; private set; }
-    public OpponentPlayerCard TargetOpponentCardData { get; private set; }
 
     private Action<SquadSlot> _onClickSlotCallback;
     private string cardPrefabAddress = "Card";
@@ -71,40 +70,9 @@ public class SquadSlot : MonoBehaviour
 
     }
 
-    public async UniTaskVoid SetOpponentCardData(OpponentPlayerCard opponentCardData)
-    {
-        TargetUserCardData = null; // 유저 카드 데이터 초기화
-        TargetOpponentCardData = opponentCardData;
-
-        if (opponentCardData == null)
-        {
-            ClearSlot();
-            return;
-        }
-
-        if (SpawnedCard == null)
-        {
-            GameObject cardobj = await ResourceManager.Instance.Instantiate(cardPrefabAddress, transform);
-
-            if (cardobj != null)
-            {
-                SpawnedCard = cardobj.GetComponent<Card>();
-            }
-        }
-
-        if (SpawnedCard != null)
-        {
-            SpawnedCard.gameObject.SetActive(true);
-            SpawnedCard.SetTargetOpponentCardData(opponentCardData);
-            SpawnedCard.SetUpOpponentCard(opponentCardData);
-            SpawnedCard.DisableCardButton();
-        }
-    }
-
     public void ClearSlot()
     {
         TargetUserCardData = null;
-        TargetOpponentCardData = null;
 
         if (SpawnedCard != null)
         {
