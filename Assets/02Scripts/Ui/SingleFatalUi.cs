@@ -117,6 +117,8 @@ public class SingleFatalUi : UiBase
     private float endTimer = 30f;
 
     private AiPlaying aiPlaying = new AiPlaying();
+    private HashSet<int> usedCardInstanceIds = new HashSet<int>();
+    private Dictionary<SquadSlot, GameObject> usingBlockDict = new Dictionary<SquadSlot, GameObject>();
 
     private void OnEnable()
     {
@@ -268,6 +270,9 @@ public class SingleFatalUi : UiBase
             text_Turn.text = "현재 턴: " + currentTurn;
         }
 
+        usedCardInstanceIds.Clear();
+        CacheUsingBlocks();
+
         subPossibleCount = 5;
         subCompletedCount = 0;
 
@@ -348,7 +353,6 @@ public class SingleFatalUi : UiBase
             }
         }
 
-        // SingleLeagueMode를 통해 실제 AI 상대 팀 스쿼드 및 라인업 생성 및 적재[cite: 11]
         if (string.IsNullOrEmpty(opponentTeamName) == false)
         {
             SingleLeagueMode leagueMode = new SingleLeagueMode();
@@ -395,6 +399,7 @@ public class SingleFatalUi : UiBase
 
         LoadMatchLogosAsync(homeTeamName, awayTeamName).Forget();
         LoadAndApplyUserSquad(userId);
+        UpdateAllSlotUsingBlocks();
     }
 
     private async UniTaskVoid LoadMatchLogosAsync(string homeName, string awayName)
@@ -636,6 +641,12 @@ public class SingleFatalUi : UiBase
 
         if (clickedSlot.TargetUserCardData != null)
         {
+            if (usedCardInstanceIds.Contains(clickedSlot.TargetUserCardData.InstanceId))
+            {
+                Debug.LogWarning("[SingleFatalUi] 이미 사용 완료된 선수 카드입니다.");
+                return;
+            }
+
             mySelectedCardData = clickedSlot.TargetUserCardData;
             OpenCardInfo(mySelectedCardData);
         }
@@ -1018,6 +1029,12 @@ public class SingleFatalUi : UiBase
         }
 
         OnClickCardInfoClose();
+
+        if (mySelectedCardData != null && !usedCardInstanceIds.Contains(mySelectedCardData.InstanceId))
+        {
+            usedCardInstanceIds.Add(mySelectedCardData.InstanceId);
+            UpdateAllSlotUsingBlocks();
+        }
 
         SingleLeagueData seasonData = SingleModeManager.Instance.CurrentSeasonData;
         int stageIndex = (seasonData != null) ? seasonData.difficultyIndex : 0;
@@ -1427,6 +1444,95 @@ public class SingleFatalUi : UiBase
             currentScore = currentScore + delta;
             if (currentScore < 0) currentScore = 0;
             point_Home.text = currentScore.ToString();
+        }
+    }
+
+    private void CacheUsingBlocks()
+    {
+        usingBlockDict.Clear();
+        CacheSlotBlock(slot_GK);
+        CacheSlotArrayBlocks(slot_DFs);
+        CacheSlotArrayBlocks(slot_MFs);
+        CacheSlotArrayBlocks(slot_FWs);
+    }
+
+    private void CacheSlotBlock(SquadSlot slot)
+    {
+        if (slot == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < slot.transform.childCount; i++)
+        {
+            Transform child = slot.transform.GetChild(i);
+            if (child.name == "UsingBlock")
+            {
+                usingBlockDict[slot] = child.gameObject;
+                break;
+            }
+        }
+    }
+
+    private void CacheSlotArrayBlocks(SquadSlot[] slots)
+    {
+        if (slots == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            CacheSlotBlock(slots[i]);
+        }
+    }
+
+    private void UpdateSlotUsingBlock(SquadSlot slot)
+    {
+        if (slot == null)
+        {
+            return;
+        }
+
+        if (usingBlockDict.TryGetValue(slot, out GameObject usingBlockObj))
+        {
+            bool isUsed = false;
+
+            if (slot.TargetUserCardData != null)
+            {
+                isUsed = usedCardInstanceIds.Contains(slot.TargetUserCardData.InstanceId);
+            }
+
+            usingBlockObj.SetActive(isUsed);
+        }
+    }
+
+    private void UpdateAllSlotUsingBlocks()
+    {
+        UpdateSlotUsingBlock(slot_GK);
+
+        if (slot_DFs != null)
+        {
+            for (int i = 0; i < slot_DFs.Length; i++)
+            {
+                UpdateSlotUsingBlock(slot_DFs[i]);
+            }
+        }
+
+        if (slot_MFs != null)
+        {
+            for (int i = 0; i < slot_MFs.Length; i++)
+            {
+                UpdateSlotUsingBlock(slot_MFs[i]);
+            }
+        }
+
+        if (slot_FWs != null)
+        {
+            for (int i = 0; i < slot_FWs.Length; i++)
+            {
+                UpdateSlotUsingBlock(slot_FWs[i]);
+            }
         }
     }
 
