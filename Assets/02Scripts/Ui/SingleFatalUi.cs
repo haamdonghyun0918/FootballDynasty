@@ -1504,6 +1504,11 @@ public class SingleFatalUi : UiBase
             }
 
             usingBlockObj.SetActive(isUsed);
+
+            if (isUsed)
+            {
+                usingBlockObj.transform.SetAsLastSibling();
+            }
         }
     }
 
