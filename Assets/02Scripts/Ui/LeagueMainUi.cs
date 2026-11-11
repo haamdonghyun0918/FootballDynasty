@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class LeagueMainUi : UiBase
 {
@@ -12,6 +14,15 @@ public class LeagueMainUi : UiBase
     [SerializeField] private GameObject panel_Match;
     [SerializeField] private GameObject panel_Rank;
     [SerializeField] private GameObject panel_History;
+
+    [Header("Panel_Main")]
+    [SerializeField] private UiButton button_Sim;
+    [SerializeField] private UiButton button_Play;
+    [SerializeField] private Image image_Home;
+    [SerializeField] private Image image_Away;
+    [SerializeField] private TMP_Text text_HomeName;
+    [SerializeField] private TMP_Text text_AwayName;
+
 
     private void OnEnable()
     {
@@ -33,6 +44,16 @@ public class LeagueMainUi : UiBase
         if (button_Close != null)
         {
             button_Close.BindOnClickButtonEvent(OnClickClose);
+        }
+
+        if (button_Play != null)
+        {
+            button_Play.BindOnClickButtonEvent(OnClickPlay);
+        }
+
+        if (button_Sim != null)
+        {
+            button_Sim.BindOnClickButtonEvent(OnClickSim);
         }
 
         RefreshPanel();
@@ -73,6 +94,15 @@ public class LeagueMainUi : UiBase
         }
     }
 
+    private void OnClickPlay()
+    {
+
+    }
+
+    private void OnClickSim()
+    {
+
+    }
 
     private async void OnClickClose()
     {
