@@ -75,6 +75,7 @@ public class MainUi : UiBase
 
     private async void OnClickSingleMode()
     {
-
+        await UiManager.Instance.OpenUi<DifficultySelectUi>();
+        UiManager.Instance.CloseUi<MainUi>();
     }
 }
