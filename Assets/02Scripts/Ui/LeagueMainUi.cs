@@ -22,6 +22,11 @@ public class LeagueMainUi : UiBase
     [SerializeField] private Image image_Away;
     [SerializeField] private TMP_Text text_HomeName;
     [SerializeField] private TMP_Text text_AwayName;
+    [SerializeField] private TMP_Text text_Round;
+
+    [Header("Panel_Rank")]
+    [SerializeField] private TMP_Text text_Difficulty;
+    [SerializeField] private Transform content_TeamView;
 
 
     private void OnEnable()
