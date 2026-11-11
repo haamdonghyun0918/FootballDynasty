@@ -431,6 +431,34 @@ public class DBManager : MonoBehaviour
         return squadDict;
     }
 
+    public int GetUserLeagueDifficulty(string userId)
+    {
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                string query = "SELECT LeagueDifficulty FROM userinfo WHERE UserId = @userId";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    object result = cmd.ExecuteScalar();
+
+                    return result != null ? Convert.ToInt32(result) : 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"리그 난이도 조회 실패: {ex.Message}");
+                return 1;
+            }
+        }
+    }
+
     public bool SaveSingleModeData(string userId, int difficultyLevel, List<TeamSquad> leagueSquads)
     {
         string connString = DBConfig.GetConnection();
