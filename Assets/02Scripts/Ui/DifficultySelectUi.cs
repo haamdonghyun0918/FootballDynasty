@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DifficultySelectUi : UiBase
 {
@@ -119,6 +118,82 @@ public class DifficultySelectUi : UiBase
         if (button_Close != null)
         {
             button_Close.BindOnClickButtonEvent(OnClickClose);
+        }
+
+        int unlockedLevel = DBManager.Instance.GetUserLeagueDifficulty(DBManager.Instance.CurrentUserId);
+        UpdateDifficulty(unlockedLevel);
+    }
+
+    private void UpdateDifficulty(int unlockedLevel)
+    {
+        if (block_Diff2 != null)
+        {
+            block_Diff2.SetActive(unlockedLevel < 2);
+        }
+
+        if (block_Diff3 != null)
+        {
+            block_Diff3.SetActive(unlockedLevel < 3);
+        }
+
+        if (block_Diff4 != null)
+        {
+            block_Diff4.SetActive(unlockedLevel < 4);
+        }
+
+        if (block_Diff5 != null)
+        {
+            block_Diff5.SetActive(unlockedLevel < 5);
+        }
+
+        if (block_Diff6 != null)
+        {
+            block_Diff6.SetActive(unlockedLevel < 6);
+        }
+
+        if (block_Diff7 != null)
+        {
+            block_Diff7.SetActive(unlockedLevel < 7);
+        }
+
+        if (block_Diff8 != null)
+        {
+            block_Diff8.SetActive(unlockedLevel < 8);
+        }
+
+        if (block_Diff9 != null)
+        {
+            block_Diff9.SetActive(unlockedLevel < 9);
+        }
+
+        if (block_Diff10 != null)
+        {
+            block_Diff10.SetActive(unlockedLevel < 10);
+        }
+
+        if (Block_Diff11 != null)
+        {
+            Block_Diff11.SetActive(unlockedLevel < 11);
+        }
+
+        if (Block_Diff12 != null)
+        {
+            Block_Diff12.SetActive(unlockedLevel < 12);
+        }
+
+        if (Block_Diff13 != null)
+        {
+            Block_Diff13.SetActive(unlockedLevel < 13);
+        }
+
+        if (Block_Diff14 != null)
+        {
+            Block_Diff14.SetActive(unlockedLevel < 14);
+        }
+
+        if (Block_Diff15 != null)
+        {
+            Block_Diff15.SetActive(unlockedLevel < 15);
         }
     }
 
