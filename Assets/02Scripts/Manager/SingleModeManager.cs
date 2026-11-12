@@ -48,4 +48,41 @@ public class SingleModeManager : MonoBehaviour
         playerAssignedSkills.Clear();
         Debug.Log("[SingleModeManager] 싱글모드 리그 데이터가 초기화되었습니다.");
     }
+
+    public List<RankedTeamData> GetRankedTeamList()
+    {
+        string userId = DBManager.Instance.CurrentUserId;
+        List<LeagueTeamRecord> recordList = DBManager.Instance.GetLeagueRankRecords(userId);
+
+        if (recordList == null || recordList.Count == 0)
+        {
+            return new List<RankedTeamData>();
+        }
+
+        recordList.Sort(new LeagueRecordComparator());
+
+        List<RankedTeamData> rankedList = new List<RankedTeamData>();
+        int currentRank = 1;
+
+        for (int i = 0; i < recordList.Count; i++)
+        {
+            if (i > 0)
+            {
+                bool isSamePoints = (recordList[i].points == recordList[i - 1].points);
+                bool isSameWins = (recordList[i].wins == recordList[i - 1].wins);
+
+                if (!isSamePoints || !isSameWins)
+                {
+                    currentRank = i + 1;
+                }
+            }
+
+            RankedTeamData rankedData = new RankedTeamData();
+            rankedData.rank = currentRank;
+            rankedData.record = recordList[i];
+            rankedList.Add(rankedData);
+        }
+
+        return rankedList;
+    }
 }
