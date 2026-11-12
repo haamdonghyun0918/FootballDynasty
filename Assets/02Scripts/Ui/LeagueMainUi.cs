@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
-using TMPro;
 using UnityEngine.UI;
+using TMPro;
+using System.Collections.Generic;
 
 public class LeagueMainUi : UiBase
 {
@@ -27,6 +28,8 @@ public class LeagueMainUi : UiBase
     [Header("Panel_Rank")]
     [SerializeField] private TMP_Text text_Difficulty;
     [SerializeField] private Transform content_TeamView;
+    private string rankSlotPrefabAddress = "LeagueRankSlot";
+    private List<GameObject> spawnedRankSlots = new List<GameObject>();
 
 
     private void OnEnable()
@@ -71,12 +74,7 @@ public class LeagueMainUi : UiBase
 
     private void OnClickRank()
     {
-        if (panel_Match != null || panel_Rank != null || panel_History != null)
-        {
-            panel_Match.SetActive(false);
-            panel_Rank.SetActive(true);
-            panel_History.SetActive(false);
-        }
+        RefreshRankPanel();
     }
 
     private void OnClickHistory()
@@ -107,6 +105,47 @@ public class LeagueMainUi : UiBase
     private void OnClickSim()
     {
 
+    }
+
+    private async void RefreshRankPanel()
+    {
+        for (int i = 0; i < spawnedRankSlots.Count; i++)
+        {
+            if (spawnedRankSlots[i] != null)
+            {
+                Destroy(spawnedRankSlots[i]);
+            }
+        }
+
+        spawnedRankSlots.Clear();
+
+        List<RankedTeamData> rankedList = SingleModeManager.Instance.GetRankedTeamList();
+
+        for (int i = 0; i < rankedList.Count; i++)
+        {
+            int rank = rankedList[i].rank;
+            LeagueTeamRecord record = rankedList[i].record;
+
+            GameObject slotObj = await ResourceManager.Instance.Instantiate(rankSlotPrefabAddress, content_TeamView);
+
+            if (slotObj != null)
+            {
+                spawnedRankSlots.Add(slotObj);
+                LeagueRankSlot rankSlot = slotObj.GetComponent<LeagueRankSlot>();
+
+                if (rankSlot != null)
+                {
+                    rankSlot.SetData(rank, record.teamName, record.wins, record.draws, record.losses, record.points);
+                }
+            }
+        }
+
+        if (panel_Match != null || panel_Rank != null || panel_History != null)
+        {
+            panel_Match.SetActive(false);
+            panel_Rank.SetActive(true);
+            panel_History.SetActive(false);
+        }
     }
 
     private async void OnClickClose()
