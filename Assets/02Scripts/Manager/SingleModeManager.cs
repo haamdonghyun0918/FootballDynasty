@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using MySqlConnector;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SingleModeManager : MonoBehaviour
@@ -38,8 +40,13 @@ public class SingleModeManager : MonoBehaviour
         currentLeagueSquads = teamGenerator.GenerateLeagueTeams(allPlayers);
         LeaguePlayerSetting playerSetting = new LeaguePlayerSetting();
         playerSetting.ApplyDifficulty(currentLeagueSquads, allSkills, difficultyLevel, playerAssignedSkills);
-        DBManager.Instance.SaveSingleModeData(DBManager.Instance.CurrentUserId, difficultyLevel, currentLeagueSquads);
-        Debug.Log($"[SingleModeManager] 싱글모드 세팅 완료! (난이도: {difficultyLevel}단계, 팀 수: {currentLeagueSquads.Count})");
+
+        string userId = DBManager.Instance.CurrentUserId;
+        string userTeamName = DBManager.Instance.CurrentUserName;
+
+        DBManager.Instance.SaveSingleModeData(userId, difficultyLevel, currentLeagueSquads);
+        GenerateLeagueSchedule(userId, userTeamName, currentLeagueSquads);
+        Debug.Log($"[SingleModeManager] 싱글모드 세팅 및 38라운드 대진표 생성 완료! (난이도: {difficultyLevel}단계)");
     }
 
     public void ClearSingleModeData()
@@ -82,7 +89,115 @@ public class SingleModeManager : MonoBehaviour
             rankedData.record = recordList[i];
             rankedList.Add(rankedData);
         }
-
         return rankedList;
+    }
+
+    private void GenerateLeagueSchedule(string userId, string userTeamName, List<TeamSquad> aiTeams)
+    {
+        List<string> allTeams = new List<string>();
+        allTeams.Add(userTeamName);
+
+        for (int i = 0; i < aiTeams.Count; i++)
+        {
+            allTeams.Add(aiTeams[i].TeamName);
+        }
+
+        int totalTeams = allTeams.Count;
+        int halfTeams = totalTeams / 2;
+        int singleRoundCount = totalTeams - 1;
+
+        List<string> rotatingTeams = new List<string>();
+        for (int i = 1; i < totalTeams; i++)
+        {
+            rotatingTeams.Add(allTeams[i]);
+        }
+
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            conn.Open();
+
+            using (MySqlTransaction transaction = conn.BeginTransaction())
+            {
+                try
+                {
+                    for (int round = 0; round < singleRoundCount; round++)
+                    {
+                        int roundIndex = round + 1;
+
+                        string teamA = allTeams[0];
+                        string teamB = rotatingTeams[round % rotatingTeams.Count];
+
+                        bool isZeroHome = (round % 2 == 0);
+                        string homeTeam = isZeroHome ? teamA : teamB;
+                        string awayTeam = isZeroHome ? teamB : teamA;
+                        bool isPlayerHome = (homeTeam == userTeamName);
+
+                        DBManager.Instance.SaveMatchSchedule(userId, roundIndex, homeTeam, awayTeam, isPlayerHome, conn, transaction);
+
+                        for (int i = 1; i < halfTeams; i++)
+                        {
+                            int team1Idx = (round + i) % rotatingTeams.Count;
+                            int team2Idx = (round + singleRoundCount - i) % rotatingTeams.Count;
+
+                            string t1 = rotatingTeams[team1Idx];
+                            string t2 = rotatingTeams[team2Idx];
+
+                            bool isT1Home = (i % 2 == 1);
+                            string hTeam = isT1Home ? t1 : t2;
+                            string aTeam = isT1Home ? t2 : t1;
+                            bool isPlayerMatchHome = (hTeam == userTeamName);
+
+                            DBManager.Instance.SaveMatchSchedule(userId, roundIndex, hTeam, aTeam, isPlayerMatchHome, conn, transaction);
+                        }
+                    }
+
+                    for (int round = 0; round < singleRoundCount; round++)
+                    {
+                        int firstHalfRound = round + 1;
+                        int secondHalfRound = firstHalfRound + singleRoundCount;
+
+                        string getFirstHalfQuery = "SELECT HomeTeam, AwayTeam, IsPlayerHome FROM singleleague_matches WHERE UserId = @userId AND RoundIndex = @firstRound";
+
+                        List<string[]> matchesToInvert = new List<string[]>();
+                        List<bool> playerHomeList = new List<bool>();
+
+                        using (MySqlCommand cmd = new MySqlCommand(getFirstHalfQuery, conn, transaction))
+                        {
+                            cmd.Parameters.AddWithValue("@userId", userId);
+                            cmd.Parameters.AddWithValue("@firstRound", firstHalfRound);
+                            
+                            using (MySqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    string h = reader.GetString("HomeTeam");
+                                    string a = reader.GetString("AwayTeam");
+                                    bool pHome = reader.GetBoolean("IsPlayerHome");
+                                    matchesToInvert.Add(new string[] { h, a });
+                                    playerHomeList.Add(pHome);
+                                }
+                            }
+                        }
+
+                        for (int m = 0; m < matchesToInvert.Count; m++)
+                        {
+                            string newHome = matchesToInvert[m][1];
+                            string newAway = matchesToInvert[m][0];
+                            bool newIsPlayerHome = (newHome == userTeamName);
+
+                            DBManager.Instance.SaveMatchSchedule(userId, secondHalfRound, newHome, newAway, newIsPlayerHome, conn, transaction);
+                        }
+                    }
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    Debug.LogError($"대진표 생성 및 저장 트랜잭션 실패: {ex.Message}");
+                }
+            }
+        }
     }
 }

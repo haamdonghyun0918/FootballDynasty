@@ -87,13 +87,65 @@ public class LeagueMainUi : UiBase
         }
     }
 
-    private void RefreshPanel()
+    private async void RefreshPanel()
     {
         if (panel_Match != null || panel_Rank != null || panel_History != null)
         {
             panel_Match.SetActive(true);
             panel_Rank.SetActive(false);
             panel_History.SetActive(false);
+        }
+        string userId = DBManager.Instance.CurrentUserId;
+        LeagueMatchData currentMatch = DBManager.Instance.GetCurrentMatchInfo(userId);
+
+        if (currentMatch != null)
+        {
+            if (text_Round != null)
+            {
+                text_Round.text = $"ROUND {currentMatch.roundIndex}";
+            }
+
+            if (text_HomeName != null)
+            {
+                text_HomeName.text = currentMatch.homeTeam;
+            }
+
+            if (text_AwayName != null)
+            {
+                text_AwayName.text = currentMatch.awayTeam;
+            }
+
+            if (image_Home != null)
+            {
+                Sprite homeSprite = await ResourceManager.Instance.LoadAsset<Sprite>(currentMatch.homeTeam);
+
+                if (homeSprite != null)
+                {
+                    image_Home.sprite = homeSprite;
+                    image_Home.gameObject.SetActive(true);
+                }
+
+                else
+                {
+                    image_Home.gameObject.SetActive(false);
+                }
+            }
+
+            if (image_Away != null)
+            {
+                Sprite awaySprite = await ResourceManager.Instance.LoadAsset<Sprite>(currentMatch.awayTeam);
+
+                if (awaySprite != null)
+                {
+                    image_Away.sprite = awaySprite;
+                    image_Away.gameObject.SetActive(true);
+                }
+
+                else
+                {
+                    image_Away.gameObject.SetActive(false);
+                }
+            }
         }
     }
 

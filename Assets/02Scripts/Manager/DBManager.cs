@@ -632,7 +632,64 @@ public class DBManager : MonoBehaviour
                 Debug.LogError($"리그 순위 데이터 조회 실패: {ex.Message}");
             }
         }
-
         return recordList;
+    }
+
+    public bool SaveMatchSchedule(string userId, int roundIndex, string homeTeam, string awayTeam, bool isPlayerHome, MySqlConnection conn, MySqlTransaction transaction)
+    {
+        string query = "INSERT INTO singleleague_matches (UserId, RoundIndex, HomeTeam, AwayTeam, HomeScore, AwayScore, IsPlayerHome) VALUES (@userId, @roundIndex, @homeTeam, @awayTeam, 0, 0, @isPlayerHome)";
+
+        using (MySqlCommand cmd = new MySqlCommand(query, conn, transaction))
+        {
+            cmd.Parameters.AddWithValue("@userId", userId);
+            cmd.Parameters.AddWithValue("@roundIndex", roundIndex);
+            cmd.Parameters.AddWithValue("@homeTeam", homeTeam);
+            cmd.Parameters.AddWithValue("@awayTeam", awayTeam);
+            cmd.Parameters.AddWithValue("@isPlayerHome", isPlayerHome);
+
+            return cmd.ExecuteNonQuery() > 0;
+        }
+    }
+
+    public LeagueMatchData GetCurrentMatchInfo(string userId)
+    {
+        LeagueMatchData matchData = null;
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                string query = @"SELECT m.RoundIndex, m.HomeTeam, m.AwayTeam, m.HomeScore, m.AwayScore, m.IsPlayerHome FROM singleleague_season s JOIN singleleague_matches m ON s.UserId = m.UserId AND s.CurrentRound = m.RoundIndex WHERE s.UserId = @userId";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            matchData = new LeagueMatchData
+                            {
+                                roundIndex = reader.GetInt32("RoundIndex"),
+                                homeTeam = reader.GetString("HomeTeam"),
+                                awayTeam = reader.GetString("AwayTeam"),
+                                homeScore = reader.GetInt32("HomeScore"),
+                                awayScore = reader.GetInt32("AwayScore"),
+                                isPlayerHome = reader.GetBoolean("IsPlayerHome")
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"현재 경기 정보 조회 실패: {ex.Message}");
+            }
+        }
+        return matchData;
     }
 }
