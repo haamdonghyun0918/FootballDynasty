@@ -569,4 +569,70 @@ public class DBManager : MonoBehaviour
             }
         }
     }
+
+    public List<LeagueTeamRecord> GetLeagueRankRecords(string userId)
+    {
+        List<LeagueTeamRecord> recordList = new List<LeagueTeamRecord>();
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                string userQuery = @"SELECT u.UserName, s.Wins, s.Draws, s.Losses, s.Points FROM singleleague_season s JOIN userinfo u ON s.UserId = u.UserId WHERE s.UserId = @userId";
+
+                using (MySqlCommand cmd = new MySqlCommand(userQuery, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            LeagueTeamRecord userRecord = new LeagueTeamRecord();
+                            userRecord.teamName = reader.GetString("UserName");
+                            userRecord.wins = reader.GetInt32("Wins");
+                            userRecord.draws = reader.GetInt32("Draws");
+                            userRecord.losses = reader.GetInt32("Losses");
+                            userRecord.points = reader.GetInt32("Points");
+                            userRecord.isUserTeam = true;
+
+                            recordList.Add(userRecord);
+                        }
+                    }
+                }
+
+                string aiQuery = "SELECT TeamName, Wins, Draws, Losses, Points FROM singleleague_aiteams WHERE UserId = @userId";
+                
+                using (MySqlCommand cmd = new MySqlCommand(aiQuery, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            LeagueTeamRecord aiRecord = new LeagueTeamRecord();
+                            aiRecord.teamName = reader.GetString("TeamName");
+                            aiRecord.wins = reader.GetInt32("Wins");
+                            aiRecord.draws = reader.GetInt32("Draws");
+                            aiRecord.losses = reader.GetInt32("Losses");
+                            aiRecord.points = reader.GetInt32("Points");
+                            aiRecord.isUserTeam = false;
+
+                            recordList.Add(aiRecord);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"리그 순위 데이터 조회 실패: {ex.Message}");
+            }
+        }
+
+        return recordList;
+    }
 }
