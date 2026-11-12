@@ -2775,6 +2775,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e5c103927cec6454ea3d51439d4c6296
+    m_Address: LeagueRankSlot
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e6143273c2d798743a9d3183e18e3701
     m_Address: "\uB3C4\uCFC4 \uC2A4\uD3EC\uB974\uD305"
     m_ReadOnly: 0
