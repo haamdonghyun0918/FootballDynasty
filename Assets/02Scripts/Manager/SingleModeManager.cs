@@ -167,7 +167,7 @@ public class SingleModeManager : MonoBehaviour
                         {
                             cmd.Parameters.AddWithValue("@userId", userId);
                             cmd.Parameters.AddWithValue("@firstRound", firstHalfRound);
-                            
+
                             using (MySqlDataReader reader = cmd.ExecuteReader())
                             {
                                 while (reader.Read())
@@ -191,11 +191,12 @@ public class SingleModeManager : MonoBehaviour
                         }
                     }
                     transaction.Commit();
+                    Debug.Log("[SingleModeManager] 38라운드 대진표 생성 및 DB 저장 완료!");
                 }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    Debug.LogError($"대진표 생성 및 저장 트랜잭션 실패: {ex.Message}");
+                    Debug.LogError($"대진표 생성 및 저장 트랜잭션 실패 [상세 에러]: {ex.Message} \n StackTrace: {ex.StackTrace}");
                 }
             }
         }

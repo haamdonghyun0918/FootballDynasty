@@ -637,7 +637,7 @@ public class DBManager : MonoBehaviour
 
     public bool SaveMatchSchedule(string userId, int roundIndex, string homeTeam, string awayTeam, bool isPlayerHome, MySqlConnection conn, MySqlTransaction transaction)
     {
-        string query = "INSERT INTO singleleague_matches (UserId, RoundIndex, HomeTeam, AwayTeam, HomeScore, AwayScore, IsPlayerHome) VALUES (@userId, @roundIndex, @homeTeam, @awayTeam, 0, 0, @isPlayerHome)";
+        string query = @"INSERT INTO singleleague_matches (UserId, RoundIndex, HomeTeam, AwayTeam, HomeScore, AwayScore, IsPlayerHome) VALUES (@userId, @roundIndex, @homeTeam, @awayTeam, 0, 0, @isPlayerHome) ON DUPLICATE KEY UPDATE HomeTeam = @homeTeam, AwayTeam = @awayTeam, IsPlayerHome = @isPlayerHome";
 
         using (MySqlCommand cmd = new MySqlCommand(query, conn, transaction))
         {
@@ -662,12 +662,50 @@ public class DBManager : MonoBehaviour
             {
                 conn.Open();
 
+                string userName = string.Empty;
+                int currentRound = 1;
+
+                string infoQuery = "SELECT u.UserName, s.CurrentRound FROM userinfo u JOIN singleleague_season s ON u.UserId = s.UserId WHERE u.UserId = @userId";
+                using (MySqlCommand infoCmd = new MySqlCommand(infoQuery, conn))
+                {
+                    infoCmd.Parameters.AddWithValue("@userId", userId);
+                    using (MySqlDataReader infoReader = infoCmd.ExecuteReader())
+                    {
+                        if (infoReader.Read())
+                        {
+                            userName = infoReader.GetString("UserName");
+                            currentRound = infoReader.GetInt32("CurrentRound");
+                        }
+                    }
+                }
+
+                Debug.Log($"[디버그] 현재 유저 ID: {userId} | 유저 닉네임(팀명): [{userName}] | 현재 라운드: {currentRound}");
+
+                string debugQuery = "SELECT HomeTeam, AwayTeam FROM singleleague_matches WHERE UserId = @userId AND RoundIndex = @round";
+
+                using (MySqlCommand debugCmd = new MySqlCommand(debugQuery, conn))
+                {
+                    debugCmd.Parameters.AddWithValue("@userId", userId);
+                    debugCmd.Parameters.AddWithValue("@round", currentRound);
+
+                    using (MySqlDataReader debugReader = debugCmd.ExecuteReader())
+                    {
+                        string allMatchesLog = $"[디버그] ROUND {currentRound} 전체 대진표 목록:\n";
+
+                        while (debugReader.Read())
+                        {
+                            allMatchesLog += $"- {debugReader.GetString("HomeTeam")} VS {debugReader.GetString("AwayTeam")}\n";
+                        }
+                        Debug.Log(allMatchesLog);
+                    }
+                }
+
                 string query = @"SELECT m.RoundIndex, m.HomeTeam, m.AwayTeam, m.HomeScore, m.AwayScore, m.IsPlayerHome FROM singleleague_season s JOIN userinfo u ON s.UserId = u.UserId JOIN singleleague_matches m ON s.UserId = m.UserId AND s.CurrentRound = m.RoundIndex WHERE s.UserId = @userId AND (m.HomeTeam = u.UserName OR m.AwayTeam = u.UserName)";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@userId", userId);
-                    
+
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
@@ -681,6 +719,13 @@ public class DBManager : MonoBehaviour
                                 awayScore = reader.GetInt32("AwayScore"),
                                 isPlayerHome = reader.GetBoolean("IsPlayerHome")
                             };
+
+                            Debug.Log($"[DBManager] 유저 경기 매칭 성공! ({matchData.homeTeam} VS {matchData.awayTeam})");
+                        }
+
+                        else
+                        {
+                            Debug.LogWarning($"[DBManager] 실패! 닉네임 [{userName}]과 일치하는 팀이 ROUND {currentRound} 대진표에 없습니다!");
                         }
                     }
                 }
