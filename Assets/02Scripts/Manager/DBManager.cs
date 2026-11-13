@@ -514,12 +514,11 @@ public class DBManager : MonoBehaviour
                             for (int s = 0; s < squad.StartingLineup.Count; s++)
                             {
                                 PlayerData player = squad.StartingLineup[s];
+                                
                                 string slotKey = $"Start_{s}";
-                                
-                                int.TryParse(player.Id, out int playerId);
-
+                                string playerId = player.Id;
                                 string insertSquad = "INSERT INTO singleleague_aisquad (UserId, TeamName, SlotKey, PlayerId) VALUES (@userId, @teamName, @slotKey, @playerId)";
-                                
+
                                 using (MySqlCommand cmd = new MySqlCommand(insertSquad, conn, transaction))
                                 {
                                     cmd.Parameters.AddWithValue("@userId", userId);
@@ -533,10 +532,9 @@ public class DBManager : MonoBehaviour
                             for (int sub = 0; sub < squad.SubPlayers.Count; sub++)
                             {
                                 PlayerData player = squad.SubPlayers[sub];
-                                string slotKey = $"Sub_{sub}";
                                 
-                                int.TryParse(player.Id, out int playerId);
-
+                                string slotKey = $"Sub_{sub}";
+                                string playerId = player.Id;
                                 string insertSquad = "INSERT INTO singleleague_aisquad (UserId, TeamName, SlotKey, PlayerId) VALUES (@userId, @teamName, @slotKey, @playerId)";
                                
                                 using (MySqlCommand cmd = new MySqlCommand(insertSquad, conn, transaction))
