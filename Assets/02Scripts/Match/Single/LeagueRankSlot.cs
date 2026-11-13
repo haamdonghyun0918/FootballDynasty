@@ -57,17 +57,7 @@ public class LeagueRankSlot : MonoBehaviour
         }
 
         Sprite teamSprite = await ResourceManager.Instance.LoadAsset<Sprite>(teamName);
-
-        if (teamSprite != null)
-        {
-            image_TeamLogo.sprite = teamSprite;
-            image_TeamLogo.gameObject.SetActive(true);
-        }
-
-        else
-        {
-            image_TeamLogo.gameObject.SetActive(false);
-            Debug.Log($"팀 로고를 찾을 수 없습니다: {teamName}");
-        }
+        image_TeamLogo.gameObject.SetActive(true);
+        image_TeamLogo.sprite = teamSprite;
     }
 }

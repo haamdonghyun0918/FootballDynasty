@@ -120,32 +120,16 @@ public class LeagueMainUi : UiBase
             {
                 Sprite homeSprite = await ResourceManager.Instance.LoadAsset<Sprite>(currentMatch.homeTeam);
 
-                if (homeSprite != null)
-                {
-                    image_Home.sprite = homeSprite;
-                    image_Home.gameObject.SetActive(true);
-                }
-
-                else
-                {
-                    image_Home.gameObject.SetActive(false);
-                }
+                image_Home.gameObject.SetActive(true);
+                image_Home.sprite = homeSprite;
             }
 
             if (image_Away != null)
             {
                 Sprite awaySprite = await ResourceManager.Instance.LoadAsset<Sprite>(currentMatch.awayTeam);
 
-                if (awaySprite != null)
-                {
-                    image_Away.sprite = awaySprite;
-                    image_Away.gameObject.SetActive(true);
-                }
-
-                else
-                {
-                    image_Away.gameObject.SetActive(false);
-                }
+                image_Away.gameObject.SetActive(true);
+                image_Away.sprite = awaySprite;
             }
         }
     }

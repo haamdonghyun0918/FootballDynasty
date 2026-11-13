@@ -662,7 +662,7 @@ public class DBManager : MonoBehaviour
             {
                 conn.Open();
 
-                string query = @"SELECT m.RoundIndex, m.HomeTeam, m.AwayTeam, m.HomeScore, m.AwayScore, m.IsPlayerHome FROM singleleague_season s JOIN singleleague_matches m ON s.UserId = m.UserId AND s.CurrentRound = m.RoundIndex WHERE s.UserId = @userId";
+                string query = @"SELECT m.RoundIndex, m.HomeTeam, m.AwayTeam, m.HomeScore, m.AwayScore, m.IsPlayerHome FROM singleleague_season s JOIN userinfo u ON s.UserId = u.UserId JOIN singleleague_matches m ON s.UserId = m.UserId AND s.CurrentRound = m.RoundIndex WHERE s.UserId = @userId AND (m.HomeTeam = u.UserName OR m.AwayTeam = u.UserName)";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
