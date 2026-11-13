@@ -512,6 +512,7 @@ GameObject:
   - component: {fileID: 5436432798161546921}
   - component: {fileID: 7133392613866849169}
   - component: {fileID: 7201993376436761312}
+  - component: {fileID: 1797301437237032653}
   m_Layer: 5
   m_Name: MatchHistorySlot
   m_TagString: Untagged
@@ -584,6 +585,25 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1797301437237032653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3065657155220592871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a7c83d91dd5ce841842f3b5d497e101, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MatchHistorySlot
+  text_Round: {fileID: 6856835070236022747}
+  image_Home: {fileID: 5254070746038301062}
+  text_HomeName: {fileID: 1586363967256904220}
+  text_HomeScore: {fileID: 4919791128704042992}
+  image_Away: {fileID: 3567562005890218330}
+  text_AwayName: {fileID: 3392972852880808263}
+  text_AwayScore: {fileID: 8039710159910034058}
 --- !u!1 &3972862069109266236
 GameObject:
   m_ObjectHideFlags: 0
