@@ -31,6 +31,11 @@ public class LeagueMainUi : UiBase
     private string rankSlotPrefabAddress = "LeagueRankSlot";
     private List<GameObject> spawnedRankSlots = new List<GameObject>();
 
+    [Header("Panel_History")]
+    [SerializeField] private Transform content_HistoryView;
+    private string historySlotPrefabAddress = "MatchHistorySlot";
+    private List<GameObject> spawnedHistorySlots = new List<GameObject>();
+
 
     private void OnEnable()
     {
@@ -79,12 +84,7 @@ public class LeagueMainUi : UiBase
 
     private void OnClickHistory()
     {
-        if (panel_Match != null || panel_Rank != null || panel_History != null)
-        {
-            panel_Match.SetActive(false);
-            panel_Rank.SetActive(false);
-            panel_History.SetActive(true);
-        }
+        RefreshHistoryPanel();
     }
 
     private async void RefreshPanel()
@@ -95,6 +95,7 @@ public class LeagueMainUi : UiBase
             panel_Rank.SetActive(false);
             panel_History.SetActive(false);
         }
+
         string userId = DBManager.Instance.CurrentUserId;
         LeagueMatchData currentMatch = DBManager.Instance.GetCurrentMatchInfo(userId);
 
@@ -161,6 +162,13 @@ public class LeagueMainUi : UiBase
 
     private async void RefreshRankPanel()
     {
+        if (panel_Match != null || panel_Rank != null || panel_History != null)
+        {
+            panel_Match.SetActive(false);
+            panel_Rank.SetActive(true);
+            panel_History.SetActive(false);
+        }
+
         for (int i = 0; i < spawnedRankSlots.Count; i++)
         {
             if (spawnedRankSlots[i] != null)
@@ -191,12 +199,47 @@ public class LeagueMainUi : UiBase
                 }
             }
         }
+    }
 
-        if (panel_Match != null || panel_Rank != null || panel_History != null)
+    private async void RefreshHistoryPanel()
+    {
+        if (panel_Match != null && panel_Rank != null && panel_History != null)
         {
             panel_Match.SetActive(false);
-            panel_Rank.SetActive(true);
-            panel_History.SetActive(false);
+            panel_Rank.SetActive(false);
+            panel_History.SetActive(true);
+        }
+
+        for (int i = 0; i < spawnedHistorySlots.Count; i++)
+        {
+            if (spawnedHistorySlots[i] != null)
+            {
+                Destroy(spawnedHistorySlots[i]);
+            }
+        }
+
+        spawnedHistorySlots.Clear();
+
+        string userId = DBManager.Instance.CurrentUserId;
+        string userTeamName = DBManager.Instance.CurrentUserName;
+        List<LeagueMatchData> historyList = DBManager.Instance.GetUserMatchHistory(userId, userTeamName);
+
+        for (int i = 0; i < historyList.Count; i++)
+        {
+            LeagueMatchData match = historyList[i];
+
+            GameObject slotObj = await ResourceManager.Instance.Instantiate(historySlotPrefabAddress, content_HistoryView);
+
+            if (slotObj != null)
+            {
+                spawnedHistorySlots.Add(slotObj);
+                MatchHistorySlot historySlot = slotObj.GetComponent<MatchHistorySlot>();
+
+                if (historySlot != null)
+                {
+                    historySlot.SetData(match.roundIndex, match.homeTeam, match.awayTeam, match.homeScore, match.awayScore);
+                }
+            }
         }
     }
 
