@@ -75,7 +75,20 @@ public class MainUi : UiBase
 
     private async void OnClickSingleMode()
     {
-        await UiManager.Instance.OpenUi<DifficultySelectUi>();
+        string userId = DBManager.Instance.CurrentUserId;
+
+        bool hasActiveLeague = DBManager.Instance.HasActiveSingleLeague(userId);
+
+        if (hasActiveLeague)
+        {
+            await UiManager.Instance.OpenUi<LeagueMainUi>();
+        }
+
+        else
+        {
+            await UiManager.Instance.OpenUi<DifficultySelectUi>();
+        }
+
         UiManager.Instance.CloseUi<MainUi>();
     }
 }
