@@ -197,79 +197,109 @@ public class DifficultySelectUi : UiBase
         }
     }
 
-    private void OnClickDiff1()
+    private async void OnClickDiff1()
     {
         SingleModeManager.Instance.StartSingleMode(1);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
-    private void OnClickDiff2()
+    private async void OnClickDiff2()
     {
         SingleModeManager.Instance.StartSingleMode(2);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
-    private void OnClickDiff3()
+    private async void OnClickDiff3()
     {
         SingleModeManager.Instance.StartSingleMode(3);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
-    private void OnClickDiff4()
+    private async void OnClickDiff4()
     {
         SingleModeManager.Instance.StartSingleMode(4);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
-    private void OnClickDiff5()
+    private async void OnClickDiff5()
     {
         SingleModeManager.Instance.StartSingleMode(5);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
-    private void OnClickDiff6()
+    private async void OnClickDiff6()
     {
         SingleModeManager.Instance.StartSingleMode(6);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
-    private void OnClickDiff7()
+    private async void OnClickDiff7()
     {
         SingleModeManager.Instance.StartSingleMode(7);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
-    private void OnClickDiff8()
+    private async void OnClickDiff8()
     {
         SingleModeManager.Instance.StartSingleMode(8);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
-    private void OnClickDiff9()
+    private async void OnClickDiff9()
     {
         SingleModeManager.Instance.StartSingleMode(9);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
-    private void OnClickDiff10()
+    private async void OnClickDiff10()
     {
         SingleModeManager.Instance.StartSingleMode(10);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
-    private void OnClickDiff11()
+    private async void OnClickDiff11()
     {
         SingleModeManager.Instance.StartSingleMode(11);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
-    private void OnClickDiff12()
+    private async void OnClickDiff12()
     {
         SingleModeManager.Instance.StartSingleMode(12);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
-    private void OnClickDiff13()
+    private async void OnClickDiff13()
     {
         SingleModeManager.Instance.StartSingleMode(13);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
-    private void OnClickDiff14()
+    private async void OnClickDiff14()
     {
         SingleModeManager.Instance.StartSingleMode(14);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
-    private void OnClickDiff15()
+    private async void OnClickDiff15()
     {
         SingleModeManager.Instance.StartSingleMode(15);
+        await UiManager.Instance.OpenUi<LeagueMainUi>();
+        UiManager.Instance.CloseUi<DifficultySelectUi>();
     }
 
     private async void OnClickClose()
