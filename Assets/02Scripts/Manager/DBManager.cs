@@ -692,4 +692,48 @@ public class DBManager : MonoBehaviour
         }
         return matchData;
     }
+
+    public List<LeagueMatchData> GetUserMatchHistory(string userId, string userTeamName)
+    {
+        List<LeagueMatchData> historyList = new List<LeagueMatchData>();
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                string query = @"SELECT m.RoundIndex, m.HomeTeam, m.AwayTeam, m.HomeScore, m.AwayScore, m.IsPlayerHome FROM singleleague_matches m JOIN singleleague_season s ON m.UserId = s.UserId WHERE m.UserId = @userId AND (m.HomeTeam = @teamName OR m.AwayTeam = @teamName) AND m.RoundIndex <= s.CurrentRound ORDER BY m.RoundIndex ASC";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("@teamName", userTeamName);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            LeagueMatchData match = new LeagueMatchData
+                            {
+                                roundIndex = reader.GetInt32("RoundIndex"),
+                                homeTeam = reader.GetString("HomeTeam"),
+                                awayTeam = reader.GetString("AwayTeam"),
+                                homeScore = reader.GetInt32("HomeScore"),
+                                awayScore = reader.GetInt32("AwayScore"),
+                                isPlayerHome = reader.GetBoolean("IsPlayerHome")
+                            };
+                            historyList.Add(match);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"유저 경기 기록 조회 실패: {ex.Message}");
+            }
+        }
+        return historyList;
+    }
 }
