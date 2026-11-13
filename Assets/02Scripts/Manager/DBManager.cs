@@ -693,6 +693,33 @@ public class DBManager : MonoBehaviour
         return matchData;
     }
 
+    public bool HasActiveSingleLeague(string userId)
+    {
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                string query = "SELECT COUNT(*) FROM singleleague_season WHERE UserId = @userId";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    return count > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"진행 중인 싱글리그 확인 실패: {ex.Message}");
+                return false;
+            }
+        }
+    }
+
     public List<LeagueMatchData> GetUserMatchHistory(string userId, string userTeamName)
     {
         List<LeagueMatchData> historyList = new List<LeagueMatchData>();
