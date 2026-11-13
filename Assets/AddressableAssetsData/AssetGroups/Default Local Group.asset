@@ -915,6 +915,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4b489ec0215ec854182df63d7bbcd75b
+    m_Address: MatchHistorySlot
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4b7e3493227c1a54686e4e5cbb55de44
     m_Address: Player_71
     m_ReadOnly: 0
