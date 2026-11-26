@@ -201,4 +201,20 @@ public class SingleModeManager : MonoBehaviour
             }
         }
     }
+
+
+    public TeamSquad GetLeagueTeamSquad(string teamName)
+    {
+        for (int i = 0; i < currentLeagueSquads.Count; i++)
+        {
+            if (currentLeagueSquads[i].TeamName == teamName)
+            {
+                return currentLeagueSquads[i];
+            }
+        }
+
+        string userId = DBManager.Instance.CurrentUserId;
+
+        return DBManager.Instance.GetSingleLeagueAiTeamSquad(userId, teamName);
+    }
 }

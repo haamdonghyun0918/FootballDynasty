@@ -806,4 +806,139 @@ public class DBManager : MonoBehaviour
         }
         return historyList;
     }
+
+    public TeamSquad GetSingleLeagueAiTeamSquad(string userId, string teamName)
+    {
+        SortedDictionary<int, PlayerData> startingPlayers = new SortedDictionary<int, PlayerData>();
+        SortedDictionary<int, PlayerData> subPlayers = new SortedDictionary<int, PlayerData>();
+
+        string connString = DBConfig.GetConnection();
+
+        using (MySqlConnection conn = new MySqlConnection(connString))
+        {
+            try
+            {
+                conn.Open();
+
+                string query = @"SELECT SlotKey, PlayerId FROM singleleague_aisquad WHERE UserId = @userId AND TeamName = @teamName";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("@teamName", teamName);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string slotKey = reader.GetString("SlotKey");
+                            string playerId = reader.GetString("PlayerId");
+
+                            PlayerData player = GameDataManager.Instance.GetData<PlayerData>(playerId);
+
+                            if (player == null)
+                            {
+                                Debug.LogWarning($"[DBManager] AI 선수 데이터를 찾을 수 없습니다: {playerId}");
+                                continue;
+                            }
+
+                            int slotIndex;
+
+                            if (slotKey.StartsWith("Start_"))
+                            {
+                                if (int.TryParse(slotKey.Substring(6), out slotIndex))
+                                {
+                                    startingPlayers[slotIndex] = player;
+                                }
+                            }
+
+                            else if (slotKey.StartsWith("Sub_"))
+                            {
+                                if (int.TryParse(slotKey.Substring(4), out slotIndex))
+                                {
+                                    subPlayers[slotIndex] = player;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (startingPlayers.Count == 0)
+                {
+                    Debug.LogWarning($"[DBManager] {teamName}의 AI 선발 선수 데이터가 없습니다.");
+                    return null;
+                }
+
+                TeamSquad squad = new TeamSquad();
+                squad.TeamName = teamName;
+
+                foreach (KeyValuePair<int, PlayerData> item in startingPlayers)
+                {
+                    squad.StartingLineup.Add(item.Value);
+                }
+
+                foreach (KeyValuePair<int, PlayerData> item in subPlayers)
+                {
+                    squad.SubPlayers.Add(item.Value);
+                }
+
+                int dfCount = 0;
+                int mfCount = 0;
+                int fwCount = 0;
+
+                foreach (PlayerData player in squad.StartingLineup)
+                {
+                    if (player.Pos == "DF")
+                    {
+                        dfCount++;
+                    }
+
+                    else if (player.Pos == "MF")
+                    {
+                        mfCount++;
+                    }
+
+                    else if (player.Pos == "FW")
+                    {
+                        fwCount++;
+                    }
+                }
+
+                if (dfCount == 4 && mfCount == 3 && fwCount == 3)
+                {
+                    squad.FormationType = "4-3-3";
+                }
+
+                else if (dfCount == 4 && mfCount == 4 && fwCount == 2)
+                {
+                    squad.FormationType = "4-4-2";
+                }
+
+                else if (dfCount == 4 && mfCount == 5 && fwCount == 1)
+                {
+                    squad.FormationType = "4-5-1";
+                }
+
+                else if (dfCount == 3 && mfCount == 5 && fwCount == 2)
+                {
+                    squad.FormationType = "3-5-2";
+                }
+
+                else if (dfCount == 3 && mfCount == 4 && fwCount == 3)
+                {
+                    squad.FormationType = "3-4-3";
+                }
+
+                Debug.Log($"[DBManager] AI 팀({teamName}) 선수단 복원 완료! " + $"선발: {squad.StartingLineup.Count}, 후보: {squad.SubPlayers.Count}, "+ $"포메이션: {squad.FormationType}");
+
+                return squad;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"AI 팀 선수단 조회 실패: {ex.Message}");
+                return null;
+            }
+        }
+    }
+
 }
