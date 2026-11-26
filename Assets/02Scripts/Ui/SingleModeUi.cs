@@ -34,6 +34,33 @@ public class SingleModeUi : UiBase
     [SerializeField] private Transform _opponentLineMF;
     [SerializeField] private Transform _opponentLineFW;
 
+    [Header("Squad Panels")]
+    [SerializeField] private GameObject panel_UserSquad;
+    [SerializeField] private GameObject panel_OpponentSquad;
+    [SerializeField] private UiButton button_Opponent;
+
+    [Header("Opponent Choice")]
+    [SerializeField] private GameObject panel_OpponentChoice;
+    [SerializeField] private Transform opponentCard_Locate;
+    [SerializeField] private TMP_Text text_ChooseOverall;
+
+    [Header("User Choice")]
+    [SerializeField] private GameObject panel_Choice;
+    [SerializeField] private Transform card_Spawn;
+
+    [SerializeField] private UiButton button_OverallFW;
+    [SerializeField] private UiButton button_OverallMF;
+    [SerializeField] private UiButton button_OverallDF;
+
+    [SerializeField] private TMP_Text text_OverallFW;
+    [SerializeField] private TMP_Text text_OverallMF;
+    [SerializeField] private TMP_Text text_OverallDF;
+
+    [SerializeField] private TMP_Text text_SkillFW;
+    [SerializeField] private TMP_Text text_SkillMF;
+    [SerializeField] private TMP_Text text_SkillDF;
+    [SerializeField] private UiButton button_Cancel;
+
     private string cardPrefabAddress = "Card";
 
     private LeagueMatchData _currentMatch;
@@ -56,6 +83,18 @@ public class SingleModeUi : UiBase
     private Dictionary<string, UserCardData> _userCardsBySlot = new Dictionary<string, UserCardData>();
 
     private Dictionary<string, PlayerData> _opponentPlayersBySlot = new Dictionary<string, PlayerData>();
+
+    private bool _isShowingOpponentSquad = false;
+
+    private GameObject _opponentChoiceSlotObject;
+
+    private Card _choicePreviewCard;
+
+    private UserCardData _selectedUserCardData;
+    private string _selectedUserOverall = string.Empty;
+
+    private PlayerData _selectedOpponentPlayer;
+    private string _selectedOpponentOverall = string.Empty;
 
     public LeagueMatchData CurrentMatch
     {
@@ -89,7 +128,197 @@ public class SingleModeUi : UiBase
 
     private void OnEnable()
     {
+        BindButtons();
+
+        if (panel_UserSquad != null)
+        {
+            panel_UserSquad.SetActive(true);
+        }
+
+        if (panel_OpponentSquad != null)
+        {
+            panel_OpponentSquad.SetActive(false);
+        }
+
+        if (panel_Choice != null)
+        {
+            panel_Choice.SetActive(false);
+        }
+
+        if (panel_OpponentChoice != null)
+        {
+            panel_OpponentChoice.SetActive(false);
+        }
+
+        _isShowingOpponentSquad = false;
+
         InitializeMatchAsync().Forget();
+    }
+
+    private void OnDisable()
+    {
+        UnbindButtons();
+    }
+
+    private void BindButtons()
+    {
+        if (button_Opponent != null)
+        {
+            button_Opponent.BindOnClickButtonEvent(OnClickOpponent);
+        }
+
+        if (button_OverallFW != null)
+        {
+            button_OverallFW.BindOnClickButtonEvent(OnClickOverallFW);
+        }
+
+        if (button_OverallMF != null)
+        {
+            button_OverallMF.BindOnClickButtonEvent(OnClickOverallMF);
+        }
+
+        if (button_OverallDF != null)
+        {
+            button_OverallDF.BindOnClickButtonEvent(OnClickOverallDF);
+        }
+
+        if (button_Cancel != null)
+        {
+            button_Cancel.BindOnClickButtonEvent(OnClickCancel);
+        }
+    }
+
+    private void UnbindButtons()
+    {
+        if (button_Opponent != null)
+        {
+            button_Opponent.UnBindOnClickButtonEvent(OnClickOpponent);
+        }
+
+        if (button_OverallFW != null)
+        {
+            button_OverallFW.UnBindOnClickButtonEvent(OnClickOverallFW);
+        }
+
+        if (button_OverallMF != null)
+        {
+            button_OverallMF.UnBindOnClickButtonEvent(OnClickOverallMF);
+        }
+
+        if (button_OverallDF != null)
+        {
+            button_OverallDF.UnBindOnClickButtonEvent(OnClickOverallDF);
+        }
+
+        if (button_Cancel != null)
+        {
+            button_Cancel.UnBindOnClickButtonEvent(OnClickCancel);
+        }
+    }
+
+    private void OnClickOpponent()
+    {
+        if (_isShowingOpponentSquad)
+        {
+            SetSquadView(false);
+        }
+
+        else
+        {
+            SetSquadView(true);
+        }
+
+        if (panel_Choice != null)
+        {
+            panel_Choice.SetActive(false);
+        }
+
+        _selectedUserCardData = null;
+        _selectedUserOverall = string.Empty;
+    }
+
+    private void SetSquadView(bool showOpponent)
+    {
+        _isShowingOpponentSquad = showOpponent;
+
+        if (panel_UserSquad != null)
+        {
+            panel_UserSquad.SetActive(showOpponent == false);
+        }
+
+        if (panel_OpponentSquad != null)
+        {
+            panel_OpponentSquad.SetActive(showOpponent);
+        }
+
+        if (showOpponent == false)
+        {
+            RefreshUserCardViews();
+        }
+    }
+
+    private void RefreshUserCardViews()
+    {
+        foreach (KeyValuePair<string, UserCardData> item in _userCardsBySlot)
+        {
+            string slotKey = item.Key;
+            UserCardData userCard = item.Value;
+
+            if (userCard == null)
+            {
+                continue;
+            }
+
+            Transform slot = GetUserSlotFromKey(slotKey);
+
+            if (slot == null)
+            {
+                continue;
+            }
+
+            Card card = null;
+
+            if (_userCardViews.TryGetValue(slot, out card) == false)
+            {
+                continue;
+            }
+
+            if (card == null)
+            {
+                continue;
+            }
+
+            card.gameObject.SetActive(true);
+            card.SetUpCard(userCard);
+            card.EnableCardButton(OnClickUserSquadCard);
+        }
+    }
+
+    private Transform GetUserSlotFromKey(string slotKey)
+    {
+        if (slotKey == "GK")
+        {
+            return _userSlotGK;
+        }
+
+        int separatorIndex = slotKey.IndexOf('_');
+
+        if (separatorIndex < 0)
+        {
+            return null;
+        }
+
+        string position = slotKey.Substring(0, separatorIndex);
+        string indexText = slotKey.Substring(separatorIndex + 1);
+
+        int slotIndex;
+
+        if (int.TryParse(indexText, out slotIndex) == false)
+        {
+            return null;
+        }
+
+        return GetSquadSlot(true, position, slotIndex);
     }
 
     private async UniTaskVoid InitializeMatchAsync()
@@ -155,6 +384,7 @@ public class SingleModeUi : UiBase
 
             await LoadUserSquadAsync(userId);
             await LoadOpponentSquadAsync(userId);
+            SetSquadView(false);
 
             Debug.Log($"[SingleModeUi] 경기 준비 완료! " + $"{_currentMatch.homeTeam} VS {_currentMatch.awayTeam}");
         }
@@ -316,6 +546,7 @@ public class SingleModeUi : UiBase
         {
             cardView.gameObject.SetActive(true);
             cardView.SetUpCard(targetCard);
+            cardView.EnableCardButton(OnClickUserSquadCard);
         }
     }
 
@@ -440,18 +671,6 @@ public class SingleModeUi : UiBase
 
             Destroy(cardObj);
             return null;
-        }
-
-        RectTransform rect = cardObj.GetComponent<RectTransform>();
-
-        if (rect != null)
-        {
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
-            rect.anchoredPosition = Vector2.zero;
-            rect.localScale = Vector3.one;
         }
 
         cardPool.Add(slot, card);
@@ -789,4 +1008,287 @@ public class SingleModeUi : UiBase
             image_AttackAway.gameObject.SetActive(!isHomeTeam);
         }
     }
+
+    private void OnClickUserSquadCard(Card clickedCard)
+    {
+        if (_isShowingOpponentSquad)
+        {
+            return;
+        }
+
+        if (clickedCard == null)
+        {
+            return;
+        }
+
+        if (clickedCard.TargetUserCardData == null)
+        {
+            return;
+        }
+
+        _selectedUserCardData = clickedCard.TargetUserCardData;
+        _selectedUserOverall = string.Empty;
+
+        OpenUserChoicePanelAsync().Forget();
+    }
+
+    private async UniTaskVoid OpenUserChoicePanelAsync()
+    {
+        if (_selectedUserCardData == null)
+        {
+            return;
+        }
+
+        PlayerData playerData = _selectedUserCardData.StaticData;
+
+        if (playerData == null)
+        {
+            Debug.LogError("[SingleModeUi] 선수 데이터가 없습니다.");
+            return;
+        }
+
+        if (panel_Choice == null || card_Spawn == null)
+        {
+            Debug.LogError("[SingleModeUi] Panel_Choice 연결을 확인해주세요.");
+            return;
+        }
+
+        panel_Choice.SetActive(true);
+
+        if (_choicePreviewCard == null)
+        {
+            GameObject cardObj = await ResourceManager.Instance.Instantiate(cardPrefabAddress, card_Spawn, true);
+
+            if (cardObj == null)
+            {
+                return;
+            }
+
+            _choicePreviewCard = cardObj.GetComponent<Card>();
+        }
+
+        if (_choicePreviewCard == null)
+        {
+            return;
+        }
+
+        _choicePreviewCard.gameObject.SetActive(true);
+        _choicePreviewCard.SetUpCard(_selectedUserCardData);
+        _choicePreviewCard.DisableCardButton();
+
+        if (text_OverallFW != null)
+        {
+            text_OverallFW.text = "FW";
+        }
+
+        if (text_OverallMF != null)
+        {
+            text_OverallMF.text = "MF";
+        }
+
+        if (text_OverallDF != null)
+        {
+            text_OverallDF.text = "DF";
+        }
+
+        if (text_SkillFW != null)
+        {
+            text_SkillFW.text = GetSkillDescription(_selectedUserCardData.SkillFwData);
+        }
+
+        if (text_SkillMF != null)
+        {
+            text_SkillMF.text = GetSkillDescription(_selectedUserCardData.SkillMfData);
+        }
+
+        if (text_SkillDF != null)
+        {
+            text_SkillDF.text = GetSkillDescription(_selectedUserCardData.SkillDfData);
+        }
+    }
+
+    private string GetSkillDescription(SkillData skillData)
+    {
+        if (skillData == null)
+        {
+            return "스킬 정보 없음";
+        }
+
+        return skillData.Description;
+    }
+
+
+    private void OnClickOverallFW()
+    {
+        SelectUserOverall("FW");
+    }
+
+    private void OnClickOverallMF()
+    {
+        SelectUserOverall("MF");
+    }
+
+    private void OnClickOverallDF()
+    {
+        SelectUserOverall("DF");
+    }
+
+    private void SelectUserOverall(string overallType)
+    {
+        if (_selectedUserCardData == null)
+        {
+            return;
+        }
+
+        _selectedUserOverall = overallType;
+
+        if (panel_Choice != null)
+        {
+            panel_Choice.SetActive(false);
+        }
+
+        Debug.Log("[SingleModeUi] 유저 능력치 선택: " + _selectedUserCardData.StaticData.Name +" / " + overallType);
+    }
+
+    private void OnClickCancel()
+    {
+        _selectedUserCardData = null;
+        _selectedUserOverall = string.Empty;
+
+        if (panel_Choice != null)
+        {
+            panel_Choice.SetActive(false);
+        }
+    }
+
+
+    public void ShowOpponentChoice(PlayerData playerData, string overallType)
+    {
+        if (playerData == null)
+        {
+            return;
+        }
+
+        if (IsUserTeamAttacking)
+        {
+            return;
+        }
+
+        if (overallType != "FW" && overallType != "MF" && overallType != "DF")
+        {
+            Debug.LogError("[SingleModeUi] 잘못된 능력치 선택입니다.");
+            return;
+        }
+
+        Transform sourceSlot = FindOpponentPlayerSlot(playerData);
+
+        if (sourceSlot == null)
+        {
+            Debug.LogError("[SingleModeUi] 상대 포지션 슬롯을 찾지 못했습니다.");
+            return;
+        }
+
+        if (opponentCard_Locate == null)
+        {
+            Debug.LogError("[SingleModeUi] OpponentCard_Locate가 연결되지 않았습니다.");
+            return;
+        }
+
+        _selectedOpponentPlayer = playerData;
+        _selectedOpponentOverall = overallType;
+
+        if (_opponentChoiceSlotObject != null)
+        {
+            Destroy(_opponentChoiceSlotObject);
+            _opponentChoiceSlotObject = null;
+        }
+
+        _opponentChoiceSlotObject = Instantiate(sourceSlot.gameObject, opponentCard_Locate, false);
+
+        _opponentChoiceSlotObject.name = "OpponentChoicePositionSlot";
+
+        RectTransform copiedRect = _opponentChoiceSlotObject.GetComponent<RectTransform>();
+
+        if (copiedRect != null)
+        {
+            copiedRect.anchorMin = Vector2.zero;
+            copiedRect.anchorMax = Vector2.one;
+            copiedRect.offsetMin = Vector2.zero;
+            copiedRect.offsetMax = Vector2.zero;
+        }
+
+        UpdateOpponentOverallText(overallType);
+
+        if (panel_OpponentChoice != null)
+        {
+            panel_OpponentChoice.SetActive(true);
+        }
+    }
+
+    private Transform FindOpponentPlayerSlot(PlayerData playerData)
+    {
+        foreach (KeyValuePair<string, PlayerData> item in _opponentPlayersBySlot)
+        {
+            if (item.Value == null)
+            {
+                continue;
+            }
+
+            if (item.Value.Id == playerData.Id)
+            {
+                if (item.Key == "GK")
+                {
+                    return _opponentSlotGK;
+                }
+
+                int separatorIndex = item.Key.IndexOf('_');
+
+                if (separatorIndex < 0)
+                {
+                    return null;
+                }
+
+                string position = item.Key.Substring(0, separatorIndex);
+                string indexText = item.Key.Substring(separatorIndex + 1);
+
+                int slotIndex;
+
+                if (int.TryParse(indexText, out slotIndex) == false)
+                {
+                    return null;
+                }
+
+                return GetSquadSlot(false, position, slotIndex);
+            }
+        }
+
+        return null;
+    }
+
+    private void UpdateOpponentOverallText(string overallType)
+    {
+        if (text_ChooseOverall == null)
+        {
+            return;
+        }
+
+        if (overallType == "FW")
+        {
+            text_ChooseOverall.text = "FW";
+            text_ChooseOverall.color = Color.red;
+        }
+
+        else if (overallType == "MF")
+        {
+            text_ChooseOverall.text = "MF";
+            text_ChooseOverall.color = Color.green;
+        }
+
+        else if (overallType == "DF")
+        {
+            text_ChooseOverall.text = "DF";
+            text_ChooseOverall.color = Color.blue;
+        }
+    }
+
 }

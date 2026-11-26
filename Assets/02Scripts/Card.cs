@@ -52,6 +52,11 @@ public class Card : MonoBehaviour
 
     private void OnDisable()
     {
+        if (_buttonCard != null)
+        {
+            _buttonCard.UnBindOnClickButtonEvent(OnClickCard);
+        }
+
         OnClickCardAction = null;
         TargetUserCardData = null;
     }

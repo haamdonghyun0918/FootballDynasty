@@ -4673,6 +4673,24 @@ MonoBehaviour:
   _opponentLineDF: {fileID: 2465384604688914329}
   _opponentLineMF: {fileID: 1298143413947472917}
   _opponentLineFW: {fileID: 3880224812040363321}
+  panel_UserSquad: {fileID: 5708365415229884233}
+  panel_OpponentSquad: {fileID: 1106418163716693919}
+  button_Opponent: {fileID: 6009127855317078387}
+  panel_OpponentChoice: {fileID: 8432328848573791060}
+  opponentCard_Locate: {fileID: 6936825488459716670}
+  text_ChooseOverall: {fileID: 843220869370766579}
+  panel_Choice: {fileID: 1625030120574475906}
+  card_Spawn: {fileID: 5751295923699057491}
+  button_OverallFW: {fileID: 8964237660961746457}
+  button_OverallMF: {fileID: 4207829292798900801}
+  button_OverallDF: {fileID: 6525088186780761280}
+  text_OverallFW: {fileID: 6818353320578696906}
+  text_OverallMF: {fileID: 1359239329194629558}
+  text_OverallDF: {fileID: 7003042501373869814}
+  text_SkillFW: {fileID: 6865289123155815416}
+  text_SkillMF: {fileID: 5398072444292182731}
+  text_SkillDF: {fileID: 8167823410201684797}
+  button_Cancel: {fileID: 4781436522581555605}
 --- !u!1 &1902540033833926416
 GameObject:
   m_ObjectHideFlags: 0
