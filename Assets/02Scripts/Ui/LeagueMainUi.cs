@@ -134,9 +134,10 @@ public class LeagueMainUi : UiBase
         }
     }
 
-    private void OnClickPlay()
+    private async void OnClickPlay()
     {
-
+        await UiManager.Instance.OpenUi<SingleModeUi>();
+        UiManager.Instance.CloseUi<LeagueMainUi>();
     }
 
     private void OnClickSim()

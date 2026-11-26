@@ -4656,6 +4656,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a83bd045176d88a45ad898268d51e9fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SingleModeUi
+  text_Turns: {fileID: 4234919536582382826}
+  image_AttackHome: {fileID: 4530667594626957362}
+  image_AttackAway: {fileID: 7866666406626031060}
+  image_LogoHome: {fileID: 5625682824793687329}
+  text_NameHome: {fileID: 4047461668420498743}
+  text_PointsHome: {fileID: 8503345959541030904}
+  image_LogoAway: {fileID: 8371530925069824473}
+  text_NameAway: {fileID: 419586337257261399}
+  text_PointsAway: {fileID: 8048739342365735993}
+  _userSlotGK: {fileID: 3194352456095256688}
+  _userLineDF: {fileID: 1176877627156063126}
+  _userLineMF: {fileID: 2710417251009438674}
+  _userLineFW: {fileID: 7329450389938717596}
+  _opponentSlotGK: {fileID: 8732650836295921954}
+  _opponentLineDF: {fileID: 2465384604688914329}
+  _opponentLineMF: {fileID: 1298143413947472917}
+  _opponentLineFW: {fileID: 3880224812040363321}
 --- !u!1 &1902540033833926416
 GameObject:
   m_ObjectHideFlags: 0
